@@ -8,10 +8,13 @@ class SimpleRailState(GameState):
         self.is_game_over = False
         self.board_hexes: Dict[str, str] = {} # e.g., {"0,0": "Red"}
         self.player_shares: Dict[str, Dict[str, int]] = {p: {} for p in players}
+        self.phase = "main"
+        self.active_player_stack = []
 
     def to_dict(self) -> Dict[str, Any]:
         return {
-            "current_player": self.turn_order[self.current_player_index] if self.turn_order else None,
+            "current_player": self.get_current_actor(),
+            "phase": self.phase,
             "board": self.board_hexes,
             "shares": self.player_shares,
             "game_over": self.is_game_over
@@ -35,7 +38,7 @@ class SimpleRailEngine(GameEngine):
         if state.is_game_over:
             raise ValueError("Game is already over")
 
-        if not state.turn_order or state.turn_order[state.current_player_index] != player_id:
+        if not state.turn_order or state.get_current_actor() != player_id:
             raise ValueError("Not your turn")
 
         if action_type == "place_track":

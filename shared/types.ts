@@ -32,8 +32,21 @@ export interface GameMove {
   payload: MovePayload;
 }
 
+export interface Company {
+  id: string;
+  color: string;
+  treasury: number;
+  unissued_shares: number;
+  track_remaining: number;
+}
+
 export interface GameState {
-  current_player: string;
+  current_player: string | null;
+  phase?: string; // Phase state machine support
+  active_player_stack?: string[]; // Auction/Interrupt support
+
+  companies?: Record<string, Company>; // Heavy games
+
   board?: Record<string, string>; // Simple Rail
   shares?: Record<string, Record<string, number>>; // Simple Rail
 

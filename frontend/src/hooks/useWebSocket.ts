@@ -3,13 +3,15 @@ import { io, Socket } from 'socket.io-client';
 import axios from 'axios';
 import { useGameStore, useAuthStore } from '../store';
 
-export const useWebSocket = (gameId: string) => {
-  const socket = useRef<Socket | null>(null);
+// Ensure we don't duplicate sockets if called multiple times
+let globalSocket: Socket | null = null;
+
+export const useWebSocket = (gameId: string, autoConnect = true) => {
   const { setGameState } = useGameStore();
   const { token, user } = useAuthStore();
 
   useEffect(() => {
-    if (!gameId) return;
+    if (!gameId || !autoConnect) return;
 
     // Fetch initial state
     const fetchState = async () => {
@@ -24,23 +26,27 @@ export const useWebSocket = (gameId: string) => {
     };
     fetchState();
 
-    socket.current = io('http://localhost:8000');
+    if (!globalSocket) {
+      globalSocket = io('http://localhost:8000');
+    }
 
-    socket.current.on('connect', () => {
+    globalSocket.on('connect', () => {
       console.log('Socket Connected');
-      socket.current?.emit('join_game', { game_id: gameId });
+      globalSocket?.emit('join_game', { game_id: gameId });
     });
 
-    socket.current.on('STATE_UPDATED', (data) => {
+    globalSocket.on('STATE_UPDATED', (data) => {
       if (data && data.payload) {
         setGameState(data.payload);
       }
     });
 
     return () => {
-      socket.current?.disconnect();
+      // Don't disconnect on unmount if it's managed globally, but remove listeners to prevent duplicates
+      globalSocket?.off('STATE_UPDATED');
+      globalSocket?.off('connect');
     };
-  }, [gameId, setGameState, token]);
+  }, [gameId, setGameState, token, autoConnect]);
 
   const sendMove = async (action_type: string, payload: any) => {
     if (!token || !user) return;

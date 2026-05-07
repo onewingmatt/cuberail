@@ -17,6 +17,8 @@ class NPState(GameState):
         self.turn_order = players
         self.current_player_index = 0
         self.is_game_over = False
+        self.phase = "main"
+        self.active_player_stack = []
 
         self.train_pos: str = "StPaul"
         # Maps city name to player_id who invested there.
@@ -26,7 +28,8 @@ class NPState(GameState):
 
     def to_dict(self) -> Dict[str, Any]:
         return {
-            "current_player": self.turn_order[self.current_player_index] if self.turn_order else None,
+            "current_player": self.get_current_actor(),
+            "phase": self.phase,
             "train_pos": self.train_pos,
             "investments": self.investments,
             "balances": self.balances,
@@ -42,7 +45,7 @@ class NPEngine(GameEngine):
         if state.is_game_over:
             raise ValueError("Game is already over")
 
-        if not state.turn_order or state.turn_order[state.current_player_index] != player_id:
+        if not state.turn_order or state.get_current_actor() != player_id:
             raise ValueError("Not your turn")
 
         if action_type == "invest":

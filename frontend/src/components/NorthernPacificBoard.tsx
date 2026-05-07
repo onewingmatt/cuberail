@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useGameStore, useAuthStore } from '../store';
 import { useWebSocket } from '../hooks/useWebSocket';
+import { GameRenderer } from './GameRenderer';
 
 // Rough visual coordinates for the NP graph
 const CITY_COORDS: Record<string, { x: number, y: number }> = {
@@ -19,13 +20,11 @@ export const NorthernPacificBoard: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { gameState } = useGameStore();
   const { user } = useAuthStore();
-  const { sendMove } = useWebSocket(id || '');
+  const { sendMove } = useWebSocket(id || '', false);
 
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
 
-  if (!gameState) {
-    return <div>Loading...</div>;
-  }
+  if (!gameState) return null;
 
   const handleCityClick = (city: string) => {
     setSelectedCity(city);
@@ -47,6 +46,40 @@ export const NorthernPacificBoard: React.FC = () => {
 
   const isMyTurn = gameState.current_player === user?.id;
 
+  // Build Generic Nodes/Edges
+  const graphEdges: any[] = [];
+  const graphNodes: any[] = [];
+
+  if (gameState.graph) {
+    Object.entries(gameState.graph).forEach(([city, neighbors]) => {
+      neighbors.forEach(neighbor => {
+        if (city < neighbor) {
+          const start = CITY_COORDS[city];
+          const end = CITY_COORDS[neighbor];
+          if (start && end) {
+            graphEdges.push({ start, end });
+          }
+        }
+      });
+    });
+  }
+
+  Object.entries(CITY_COORDS).forEach(([city, coords]) => {
+    const isInvested = !!(gameState.investments && gameState.investments[city]);
+    const isSelected = selectedCity === city;
+    const hasTrain = gameState.train_pos === city;
+
+    graphNodes.push({
+      id: city,
+      x: coords.x,
+      y: coords.y,
+      color: isInvested ? '#4f46e5' : '#fff',
+      stroke: isSelected ? '#ef4444' : '#333',
+      hasTrain,
+      isInvested
+    });
+  });
+
   return (
     <div className="flex flex-col items-center p-8">
       <h2 className="text-2xl font-bold mb-4">Northern Pacific: {id}</h2>
@@ -58,60 +91,12 @@ export const NorthernPacificBoard: React.FC = () => {
       )}
 
       <div className="flex gap-4 w-full max-w-4xl">
-        <div className="bg-white p-4 shadow-lg rounded-lg flex-1 relative overflow-auto" style={{ height: '400px' }}>
-          <svg width="600" height="400">
-            {/* Draw Edges */}
-            {gameState.graph && Object.entries(gameState.graph).map(([city, neighbors]) =>
-              neighbors.map(neighbor => {
-                const start = CITY_COORDS[city];
-                const end = CITY_COORDS[neighbor];
-                if (!start || !end) return null;
-                // draw only once per pair
-                if (city > neighbor) return null;
-                return (
-                  <line
-                    key={`${city}-${neighbor}`}
-                    x1={start.x} y1={start.y} x2={end.x} y2={end.y}
-                    stroke="#ccc" strokeWidth="3"
-                  />
-                );
-              })
-            )}
-
-            {/* Draw Cities */}
-            {Object.entries(CITY_COORDS).map(([city, coords]) => {
-              const isInvested = gameState.investments && gameState.investments[city];
-              const isSelected = selectedCity === city;
-              const hasTrain = gameState.train_pos === city;
-              return (
-                <g
-                  key={city}
-                  transform={`translate(${coords.x}, ${coords.y})`}
-                  onClick={() => handleCityClick(city)}
-                  className="cursor-pointer"
-                >
-                  <circle
-                    r="15"
-                    fill={isInvested ? "#4f46e5" : "#fff"}
-                    stroke={isSelected ? "#ef4444" : "#333"}
-                    strokeWidth={isSelected ? "4" : "2"}
-                  />
-                  {hasTrain && (
-                    <circle r="8" fill="#ef4444" />
-                  )}
-                  <text y="-20" textAnchor="middle" fontSize="12" fill="#333" className="pointer-events-none font-bold">
-                    {city}
-                  </text>
-                  {isInvested && (
-                    <text y="5" textAnchor="middle" fontSize="10" fill="#fff" className="pointer-events-none">
-                      $
-                    </text>
-                  )}
-                </g>
-              );
-            })}
-          </svg>
-        </div>
+        <GameRenderer
+          boardType="graph"
+          graphEdges={graphEdges}
+          graphNodes={graphNodes}
+          onNodeClick={handleCityClick}
+        />
 
         <div className="w-64 flex flex-col gap-4">
           <div className="bg-white p-4 rounded shadow">

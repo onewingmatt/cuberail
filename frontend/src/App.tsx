@@ -11,11 +11,23 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   return token ? <>{children}</> : <Navigate to="/login" />;
 };
 
+import { useParams } from 'react-router-dom';
+import { useWebSocket } from './hooks/useWebSocket';
+
 const GameRouter = () => {
+  const { id } = useParams<{ id: string }>();
   const { gameState } = useGameStore();
+
+  // Lift WS and state fetching here so it doesn't unmount/remount
+  useWebSocket(id || '');
+
+  if (!gameState) {
+    return <div className="p-8 text-center text-xl">Loading Game State...</div>;
+  }
+
   // We can determine which board to show based on state shape
   // If state has 'train_pos', it's NP. Else simple rail.
-  if (gameState && gameState.train_pos !== undefined) {
+  if (gameState.train_pos !== undefined) {
     return <NorthernPacificBoard />;
   }
   return <GameBoard />;
