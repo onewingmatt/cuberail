@@ -34,8 +34,14 @@ export interface GameMove {
 
 export interface GameState {
   current_player: string;
-  board: Record<string, string>;
-  shares: Record<string, Record<string, number>>;
+  board?: Record<string, string>; // Simple Rail
+  shares?: Record<string, Record<string, number>>; // Simple Rail
+
+  train_pos?: string; // Northern Pacific
+  investments?: Record<string, string>; // Northern Pacific
+  balances?: Record<string, number>; // Northern Pacific
+  graph?: Record<string, string[]>; // Northern Pacific
+
   game_over: boolean;
 }
 

@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from app.db import get_db
 from app.models.schema import Game, GamePlayer, GameMove, User
 from app.engine.games.simple_rail import SimpleRailEngine, SimpleRailState
+from app.engine.games.northern_pacific import NPEngine, NPState
 import uuid
 from typing import List, Dict, Any
 
@@ -74,6 +75,9 @@ async def rebuild_state(game_id: str, db: AsyncSession) -> Dict[str, Any]:
     if game.game_type == "simple_rail":
         engine = SimpleRailEngine()
         state = engine.setup_game(player_ids)
+    elif game.game_type == "northern_pacific":
+        engine = NPEngine()
+        state = engine.setup_game(player_ids)
     else:
         raise ValueError("Unknown game type")
 
@@ -106,7 +110,16 @@ async def make_move(game_id: str, move_req: MoveRequest, Authorize: AuthJWT = De
     last_move = result.scalars().first()
     next_move_num = last_move.move_number + 1 if last_move else 1
 
-    engine = SimpleRailEngine()
+    result = await db.execute(select(Game).where(Game.id == uuid.UUID(game_id)))
+    game = result.scalars().first()
+
+    if game.game_type == "simple_rail":
+        engine = SimpleRailEngine()
+    elif game.game_type == "northern_pacific":
+        engine = NPEngine()
+    else:
+        raise ValueError("Unknown game type")
+
     state = engine.setup_game(player_ids)
     result = await db.execute(select(GameMove).where(GameMove.game_id == uuid.UUID(game_id)).order_by(GameMove.move_number))
     moves = result.scalars().all()

@@ -11,6 +11,19 @@ export const useWebSocket = (gameId: string) => {
   useEffect(() => {
     if (!gameId) return;
 
+    // Fetch initial state
+    const fetchState = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8000/api/games/${gameId}/state`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {}
+        });
+        setGameState(response.data);
+      } catch (err) {
+        console.error('Failed to fetch initial game state', err);
+      }
+    };
+    fetchState();
+
     socket.current = io('http://localhost:8000');
 
     socket.current.on('connect', () => {
@@ -27,7 +40,7 @@ export const useWebSocket = (gameId: string) => {
     return () => {
       socket.current?.disconnect();
     };
-  }, [gameId, setGameState]);
+  }, [gameId, setGameState, token]);
 
   const sendMove = async (action_type: string, payload: any) => {
     if (!token || !user) return;

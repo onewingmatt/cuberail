@@ -3,11 +3,22 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Auth } from './components/Auth';
 import { Lobby } from './components/Lobby';
 import { GameBoard } from './components/GameBoard';
-import { useAuthStore } from './store';
+import { NorthernPacificBoard } from './components/NorthernPacificBoard';
+import { useAuthStore, useGameStore } from './store';
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const { token } = useAuthStore();
   return token ? <>{children}</> : <Navigate to="/login" />;
+};
+
+const GameRouter = () => {
+  const { gameState } = useGameStore();
+  // We can determine which board to show based on state shape
+  // If state has 'train_pos', it's NP. Else simple rail.
+  if (gameState && gameState.train_pos !== undefined) {
+    return <NorthernPacificBoard />;
+  }
+  return <GameBoard />;
 };
 
 const App: React.FC = () => {
@@ -28,7 +39,7 @@ const App: React.FC = () => {
             path="/game/:id"
             element={
               <PrivateRoute>
-                <GameBoard />
+                <GameRouter />
               </PrivateRoute>
             }
           />
