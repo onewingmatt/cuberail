@@ -5,7 +5,7 @@ import { useAuthStore } from '../store';
 
 export const Lobby: React.FC = () => {
   const navigate = useNavigate();
-  const { user, token } = useAuthStore();
+  const { token } = useAuthStore();
 
   const handleCreateGame = async (gameType: string) => {
     try {

@@ -52,7 +52,7 @@ export const NorthernPacificBoard: React.FC = () => {
 
   if (gameState.graph) {
     Object.entries(gameState.graph).forEach(([city, neighbors]) => {
-      neighbors.forEach(neighbor => {
+      (neighbors as string[]).forEach((neighbor: string) => {
         if (city < neighbor) {
           const start = CITY_COORDS[city];
           const end = CITY_COORDS[neighbor];
@@ -132,7 +132,7 @@ export const NorthernPacificBoard: React.FC = () => {
             {gameState.balances && Object.entries(gameState.balances).map(([pid, bal]) => (
               <div key={pid} className="flex justify-between text-sm">
                 <span>{pid.slice(0, 8)}...</span>
-                <span className="font-bold">${bal}</span>
+                <span className="font-bold">${bal as number}</span>
               </div>
             ))}
           </div>

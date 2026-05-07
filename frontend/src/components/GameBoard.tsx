@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useGameStore } from '../store';
 import { useWebSocket } from '../hooks/useWebSocket';
