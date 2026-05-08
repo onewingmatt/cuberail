@@ -45,6 +45,7 @@ class NPState(GameState):
         self.balances: Dict[str, int] = {p: 0 for p in players}
         self.winner: Optional[str] = None
         self.share_values: Dict[str, int] = {city: 10 for city in NP_GRAPH}
+        self.shares_held: Dict[str, Dict[str, int]] = {p: {} for p in players}
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -57,6 +58,7 @@ class NPState(GameState):
             "graph": NP_GRAPH,
             "winner": self.winner,
             "share_values": self.share_values,
+            "shares_held": self.shares_held,
         }
 
 class NPEngine(GameEngine):
@@ -101,6 +103,23 @@ class NPEngine(GameEngine):
                 # Determine winner: player with highest balance
                 if state.balances:
                     state.winner = max(state.balances, key=state.balances.get)
+
+        elif action_type == "buy_share":
+            city = payload.get("city")
+            if not city or city not in NP_GRAPH:
+                raise ValueError("Invalid city")
+            if city not in state.investments:
+                raise ValueError("City not invested yet")
+            if city == "StPaul":
+                raise ValueError("Cannot buy shares in starting city")
+            share_price = state.share_values.get(city, 10)
+            if state.balances[player_id] < share_price:
+                raise ValueError("Not enough cash to buy share")
+            if player_id not in state.shares_held:
+                state.shares_held[player_id] = {}
+            state.shares_held[player_id][city] = state.shares_held[player_id].get(city, 0) + 1
+            state.balances[player_id] -= share_price
+
         else:
             raise ValueError(f"Unknown action: {action_type}")
 

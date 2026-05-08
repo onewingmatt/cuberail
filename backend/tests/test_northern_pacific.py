@@ -84,3 +84,25 @@ def test_share_value_increases_on_visit():
     assert state.share_values["Fargo"] > 10
     # Alice got the payout based on share value
     assert state.balances["alice"] > 0
+
+
+def test_buy_share():
+    engine = NPEngine()
+    state = engine.setup_game(["alice", "bob"])
+
+    # Alice invests in Fargo
+    state = engine.apply_move(state, "alice", "invest", {"city": "Fargo"})
+
+    # Bob moves train to Fargo — Alice gets payout
+    state = engine.apply_move(state, "bob", "move_train", {"city": "Fargo"})
+
+    # Alice now has cash (share value 10 + 5 increase = 15 payout)
+    assert state.balances["alice"] == 15
+
+    # Alice's turn again — she buys a share in Fargo
+    state = engine.apply_move(state, "alice", "buy_share", {"city": "Fargo"})
+
+    # Alice holds 1 share in Fargo
+    assert state.shares_held["alice"].get("Fargo") == 1
+    # Balance: 15 - 15 (share price after increase) = 0
+    assert state.balances["alice"] == 0
