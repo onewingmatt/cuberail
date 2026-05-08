@@ -8,32 +8,73 @@ from app.models.schema import Game, GamePlayer, GameMove, User
 from app.engine.games.simple_rail import SimpleRailEngine, SimpleRailState
 from app.engine.games.northern_pacific import NPEngine, NPState
 import uuid
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
 router = APIRouter()
+
+
+BOT_NAMES = ["Bot Alpha", "Bot Beta", "Bot Gamma", "Bot Delta"]
+
 
 class MoveRequest(BaseModel):
     action_type: str
     payload: dict
 
+
 @router.post("/")
-async def create_game(game_type: str, mode: str = "async", Authorize: AuthJWT = Depends(), db: AsyncSession = Depends(get_db)):
+async def create_game(
+    game_type: str,
+    mode: str = "async",
+    bot_count: int = 0,
+    Authorize: AuthJWT = Depends(),
+    db: AsyncSession = Depends(get_db),
+):
     Authorize.jwt_required()
     user_id = Authorize.get_jwt_subject()
+    bot_count = max(0, min(bot_count, 3))
 
     game = Game(game_type=game_type, mode=mode, created_by_id=uuid.UUID(user_id))
     db.add(game)
     await db.commit()
     await db.refresh(game)
 
+    # Human creator is player 0
     player = GamePlayer(game_id=game.id, user_id=uuid.UUID(user_id), player_index=0)
     db.add(player)
+
+    # Add bot players
+    bot_ids = []
+    for i in range(bot_count):
+        bot_user = User(
+            username=f"{BOT_NAMES[i]}",
+            email=f"bot_{i}_{uuid.uuid4().hex[:8]}@bot.cuberail",
+            hashed_password="",
+        )
+        db.add(bot_user)
+        await db.flush()
+        bot_ids.append(bot_user.id)
+
+        bot_player = GamePlayer(
+            game_id=game.id,
+            user_id=bot_user.id,
+            player_index=i + 1,
+        )
+        db.add(bot_player)
+
     await db.commit()
 
-    return {"game_id": str(game.id)}
+    return {
+        "game_id": str(game.id),
+        "bot_count": bot_count,
+    }
+
 
 @router.post("/{game_id}/join")
-async def join_game(game_id: str, Authorize: AuthJWT = Depends(), db: AsyncSession = Depends(get_db)):
+async def join_game(
+    game_id: str,
+    Authorize: AuthJWT = Depends(),
+    db: AsyncSession = Depends(get_db),
+):
     Authorize.jwt_required()
     user_id = Authorize.get_jwt_subject()
 
@@ -42,29 +83,39 @@ async def join_game(game_id: str, Authorize: AuthJWT = Depends(), db: AsyncSessi
     if not game:
         raise HTTPException(status_code=404, detail="Game not found")
 
-    result = await db.execute(select(GamePlayer).where(GamePlayer.game_id == uuid.UUID(game_id)))
+    result = await db.execute(
+        select(GamePlayer).where(GamePlayer.game_id == uuid.UUID(game_id))
+    )
     players = result.scalars().all()
 
     if any(str(p.user_id) == user_id for p in players):
         return {"message": "Already joined"}
 
-    # Look up joiner's username
     result = await db.execute(select(User).where(User.id == uuid.UUID(user_id)))
     joiner = result.scalars().first()
     joiner_name = joiner.username if joiner else "Someone"
 
-    player = GamePlayer(game_id=uuid.UUID(game_id), user_id=uuid.UUID(user_id), player_index=len(players))
+    player = GamePlayer(
+        game_id=uuid.UUID(game_id),
+        user_id=uuid.UUID(user_id),
+        player_index=len(players),
+    )
     db.add(player)
     await db.commit()
 
-    # Notify the game creator
     from app.services.notifications import notify_player_joined
+
     await notify_player_joined(str(game.created_by_id), joiner_name, game_id, db)
 
     return {"message": "Joined"}
 
+
 @router.post("/{game_id}/start")
-async def start_game(game_id: str, Authorize: AuthJWT = Depends(), db: AsyncSession = Depends(get_db)):
+async def start_game(
+    game_id: str,
+    Authorize: AuthJWT = Depends(),
+    db: AsyncSession = Depends(get_db),
+):
     Authorize.jwt_required()
     user_id = Authorize.get_jwt_subject()
 
@@ -76,62 +127,35 @@ async def start_game(game_id: str, Authorize: AuthJWT = Depends(), db: AsyncSess
     game.status = "in_progress"
     await db.commit()
 
-    # Notify all players
-    result = await db.execute(select(GamePlayer).where(GamePlayer.game_id == uuid.UUID(game_id)))
+    result = await db.execute(
+        select(GamePlayer).where(GamePlayer.game_id == uuid.UUID(game_id))
+    )
     players = result.scalars().all()
     player_ids = [str(p.user_id) for p in players]
     from app.services.notifications import notify_game_started
+
     await notify_game_started(player_ids, game_id, db)
+
+    # If first player is a bot, auto-play immediately
+    engine, state, player_ids = await _load_game(game_id, db)
+    from app.main import sio
+
+    await _process_bot_turns(game_id, engine, state, db, sio, 1)
 
     return {"message": "Started"}
 
-async def rebuild_state(game_id: str, db: AsyncSession) -> Dict[str, Any]:
-    # 1. Get Players
-    result = await db.execute(select(GamePlayer).where(GamePlayer.game_id == uuid.UUID(game_id)).order_by(GamePlayer.player_index))
+
+async def _load_game(
+    game_id: str, db: AsyncSession
+) -> tuple:
+    """Load game engine and state from DB."""
+    result = await db.execute(
+        select(GamePlayer)
+        .where(GamePlayer.game_id == uuid.UUID(game_id))
+        .order_by(GamePlayer.player_index)
+    )
     players = result.scalars().all()
     player_ids = [str(p.user_id) for p in players]
-
-    # 2. Get Game
-    result = await db.execute(select(Game).where(Game.id == uuid.UUID(game_id)))
-    game = result.scalars().first()
-
-    if game.game_type == "simple_rail":
-        engine = SimpleRailEngine()
-        state = engine.setup_game(player_ids)
-    elif game.game_type == "northern_pacific":
-        engine = NPEngine()
-        state = engine.setup_game(player_ids)
-    else:
-        raise ValueError("Unknown game type")
-
-    # 3. Get Moves
-    result = await db.execute(select(GameMove).where(GameMove.game_id == uuid.UUID(game_id)).order_by(GameMove.move_number))
-    moves = result.scalars().all()
-
-    for move in moves:
-        state = engine.apply_move(state, str(move.user_id), move.action_type, move.payload)
-
-    return state.to_dict()
-
-@router.get("/{game_id}/state")
-async def get_state(game_id: str, db: AsyncSession = Depends(get_db)):
-    state = await rebuild_state(game_id, db)
-    return state
-
-@router.post("/{game_id}/moves")
-async def make_move(game_id: str, move_req: MoveRequest, Authorize: AuthJWT = Depends(), db: AsyncSession = Depends(get_db)):
-    Authorize.jwt_required()
-    user_id = Authorize.get_jwt_subject()
-
-    # Quick rebuild to validate
-    # 1. Get Players
-    result = await db.execute(select(GamePlayer).where(GamePlayer.game_id == uuid.UUID(game_id)).order_by(GamePlayer.player_index))
-    players = result.scalars().all()
-    player_ids = [str(p.user_id) for p in players]
-
-    result = await db.execute(select(GameMove).where(GameMove.game_id == uuid.UUID(game_id)).order_by(GameMove.move_number.desc()))
-    last_move = result.scalars().first()
-    next_move_num = last_move.move_number + 1 if last_move else 1
 
     result = await db.execute(select(Game).where(Game.id == uuid.UUID(game_id)))
     game = result.scalars().first()
@@ -144,41 +168,154 @@ async def make_move(game_id: str, move_req: MoveRequest, Authorize: AuthJWT = De
         raise ValueError("Unknown game type")
 
     state = engine.setup_game(player_ids)
-    result = await db.execute(select(GameMove).where(GameMove.game_id == uuid.UUID(game_id)).order_by(GameMove.move_number))
+
+    result = await db.execute(
+        select(GameMove)
+        .where(GameMove.game_id == uuid.UUID(game_id))
+        .order_by(GameMove.move_number)
+    )
     moves = result.scalars().all()
     for move in moves:
         state = engine.apply_move(state, str(move.user_id), move.action_type, move.payload)
+
+    return engine, state, player_ids
+
+
+async def _is_bot(user_id: str, db: AsyncSession) -> tuple[bool, Optional[str]]:
+    """Check if a user ID belongs to a bot. Returns (is_bot, username)."""
+    try:
+        result = await db.execute(select(User).where(User.id == uuid.UUID(user_id)))
+        user = result.scalars().first()
+        if user and user.username and user.username.startswith("Bot_"):
+            return True, user.username
+        return False, user.username if user else None
+    except Exception:
+        return False, None
+
+
+async def _process_bot_turns(
+    game_id: str,
+    engine,
+    state,
+    db: AsyncSession,
+    sio,
+    next_move_num: int,
+):
+    """
+    After a human move, auto-process any consecutive bot turns.
+    Returns the final state after all bot moves.
+    """
+    from app.engine.games.northern_pacific_bot import decide_move
+
+    while not state.is_game_over:
+        current = state.get_current_actor()
+        if not current:
+            break
+        is_bot, username = await _is_bot(current, db)
+        if not is_bot:
+            break
+
+        # Bot decides
+        action_type, payload = decide_move(current, username, state.to_dict())
+
+        # Apply
+        new_state = engine.apply_move(state, current, action_type, payload)
+        state = new_state
+
+        # Save move
+        move = GameMove(
+            game_id=uuid.UUID(game_id),
+            user_id=uuid.UUID(current),
+            move_number=next_move_num,
+            action_type=action_type,
+            payload=payload,
+        )
+        db.add(move)
+        await db.commit()
+        next_move_num += 1
+
+        # Emit incremental update
+        await sio.emit("STATE_UPDATED", {"payload": state.to_dict()}, room=game_id)
+
+    return state
+
+
+@router.get("/{game_id}/state")
+async def get_state(game_id: str, db: AsyncSession = Depends(get_db)):
+    _, state, _ = await _load_game(game_id, db)
+    result = state.to_dict()
+
+    # Enrich with player info (usernames, bot status)
+    result["players"] = []
+    gp_result = await db.execute(
+        select(GamePlayer)
+        .where(GamePlayer.game_id == uuid.UUID(game_id))
+        .order_by(GamePlayer.player_index)
+    )
+    for gp in gp_result.scalars().all():
+        user_result = await db.execute(select(User).where(User.id == gp.user_id))
+        user = user_result.scalars().first()
+        if user:
+            result["players"].append({
+                "id": str(user.id),
+                "username": user.username,
+                "is_bot": user.username.startswith("Bot_") if user.username else False,
+            })
+
+    return result
+
+
+@router.post("/{game_id}/moves")
+async def make_move(
+    game_id: str,
+    move_req: MoveRequest,
+    Authorize: AuthJWT = Depends(),
+    db: AsyncSession = Depends(get_db),
+):
+    Authorize.jwt_required()
+    user_id = Authorize.get_jwt_subject()
+
+    engine, state, player_ids = await _load_game(game_id, db)
+
+    result = await db.execute(
+        select(GameMove)
+        .where(GameMove.game_id == uuid.UUID(game_id))
+        .order_by(GameMove.move_number.desc())
+    )
+    last_move = result.scalars().first()
+    next_move_num = last_move.move_number + 1 if last_move else 1
+
+    result = await db.execute(select(Game).where(Game.id == uuid.UUID(game_id)))
+    game = result.scalars().first()
 
     try:
         new_state = engine.apply_move(state, user_id, move_req.action_type, move_req.payload)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-    # Valid move, save it
+    # Save human move
     new_move = GameMove(
         game_id=uuid.UUID(game_id),
         user_id=uuid.UUID(user_id),
         move_number=next_move_num,
         action_type=move_req.action_type,
-        payload=move_req.payload
+        payload=move_req.payload,
     )
     db.add(new_move)
     await db.commit()
+    next_move_num += 1
 
     from app.main import sio
-    await sio.emit('STATE_UPDATED', {"payload": new_state.to_dict()}, room=game_id)
+    await sio.emit("STATE_UPDATED", {"payload": new_state.to_dict()}, room=game_id)
 
     # Notification triggers
     from app.services.notifications import notify_your_turn, notify_game_over
 
     if new_state.is_game_over:
-        # Find winner by highest balance
         winner = None
-        if new_state.to_dict().get("balances"):
-            balances = new_state.to_dict()["balances"]
-            if balances:
-                winner = max(balances, key=balances.get)
-        # Look up winner name
+        balances = new_state.to_dict().get("balances", {})
+        if balances:
+            winner = max(balances, key=balances.get)
         winner_name = None
         if winner:
             r = await db.execute(select(User).where(User.id == uuid.UUID(winner)))
@@ -189,12 +326,17 @@ async def make_move(game_id: str, move_req: MoveRequest, Authorize: AuthJWT = De
     elif game.mode == "async":
         next_player = new_state.get_current_actor()
         if next_player:
-            # Look up the player who just moved
             r = await db.execute(select(User).where(User.id == uuid.UUID(user_id)))
             mover = r.scalars().first()
             mover_name = mover.username if mover else None
-            # Don't notify the player who just moved
             if next_player != user_id:
-                await notify_your_turn(next_player, game_id, mover_name, db)
+                is_bot, _ = await _is_bot(next_player, db)
+                if not is_bot:
+                    await notify_your_turn(next_player, game_id, mover_name, db)
+
+    # Auto-process bot turns (don't notify for bot moves)
+    await _process_bot_turns(
+        game_id, engine, new_state, db, sio, next_move_num
+    )
 
     return {"message": "Move accepted"}

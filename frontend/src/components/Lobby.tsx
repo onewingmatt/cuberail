@@ -7,11 +7,12 @@ export const Lobby: React.FC = () => {
   const navigate = useNavigate();
   const { token } = useAuthStore();
   const [mode, setMode] = useState<'async' | 'realtime'>('async');
+  const [botCount, setBotCount] = useState(0);
 
   const handleCreateGame = async (gameType: string) => {
     try {
       const response = await axios.post(
-        `http://localhost:8000/api/games/?game_type=${gameType}&mode=${mode}`,
+        `http://localhost:8000/api/games/?game_type=${gameType}&mode=${mode}&bot_count=${botCount}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -56,6 +57,27 @@ export const Lobby: React.FC = () => {
               ? 'Get notified when it\'s your turn'
               : 'No turn notifications — all players at the board'
             }
+          </span>
+        </div>
+
+        {/* Bot count */}
+        <div className="flex items-center gap-4 mb-4">
+          <span className="text-sm font-medium text-gray-700">Bot opponents:</span>
+          <div className="flex rounded border border-gray-300 overflow-hidden">
+            {[0, 1, 2, 3].map((n) => (
+              <button
+                key={n}
+                onClick={() => setBotCount(n)}
+                className={`px-3 py-1.5 text-sm font-medium cursor-pointer transition-colors ${
+                  botCount === n ? 'bg-purple-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                {n}
+              </button>
+            ))}
+          </div>
+          <span className="text-xs text-gray-500">
+            {botCount > 0 ? `Play against ${botCount} bot${botCount > 1 ? 's' : ''}` : 'Human opponents only'}
           </span>
         </div>
 

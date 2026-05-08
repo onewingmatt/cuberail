@@ -276,7 +276,13 @@ export const NorthernPacificBoard: React.FC = () => {
         <div className="w-52 flex flex-col gap-3">
           <div className="bg-white p-4 rounded shadow">
             <h3 className="font-bold border-b pb-2 mb-2">Controls</h3>
-            <p className="text-sm mb-2">Turn: {gameState.current_player?.slice(0, 6)}</p>
+            <p className="text-sm mb-2">
+              Turn: {(() => {
+                const cp = gameState.current_player;
+                const player = gameState.players?.find((p: any) => p.id === cp);
+                return player ? player.username : cp?.slice(0, 6);
+              })()}
+            </p>
             {selectedCity ? (
               <div className="flex flex-col gap-2">
                 <p className="text-sm font-medium">{selectedCity.replace(/([A-Z])/g, ' $1').trim()}</p>
@@ -289,9 +295,13 @@ export const NorthernPacificBoard: React.FC = () => {
           </div>
           <div className="bg-white p-4 rounded shadow">
             <h3 className="font-bold border-b pb-2 mb-2">Scores</h3>
-            {gameState.balances && Object.entries(gameState.balances).map(([pid, bal]) => (
-              <div key={pid} className="flex justify-between text-sm">
-                <span>{pid.slice(0, 6)}</span><span>${bal as number}</span>
+            {gameState.players && gameState.players.map((p: any) => (
+              <div key={p.id} className="flex justify-between text-sm items-center">
+                <span>
+                  {p.username}
+                  {p.is_bot && <span className="ml-1 text-xs text-purple-500 font-medium">[BOT]</span>}
+                </span>
+                <span>${gameState.balances?.[p.id] ?? 0}</span>
               </div>
             ))}
           </div>
