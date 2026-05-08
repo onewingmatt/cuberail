@@ -44,6 +44,7 @@ class NPState(GameState):
         self.investments: Dict[str, str] = {}
         self.balances: Dict[str, int] = {p: 0 for p in players}
         self.winner: Optional[str] = None
+        self.share_values: Dict[str, int] = {city: 10 for city in NP_GRAPH}
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -55,6 +56,7 @@ class NPState(GameState):
             "game_over": self.is_game_over,
             "graph": NP_GRAPH,
             "winner": self.winner,
+            "share_values": self.share_values,
         }
 
 class NPEngine(GameEngine):
@@ -85,9 +87,15 @@ class NPEngine(GameEngine):
             if target_city not in NP_GRAPH[state.train_pos]:
                 raise ValueError(f"Cannot move train from {state.train_pos} to {target_city}. Not connected.")
             state.train_pos = target_city
+
+            # Increase share value for the visited city
+            if target_city in state.share_values:
+                state.share_values[target_city] += 5
+
             owner = state.investments.get(target_city)
             if owner:
-                state.balances[owner] += 10
+                payout = state.share_values.get(target_city, 10)
+                state.balances[owner] += payout
             if target_city == "Seattle" or target_city == "Portland":
                 state.is_game_over = True
                 # Determine winner: player with highest balance

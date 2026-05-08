@@ -43,7 +43,7 @@ def test_np_move_train_and_payout():
     state = engine.apply_move(state, "bob", "move_train", {"city": "Fargo"})
 
     assert state.train_pos == "Fargo"
-    assert state.balances["alice"] == 10 # Alice owns Fargo
+    assert state.balances["alice"] == 15  # Alice owns Fargo (share value 10 + 5 increase)
     assert state.balances["bob"] == 0
     assert not state.is_game_over
 
@@ -58,10 +58,29 @@ def test_np_game_over():
     engine = NPEngine()
     state = engine.setup_game(["alice"])
 
-    # Cheat train to Spokane to test ending
-    state.train_pos = "Spokane"
+    # Cheat train to Richland to test ending (Richland -> Seattle is valid)
+    state.train_pos = "Richland"
 
     state = engine.apply_move(state, "alice", "move_train", {"city": "Seattle"})
 
     assert state.train_pos == "Seattle"
     assert state.is_game_over
+
+
+def test_share_value_increases_on_visit():
+    engine = NPEngine()
+    state = engine.setup_game(["alice", "bob"])
+
+    # Check initial share value
+    assert state.share_values["Fargo"] == 10
+
+    # Alice invests in Fargo
+    state = engine.apply_move(state, "alice", "invest", {"city": "Fargo"})
+
+    # Bob moves train to Fargo — share value should increase
+    state = engine.apply_move(state, "bob", "move_train", {"city": "Fargo"})
+
+    # Fargo's share value went up
+    assert state.share_values["Fargo"] > 10
+    # Alice got the payout based on share value
+    assert state.balances["alice"] > 0
