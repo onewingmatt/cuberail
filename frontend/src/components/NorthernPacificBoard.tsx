@@ -209,6 +209,17 @@ export const NorthernPacificBoard: React.FC = () => {
         >
           {label}
         </text>
+        {/* Share value */}
+        <text
+          x={px.x}
+          y={px.y + 18}
+          textAnchor="middle"
+          fontSize={8}
+          fill="#666"
+          style={{ userSelect: 'none', pointerEvents: 'none' }}
+        >
+          ${gameState.share_values?.[city] ?? 10}
+        </text>
       </g>
     );
   });
@@ -230,6 +241,11 @@ export const NorthernPacificBoard: React.FC = () => {
               } wins!</>
             ) : 'Game Over!'}
           </span>
+        </div>
+      )}
+      {gameState.phase === 'stock_round' && !gameState.game_over && (
+        <div className="bg-purple-100 border border-purple-300 text-purple-800 p-2 mb-3 rounded text-center text-sm font-medium">
+          Stock Round — Buy shares or pass
         </div>
       )}
       <div className="flex gap-4 w-full">
@@ -285,25 +301,66 @@ export const NorthernPacificBoard: React.FC = () => {
           </div>
         </div>
         <div className="w-52 flex flex-col gap-3">
-          <div className="bg-white p-4 rounded shadow">
-            <h3 className="font-bold border-b pb-2 mb-2">Controls</h3>
-            <p className="text-sm mb-2">
-              Turn: {(() => {
-                const cp = gameState.current_player;
-                const player = gameState.players?.find((p: any) => p.id === cp);
-                return player ? player.username : cp?.slice(0, 6);
-              })()}
-            </p>
-            {selectedCity ? (
-              <div className="flex flex-col gap-2">
-                <p className="text-sm font-medium">{selectedCity.replace(/([A-Z])/g, ' $1').trim()}</p>
-                <button onClick={handleInvest} disabled={!isMyTurn} className="bg-blue-600 text-white px-3 py-1 rounded text-sm disabled:opacity-40">Invest</button>
-                <button onClick={handleMoveTrain} disabled={!isMyTurn} className="bg-red-600 text-white px-3 py-1 rounded text-sm disabled:opacity-40">Move Train</button>
-              </div>
-            ) : (
-              <p className="text-sm text-gray-500">Select a city.</p>
-            )}
-          </div>
+          {gameState.phase === 'stock_round' ? (
+            <div className="bg-white p-4 rounded shadow">
+              <h3 className="font-bold border-b pb-2 mb-2">Stock Round</h3>
+              <p className="text-sm mb-2">Buy shares in invested cities:</p>
+              {gameState.investments && Object.keys(gameState.investments).length > 0 ? (
+                Object.entries(gameState.investments).map(([city, owner]) => {
+                  const value = gameState.share_values?.[city] ?? 10;
+                  const myShares = gameState.shares_held?.[user?.id]?.[city] ?? 0;
+                  return (
+                    <div key={city} className="flex justify-between items-center py-1 border-b border-gray-100 last:border-b-0">
+                      <div className="text-xs">
+                        <div className="font-medium">{city.replace(/([A-Z])/g, ' $1').trim()}</div>
+                        <div className="text-gray-500">${value} ({myShares} held)</div>
+                      </div>
+                      <button
+                        onClick={() => sendMove('buy_share', { city })}
+                        disabled={!isMyTurn}
+                        className="bg-green-600 text-white px-2 py-0.5 rounded text-xs disabled:opacity-40 cursor-pointer"
+                      >
+                        Buy
+                      </button>
+                    </div>
+                  );
+                })
+              ) : (
+                <p className="text-xs text-gray-500 mb-2">No cities invested yet.</p>
+              )}
+              <button
+                onClick={() => sendMove('pass', {})}
+                disabled={!isMyTurn}
+                className="mt-2 bg-gray-500 text-white px-3 py-1 rounded text-sm w-full disabled:opacity-40 cursor-pointer"
+              >
+                Pass
+              </button>
+            </div>
+          ) : (
+            <div className="bg-white p-4 rounded shadow">
+              <h3 className="font-bold border-b pb-2 mb-2">Controls</h3>
+              <p className="text-sm mb-2">
+                Turn: {(() => {
+                  const cp = gameState.current_player;
+                  const player = gameState.players?.find((p: any) => p.id === cp);
+                  return player ? player.username : cp?.slice(0, 6);
+                })()}
+              </p>
+              {!gameState.game_over && (
+                <>
+                  {selectedCity ? (
+                    <div className="flex flex-col gap-2">
+                      <p className="text-sm font-medium">{selectedCity.replace(/([A-Z])/g, ' $1').trim()}</p>
+                      <button onClick={handleInvest} disabled={!isMyTurn} className="bg-blue-600 text-white px-3 py-1 rounded text-sm disabled:opacity-40 cursor-pointer">Invest</button>
+                      <button onClick={handleMoveTrain} disabled={!isMyTurn} className="bg-red-600 text-white px-3 py-1 rounded text-sm disabled:opacity-40 cursor-pointer">Move Train</button>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500">Select a city.</p>
+                  )}
+                </>
+              )}
+            </div>
+          )}
           <div className="bg-white p-4 rounded shadow">
             <h3 className="font-bold border-b pb-2 mb-2">Scores</h3>
             {gameState.players && gameState.players.map((p: any) => (
