@@ -9,6 +9,7 @@ interface OpenGame {
   game_type: string;
   mode: string;
   created_by: string;
+  created_by_id: string;
   human_players: number;
   total_players: number;
   created_at: string;
@@ -16,7 +17,7 @@ interface OpenGame {
 
 export const Lobby: React.FC = () => {
   const navigate = useNavigate();
-  const { token } = useAuthStore();
+  const { token, user } = useAuthStore();
   const [mode, setMode] = useState<'async' | 'realtime'>('async');
   const [botCount, setBotCount] = useState(0);
   const [openGames, setOpenGames] = useState<OpenGame[]>([]);
@@ -66,6 +67,19 @@ export const Lobby: React.FC = () => {
       navigate(`/game/${gameId}`);
     } catch (err) {
       console.error('Failed to join game', err);
+    }
+  };
+
+  const handleStartGame = async (gameId: string) => {
+    try {
+      await axios.post(
+        `${API_BASE}/api/games/${gameId}/start`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      navigate(`/game/${gameId}`);
+    } catch (err) {
+      console.error('Failed to start game', err);
     }
   };
 
@@ -167,12 +181,23 @@ export const Lobby: React.FC = () => {
                     by {g.created_by} &middot; {g.human_players}/{g.total_players} players
                   </div>
                 </div>
-                <button
-                  onClick={() => handleJoinGame(g.id)}
-                  className="bg-indigo-600 text-white px-4 py-1.5 rounded text-sm hover:bg-indigo-700 cursor-pointer"
-                >
-                  Join
-                </button>
+                <div className="flex gap-2">
+                  {g.created_by_id === user?.id ? (
+                    <button
+                      onClick={() => handleStartGame(g.id)}
+                      className="bg-green-600 text-white px-4 py-1.5 rounded text-sm hover:bg-green-700 cursor-pointer"
+                    >
+                      Start
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleJoinGame(g.id)}
+                      className="bg-indigo-600 text-white px-4 py-1.5 rounded text-sm hover:bg-indigo-700 cursor-pointer"
+                    >
+                      Join
+                    </button>
+                  )}
+                </div>
               </div>
             ))}
           </div>

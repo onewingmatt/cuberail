@@ -53,6 +53,7 @@ async def list_games(db: AsyncSession = Depends(get_db)):
             "game_type": g.game_type,
             "mode": g.mode,
             "created_by": creator_name,
+            "created_by_id": str(g.created_by_id),
             "human_players": human_count,
             "total_players": len(players),
             "created_at": g.created_at.isoformat() if g.created_at else None,
