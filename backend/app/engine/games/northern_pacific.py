@@ -47,6 +47,10 @@ class NPState(GameState):
         self.share_values: Dict[str, int] = {city: 10 for city in NP_GRAPH}
         self.shares_held: Dict[str, Dict[str, int]] = {p: {} for p in players}
         self.final_scores: Optional[Dict[str, int]] = None
+        self.moves_since_stock_round: int = 0
+        self.stock_round_active: bool = False
+        self.stock_round_player_index: int = 0
+        self.moves_before_stock_round: int = 3
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -61,6 +65,8 @@ class NPState(GameState):
             "share_values": self.share_values,
             "shares_held": self.shares_held,
             "final_scores": self.final_scores,
+            "moves_since_stock_round": self.moves_since_stock_round,
+            "stock_round_active": self.stock_round_active,
         }
 
 class NPEngine(GameEngine):
@@ -91,7 +97,16 @@ class NPEngine(GameEngine):
         if not state.turn_order or state.get_current_actor() != player_id:
             raise ValueError("Not your turn")
 
+        entered_stock = False
+
+        # Block invest and move_train during stock round
+        if state.stock_round_active and action_type in ("invest", "move_train"):
+            action_label = "invest" if action_type == "invest" else "move the train"
+            raise ValueError(f"Cannot {action_label} during stock round")
+
         if action_type == "invest":
+            if state.stock_round_active:
+                raise ValueError("Cannot invest during stock round")
             city = payload.get("city")
             if not city or city not in NP_GRAPH:
                 raise ValueError("Invalid city")
@@ -102,6 +117,8 @@ class NPEngine(GameEngine):
             state.investments[city] = player_id
 
         elif action_type == "move_train":
+            if state.stock_round_active:
+                raise ValueError("Cannot move train during stock round")
             target_city = payload.get("city")
             if not target_city:
                 raise ValueError("Missing target city")
@@ -117,8 +134,20 @@ class NPEngine(GameEngine):
             if owner:
                 payout = state.share_values.get(target_city, 10)
                 state.balances[owner] += payout
+
+            # Track moves and trigger stock round if threshold reached
+            state.moves_since_stock_round += 1
+            entered_stock = False
+            if state.moves_since_stock_round >= state.moves_before_stock_round:
+                state.stock_round_active = True
+                state.phase = "stock_round"
+                state.stock_round_player_index = 0
+                state.current_player_index = 0
+                entered_stock = True
+
             if target_city == "Seattle" or target_city == "Portland":
                 state.is_game_over = True
+                state.stock_round_active = False
                 # Determine winner using final scores (cash + shares + cities)
                 scores = self.calculate_final_scores(state)
                 if scores:
@@ -141,10 +170,28 @@ class NPEngine(GameEngine):
             state.shares_held[player_id][city] = state.shares_held[player_id].get(city, 0) + 1
             state.balances[player_id] -= share_price
 
+        elif action_type == "pass":
+            if not state.stock_round_active:
+                raise ValueError("Can only pass during stock round")
+
         else:
             raise ValueError(f"Unknown action: {action_type}")
 
-        if not state.is_game_over:
-            state.current_player_index = (state.current_player_index + 1) % len(state.turn_order)
+        # Advance turn
+        if not state.is_game_over and not entered_stock:
+            if state.stock_round_active:
+                # Advance to next player in stock round
+                state.stock_round_player_index += 1
+                if state.stock_round_player_index >= len(state.turn_order):
+                    # End stock round
+                    state.stock_round_active = False
+                    state.phase = "main"
+                    state.moves_since_stock_round = 0
+                    # Next train move turn starts at the player after the last mover
+                    state.current_player_index = (state.current_player_index + 1) % len(state.turn_order)
+                else:
+                    state.current_player_index = state.stock_round_player_index
+            else:
+                state.current_player_index = (state.current_player_index + 1) % len(state.turn_order)
 
         return state
