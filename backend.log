@@ -1,0 +1,91 @@
+INFO:     Will watch for changes in these directories: ['/app/backend']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [47555] using StatReload
+/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/pydantic/_internal/_config.py:317: UserWarning: Valid config keys have changed in V2:
+* 'anystr_strip_whitespace' has been renamed to 'str_strip_whitespace'
+* 'min_anystr_length' has been renamed to 'str_min_length'
+  warnings.warn(message, UserWarning)
+Process SpawnProcess-1:
+Traceback (most recent call last):
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/uvicorn/server.py", line 75, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/uvicorn/server.py", line 79, in serve
+    await self._serve(sockets)
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/uvicorn/server.py", line 86, in _serve
+    config.load()
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/uvicorn/config.py", line 449, in load
+    self.loaded_app = import_from_string(self.app)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/app/backend/app/main.py", line 4, in <module>
+    from fastapi_jwt_auth import AuthJWT
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/fastapi_jwt_auth/__init__.py", line 5, in <module>
+    from .auth_jwt import AuthJWT
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/fastapi_jwt_auth/auth_jwt.py", line 6, in <module>
+    from fastapi_jwt_auth.auth_config import AuthConfig
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/fastapi_jwt_auth/auth_config.py", line 1, in <module>
+    from fastapi_jwt_auth.config import LoadConfig
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/fastapi_jwt_auth/config.py", line 11, in <module>
+    class LoadConfig(BaseModel):
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/pydantic/_internal/_model_construction.py", line 184, in __new__
+    complete_model_class(
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/pydantic/_internal/_model_construction.py", line 481, in complete_model_class
+    schema = cls.__get_pydantic_core_schema__(cls, handler)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/pydantic/main.py", line 576, in __get_pydantic_core_schema__
+    return __handler(__source)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/pydantic/_internal/_schema_generation_shared.py", line 82, in __call__
+    schema = self._handler(__source_type)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 452, in generate_schema
+    schema = self._generate_schema(obj)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 684, in _generate_schema
+    schema = self._post_process_generated_schema(self._generate_schema_inner(obj))
+                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 706, in _generate_schema_inner
+    return self._model_schema(obj)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 525, in _model_schema
+    {k: self._generate_md_field_schema(k, v, decorators) for k, v in fields.items()},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 870, in _generate_md_field_schema
+    common_field = self._common_field_schema(name, field_info, decorators)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 937, in _common_field_schema
+    schema = apply_each_item_validators(schema, each_item_validators, name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 178, in apply_each_item_validators
+    schema['schema'] = apply_each_item_validators(schema['schema'], each_item_validators, field_name)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 193, in apply_each_item_validators
+    raise TypeError(
+TypeError: `@validator(..., each_item=True)` cannot be applied to fields with a schema of json-or-python
