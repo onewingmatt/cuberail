@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from fastapi_jwt_auth import AuthJWT
@@ -157,6 +157,7 @@ async def join_game(
 @router.post("/{game_id}/start")
 async def start_game(
     game_id: str,
+    background_tasks: BackgroundTasks,
     Authorize: AuthJWT = Depends(),
     db: AsyncSession = Depends(get_db),
 ):
@@ -184,7 +185,9 @@ async def start_game(
     engine, state, player_ids = await _load_game(game_id, db)
     from app.main import sio
 
-    await _process_bot_turns(game_id, engine, state, db, sio, 1)
+    background_tasks.add_task(
+        _process_bot_turns, game_id, engine, state, sio, 1
+    )
 
     return {"message": "Started"}
 
@@ -241,45 +244,46 @@ async def _process_bot_turns(
     game_id: str,
     engine,
     state,
-    db: AsyncSession,
     sio,
     next_move_num: int,
 ):
     """
     After a human move, auto-process any consecutive bot turns.
-    Returns the final state after all bot moves.
+    Runs in background — creates its own DB session.
     """
+    from app.db import async_session
     from app.engine.games.northern_pacific_bot import decide_move
 
-    while not state.is_game_over:
-        current = state.get_current_actor()
-        if not current:
-            break
-        is_bot, username = await _is_bot(current, db)
-        if not is_bot:
-            break
+    async with async_session() as db:
+        while not state.is_game_over:
+            current = state.get_current_actor()
+            if not current:
+                break
+            is_bot, username = await _is_bot(current, db)
+            if not is_bot:
+                break
 
-        # Bot decides
-        action_type, payload = decide_move(current, username, state.to_dict())
+            # Bot decides
+            action_type, payload = decide_move(current, username, state.to_dict())
 
-        # Apply
-        new_state = engine.apply_move(state, current, action_type, payload)
-        state = new_state
+            # Apply
+            new_state = engine.apply_move(state, current, action_type, payload)
+            state = new_state
 
-        # Save move
-        move = GameMove(
-            game_id=uuid.UUID(game_id),
-            user_id=uuid.UUID(current),
-            move_number=next_move_num,
-            action_type=action_type,
-            payload=payload,
-        )
-        db.add(move)
-        await db.commit()
-        next_move_num += 1
+            # Save move
+            move = GameMove(
+                game_id=uuid.UUID(game_id),
+                user_id=uuid.UUID(current),
+                move_number=next_move_num,
+                action_type=action_type,
+                payload=payload,
+            )
+            db.add(move)
+            await db.commit()
+            next_move_num += 1
 
-        # Emit incremental update
-        await sio.emit("STATE_UPDATED", {"payload": state.to_dict()}, room=game_id)
+            # Emit incremental update
+            await sio.emit("STATE_UPDATED", {"payload": state.to_dict()}, room=game_id)
 
     return state
 
@@ -313,6 +317,7 @@ async def get_state(game_id: str, db: AsyncSession = Depends(get_db)):
 async def make_move(
     game_id: str,
     move_req: MoveRequest,
+    background_tasks: BackgroundTasks,
     Authorize: AuthJWT = Depends(),
     db: AsyncSession = Depends(get_db),
 ):
@@ -379,8 +384,8 @@ async def make_move(
                     await notify_your_turn(next_player, game_id, mover_name, db)
 
     # Auto-process bot turns (don't notify for bot moves)
-    await _process_bot_turns(
-        game_id, engine, new_state, db, sio, next_move_num
+    background_tasks.add_task(
+        _process_bot_turns, game_id, engine, new_state, sio, next_move_num
     )
 
     return {"message": "Move accepted"}
