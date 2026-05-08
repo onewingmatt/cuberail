@@ -58,8 +58,8 @@ def test_np_game_over():
     engine = NPEngine()
     state = engine.setup_game(["alice"])
 
-    # Cheat train to Spokane to test ending
-    state.train_pos = "Spokane"
+    # Cheat train to Richland to test ending (Richland connects to Seattle)
+    state.train_pos = "Richland"
 
     state = engine.apply_move(state, "alice", "move_train", {"city": "Seattle"})
 
