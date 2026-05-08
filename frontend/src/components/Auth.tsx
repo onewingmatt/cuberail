@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useAuthStore } from '../store';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE } from '../config';
 
 export const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -14,7 +15,7 @@ export const Auth: React.FC = () => {
     e.preventDefault();
     try {
       if (isLogin) {
-        const response = await axios.post('http://localhost:8000/api/auth/login', {
+        const response = await axios.post(`${API_BASE}/api/auth/login`, {
           username,
           password
         });
@@ -22,7 +23,7 @@ export const Auth: React.FC = () => {
         setUser({ id: response.data.user_id, username });
         navigate('/lobby');
       } else {
-        await axios.post('http://localhost:8000/api/auth/register', {
+        await axios.post(`${API_BASE}/api/auth/register`, {
           username,
           email: `${username}@example.com`, // Simple default email for demo
           password

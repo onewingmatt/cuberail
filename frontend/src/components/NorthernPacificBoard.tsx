@@ -219,7 +219,18 @@ export const NorthernPacificBoard: React.FC = () => {
     <div className="flex flex-col items-center p-4">
       <h2 className="text-2xl font-bold mb-2">Northern Pacific: {id}</h2>
       {gameState.game_over && (
-        <div className="bg-red-100 text-red-800 p-3 mb-3 rounded">Game Over!</div>
+        <div className="bg-yellow-100 border-2 border-yellow-400 text-yellow-900 p-4 mb-3 rounded text-center">
+          <span className="text-lg font-bold">
+            {gameState.winner ? (
+              <>Game Over! {
+                (() => {
+                  const winner = gameState.players?.find((p: any) => p.id === gameState.winner);
+                  return winner ? winner.username : 'Unknown';
+                })()
+              } wins!</>
+            ) : 'Game Over!'}
+          </span>
+        </div>
       )}
       <div className="flex gap-4 w-full">
         <div className="relative">
@@ -300,6 +311,9 @@ export const NorthernPacificBoard: React.FC = () => {
                 <span>
                   {p.username}
                   {p.is_bot && <span className="ml-1 text-xs text-purple-500 font-medium">[BOT]</span>}
+                  {gameState.game_over && gameState.winner === p.id && (
+                    <span className="ml-1 text-xs text-yellow-600 font-bold">[WINNER]</span>
+                  )}
                 </span>
                 <span>${gameState.balances?.[p.id] ?? 0}</span>
               </div>

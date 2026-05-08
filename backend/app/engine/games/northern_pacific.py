@@ -43,6 +43,7 @@ class NPState(GameState):
         self.train_pos: str = "StPaul"
         self.investments: Dict[str, str] = {}
         self.balances: Dict[str, int] = {p: 0 for p in players}
+        self.winner: Optional[str] = None
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -52,7 +53,8 @@ class NPState(GameState):
             "investments": self.investments,
             "balances": self.balances,
             "game_over": self.is_game_over,
-            "graph": NP_GRAPH
+            "graph": NP_GRAPH,
+            "winner": self.winner,
         }
 
 class NPEngine(GameEngine):
@@ -88,6 +90,9 @@ class NPEngine(GameEngine):
                 state.balances[owner] += 10
             if target_city == "Seattle" or target_city == "Portland":
                 state.is_game_over = True
+                # Determine winner: player with highest balance
+                if state.balances:
+                    state.winner = max(state.balances, key=state.balances.get)
         else:
             raise ValueError(f"Unknown action: {action_type}")
 

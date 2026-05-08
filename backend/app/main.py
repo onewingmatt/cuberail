@@ -27,7 +27,7 @@ def authjwt_exception_handler(request: Request, exc: AuthJWTException):
 
 fastapi_app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://localhost:8000"],
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://localhost:8000", "http://0.0.0.0:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -43,7 +43,7 @@ sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins='*')
 async def handle_join(sid, data):
     game_id = data.get('game_id')
     if game_id:
-        sio.enter_room(sid, game_id)
+        await sio.enter_room(sid, game_id)
 
 # Export 'app' globally so Uvicorn can pick it up via app.main:app
 app = socketio.ASGIApp(sio, other_asgi_app=fastapi_app)

@@ -21,6 +21,46 @@ class MoveRequest(BaseModel):
     payload: dict
 
 
+@router.get("/")
+async def list_games(db: AsyncSession = Depends(get_db)):
+    """Return all waiting (open) games with player counts and creator names."""
+    result = await db.execute(
+        select(Game).where(Game.status == "waiting").order_by(Game.created_at.desc())
+    )
+    games = result.scalars().all()
+
+    output = []
+    for g in games:
+        # Count human players (non-bots)
+        gp_result = await db.execute(
+            select(GamePlayer).where(GamePlayer.game_id == g.id)
+        )
+        players = gp_result.scalars().all()
+        human_count = 0
+        for p in players:
+            u_result = await db.execute(select(User).where(User.id == p.user_id))
+            u = u_result.scalars().first()
+            if u and u.username and not u.username.startswith("Bot"):
+                human_count += 1
+
+        # Creator name
+        creator_result = await db.execute(select(User).where(User.id == g.created_by_id))
+        creator = creator_result.scalars().first()
+        creator_name = creator.username if creator else "Unknown"
+
+        output.append({
+            "id": str(g.id),
+            "game_type": g.game_type,
+            "mode": g.mode,
+            "created_by": creator_name,
+            "human_players": human_count,
+            "total_players": len(players),
+            "created_at": g.created_at.isoformat() if g.created_at else None,
+        })
+
+    return output
+
+
 @router.post("/")
 async def create_game(
     game_type: str,
@@ -45,8 +85,11 @@ async def create_game(
     # Add bot players
     bot_ids = []
     for i in range(bot_count):
+        import time
+        suffix = str(int(time.time() * 1000))[-6:]
+        bot_username = f"{BOT_NAMES[i]}_{suffix}"
         bot_user = User(
-            username=f"{BOT_NAMES[i]}",
+            username=bot_username,
             email=f"bot_{i}_{uuid.uuid4().hex[:8]}@bot.cuberail",
             hashed_password="",
         )
@@ -186,7 +229,7 @@ async def _is_bot(user_id: str, db: AsyncSession) -> tuple[bool, Optional[str]]:
     try:
         result = await db.execute(select(User).where(User.id == uuid.UUID(user_id)))
         user = result.scalars().first()
-        if user and user.username and user.username.startswith("Bot_"):
+        if user and user.username and (user.username.startswith("Bot_") or user.username.startswith("Bot ")):
             return True, user.username
         return False, user.username if user else None
     except Exception:
@@ -259,7 +302,7 @@ async def get_state(game_id: str, db: AsyncSession = Depends(get_db)):
             result["players"].append({
                 "id": str(user.id),
                 "username": user.username,
-                "is_bot": user.username.startswith("Bot_") if user.username else False,
+                "is_bot": user.username.startswith("Bot_") or user.username.startswith("Bot ") if user.username else False,
             })
 
     return result
