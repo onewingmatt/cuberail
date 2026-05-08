@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi_jwt_auth import AuthJWT
 from fastapi_jwt_auth.exceptions import AuthJWTException
 from pydantic import BaseModel
-from app.api import games, auth
+from app.api import games, auth, notifications
 import socketio
 
 fastapi_app = FastAPI(title="Cube Rail API")
@@ -35,6 +35,7 @@ fastapi_app.add_middleware(
 
 fastapi_app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
 fastapi_app.include_router(games.router, prefix="/api/games", tags=["Games"])
+fastapi_app.include_router(notifications.router, prefix="/api", tags=["Notifications"])
 
 sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins='*')
 

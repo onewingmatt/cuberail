@@ -17,11 +17,11 @@ class MoveRequest(BaseModel):
     payload: dict
 
 @router.post("/")
-async def create_game(game_type: str, Authorize: AuthJWT = Depends(), db: AsyncSession = Depends(get_db)):
+async def create_game(game_type: str, mode: str = "async", Authorize: AuthJWT = Depends(), db: AsyncSession = Depends(get_db)):
     Authorize.jwt_required()
     user_id = Authorize.get_jwt_subject()
 
-    game = Game(game_type=game_type, created_by_id=uuid.UUID(user_id))
+    game = Game(game_type=game_type, mode=mode, created_by_id=uuid.UUID(user_id))
     db.add(game)
     await db.commit()
     await db.refresh(game)
@@ -37,15 +37,30 @@ async def join_game(game_id: str, Authorize: AuthJWT = Depends(), db: AsyncSessi
     Authorize.jwt_required()
     user_id = Authorize.get_jwt_subject()
 
+    result = await db.execute(select(Game).where(Game.id == uuid.UUID(game_id)))
+    game = result.scalars().first()
+    if not game:
+        raise HTTPException(status_code=404, detail="Game not found")
+
     result = await db.execute(select(GamePlayer).where(GamePlayer.game_id == uuid.UUID(game_id)))
     players = result.scalars().all()
 
     if any(str(p.user_id) == user_id for p in players):
         return {"message": "Already joined"}
 
+    # Look up joiner's username
+    result = await db.execute(select(User).where(User.id == uuid.UUID(user_id)))
+    joiner = result.scalars().first()
+    joiner_name = joiner.username if joiner else "Someone"
+
     player = GamePlayer(game_id=uuid.UUID(game_id), user_id=uuid.UUID(user_id), player_index=len(players))
     db.add(player)
     await db.commit()
+
+    # Notify the game creator
+    from app.services.notifications import notify_player_joined
+    await notify_player_joined(str(game.created_by_id), joiner_name, game_id, db)
+
     return {"message": "Joined"}
 
 @router.post("/{game_id}/start")
@@ -60,6 +75,14 @@ async def start_game(game_id: str, Authorize: AuthJWT = Depends(), db: AsyncSess
 
     game.status = "in_progress"
     await db.commit()
+
+    # Notify all players
+    result = await db.execute(select(GamePlayer).where(GamePlayer.game_id == uuid.UUID(game_id)))
+    players = result.scalars().all()
+    player_ids = [str(p.user_id) for p in players]
+    from app.services.notifications import notify_game_started
+    await notify_game_started(player_ids, game_id, db)
+
     return {"message": "Started"}
 
 async def rebuild_state(game_id: str, db: AsyncSession) -> Dict[str, Any]:
@@ -144,5 +167,34 @@ async def make_move(game_id: str, move_req: MoveRequest, Authorize: AuthJWT = De
 
     from app.main import sio
     await sio.emit('STATE_UPDATED', {"payload": new_state.to_dict()}, room=game_id)
+
+    # Notification triggers
+    from app.services.notifications import notify_your_turn, notify_game_over
+
+    if new_state.is_game_over:
+        # Find winner by highest balance
+        winner = None
+        if new_state.to_dict().get("balances"):
+            balances = new_state.to_dict()["balances"]
+            if balances:
+                winner = max(balances, key=balances.get)
+        # Look up winner name
+        winner_name = None
+        if winner:
+            r = await db.execute(select(User).where(User.id == uuid.UUID(winner)))
+            w = r.scalars().first()
+            if w:
+                winner_name = w.username
+        await notify_game_over(player_ids, game_id, winner_name, db)
+    elif game.mode == "async":
+        next_player = new_state.get_current_actor()
+        if next_player:
+            # Look up the player who just moved
+            r = await db.execute(select(User).where(User.id == uuid.UUID(user_id)))
+            mover = r.scalars().first()
+            mover_name = mover.username if mover else None
+            # Don't notify the player who just moved
+            if next_player != user_id:
+                await notify_your_turn(next_player, game_id, mover_name, db)
 
     return {"message": "Move accepted"}
