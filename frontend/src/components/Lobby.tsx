@@ -94,6 +94,12 @@ export const Lobby: React.FC = () => {
           >
             Create Northern Pacific Game
           </button>
+          <button
+            onClick={() => handleCreateGame('prussian_rails')}
+            className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 cursor-pointer"
+          >
+            Create Prussian Rails Game
+          </button>
         </div>
       </div>
 

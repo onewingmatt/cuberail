@@ -7,6 +7,7 @@ from app.db import get_db
 from app.models.schema import Game, GamePlayer, GameMove, User
 from app.engine.games.simple_rail import SimpleRailEngine, SimpleRailState
 from app.engine.games.northern_pacific import NPEngine, NPState
+from app.engine.games.prussian_rails import PrussianRailsEngine, PrussianRailsState
 import uuid
 from typing import List, Dict, Any, Optional
 
@@ -164,6 +165,8 @@ async def _load_game(
         engine = SimpleRailEngine()
     elif game.game_type == "northern_pacific":
         engine = NPEngine()
+    elif game.game_type == "prussian_rails":
+        engine = PrussianRailsEngine()
     else:
         raise ValueError("Unknown game type")
 

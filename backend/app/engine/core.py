@@ -71,3 +71,70 @@ class GameEngine(ABC):
         Returns the mutated/new GameState.
         """
         pass
+
+class AuctionManager:
+    """
+    Mixin for managing basic Cube Rail game auctions.
+    """
+    def start_auction(self, state: GameState, auction_item: str, bidders: List[str], starting_bid: int = 1):
+        state.phase = "auction"
+        state.active_player_stack = bidders.copy()
+
+        if not hasattr(state, "auction_state"):
+            state.auction_state = {}
+
+        state.auction_state = {
+            "item": auction_item,
+            "current_bid": starting_bid - 1,
+            "highest_bidder": None,
+            "bidders": bidders.copy(),
+            "passed_bidders": []
+        }
+
+    def handle_auction_bid(self, state: GameState, player_id: str, bid: int):
+        auction = getattr(state, "auction_state", {})
+        if not auction:
+            raise ValueError("No active auction.")
+
+        if player_id not in auction["bidders"]:
+            raise ValueError("Player not in auction.")
+
+        if bid <= auction["current_bid"]:
+            raise ValueError(f"Bid must be higher than current bid of {auction['current_bid']}.")
+
+        auction["current_bid"] = bid
+        auction["highest_bidder"] = player_id
+
+        current = state.active_player_stack.pop()
+        state.active_player_stack.insert(0, current)
+
+    def handle_auction_pass(self, state: GameState, player_id: str) -> bool:
+        """
+        Handles a pass in the auction.
+        Returns True if the auction is concluded.
+        """
+        auction = getattr(state, "auction_state", {})
+        if not auction:
+            raise ValueError("No active auction.")
+
+        if player_id not in auction["bidders"]:
+            raise ValueError("Player not in auction.")
+
+        auction["bidders"].remove(player_id)
+        auction["passed_bidders"].append(player_id)
+
+        if player_id in state.active_player_stack:
+            state.active_player_stack.remove(player_id)
+
+        if len(auction["bidders"]) == 1 and auction["highest_bidder"] is not None:
+            return True
+        elif len(auction["bidders"]) == 0:
+            return True
+
+        return False
+
+class StockMarket:
+    """
+    Mixin for managing typical Cube Rail share markets.
+    """
+    pass

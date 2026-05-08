@@ -1,0 +1,30 @@
+{
+  "name": "prussian_rails",
+  "board_width": 1000,
+  "board_height": 800,
+  "background_image": "",
+  "nodes": {
+    "Berlin": { "pct_x": 0.5, "pct_y": 0.3, "label": "Berlin" },
+    "Hamburg": { "pct_x": 0.3, "pct_y": 0.1, "label": "Hamburg" },
+    "Koln": { "pct_x": 0.1, "pct_y": 0.5, "label": "Köln" },
+    "Leipzig": { "pct_x": 0.6, "pct_y": 0.6, "label": "Leipzig" },
+    "Munchen": { "pct_x": 0.5, "pct_y": 0.9, "label": "München" },
+    "Frankfurt": { "pct_x": 0.3, "pct_y": 0.6, "label": "Frankfurt" },
+    "Breslau": { "pct_x": 0.8, "pct_y": 0.4, "label": "Breslau" },
+    "Konigsberg": { "pct_x": 0.9, "pct_y": 0.1, "label": "Königsberg" },
+    "Hannover": { "pct_x": 0.2, "pct_y": 0.4, "label": "Hannover" },
+    "Nurnberg": { "pct_x": 0.4, "pct_y": 0.8, "label": "Nürnberg" }
+  },
+  "edges": {
+    "Berlin": ["Hamburg", "Leipzig", "Breslau", "Hannover"],
+    "Hamburg": ["Berlin", "Hannover"],
+    "Hannover": ["Hamburg", "Berlin", "Koln", "Frankfurt"],
+    "Koln": ["Hannover", "Frankfurt"],
+    "Frankfurt": ["Koln", "Hannover", "Leipzig", "Nurnberg"],
+    "Leipzig": ["Berlin", "Frankfurt", "Nurnberg", "Breslau"],
+    "Nurnberg": ["Frankfurt", "Leipzig", "Munchen"],
+    "Munchen": ["Nurnberg"],
+    "Breslau": ["Berlin", "Leipzig", "Konigsberg"],
+    "Konigsberg": ["Breslau"]
+  }
+}

@@ -4,6 +4,7 @@ import { Auth } from './components/Auth';
 import { Lobby } from './components/Lobby';
 import { GameBoard } from './components/GameBoard';
 import { NorthernPacificBoard } from './components/NorthernPacificBoard';
+import { PrussianRailsBoard } from './components/PrussianRailsBoard';
 import { NotificationPreferences } from './components/NotificationPreferences';
 import { NotificationBell } from './components/NotificationBell';
 import { useAuthStore, useGameStore } from './store';
@@ -28,6 +29,9 @@ const GameRouter = () => {
 
   if (gameState.train_pos !== undefined) {
     return <NorthernPacificBoard />;
+  }
+  if (gameState.game_type === 'prussian_rails') {
+    return <PrussianRailsBoard />;
   }
   return <GameBoard />;
 };
