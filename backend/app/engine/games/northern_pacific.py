@@ -46,6 +46,7 @@ class NPState(GameState):
         self.winner: Optional[str] = None
         self.share_values: Dict[str, int] = {city: 10 for city in NP_GRAPH}
         self.shares_held: Dict[str, Dict[str, int]] = {p: {} for p in players}
+        self.final_scores: Optional[Dict[str, int]] = None
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -59,11 +60,29 @@ class NPState(GameState):
             "winner": self.winner,
             "share_values": self.share_values,
             "shares_held": self.shares_held,
+            "final_scores": self.final_scores,
         }
 
 class NPEngine(GameEngine):
     def setup_game(self, players: List[str]) -> NPState:
         return NPState(players)
+
+    def calculate_final_scores(self, state: NPState) -> Dict[str, int]:
+        """Final score = cash + sum(share_value * shares_held) + sum(invested city values)."""
+        scores = {}
+        for player in state.turn_order:
+            cash = state.balances.get(player, 0)
+            # Value of held shares
+            held_value = 0
+            for city, count in state.shares_held.get(player, {}).items():
+                held_value += state.share_values.get(city, 10) * count
+            # Value of invested cities
+            invested_value = 0
+            for city, owner in state.investments.items():
+                if owner == player:
+                    invested_value += state.share_values.get(city, 10)
+            scores[player] = cash + held_value + invested_value
+        return scores
 
     def apply_move(self, state: NPState, player_id: str, action_type: str, payload: dict) -> NPState:
         if state.is_game_over:
@@ -100,9 +119,11 @@ class NPEngine(GameEngine):
                 state.balances[owner] += payout
             if target_city == "Seattle" or target_city == "Portland":
                 state.is_game_over = True
-                # Determine winner: player with highest balance
-                if state.balances:
-                    state.winner = max(state.balances, key=state.balances.get)
+                # Determine winner using final scores (cash + shares + cities)
+                scores = self.calculate_final_scores(state)
+                if scores:
+                    state.winner = max(scores, key=scores.get)
+                state.final_scores = scores
 
         elif action_type == "buy_share":
             city = payload.get("city")

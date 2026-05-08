@@ -106,3 +106,26 @@ def test_buy_share():
     assert state.shares_held["alice"].get("Fargo") == 1
     # Balance: 15 - 15 (share price after increase) = 0
     assert state.balances["alice"] == 0
+
+
+def test_final_score_includes_shares():
+    engine = NPEngine()
+    state = engine.setup_game(["alice", "bob"])
+
+    # Alice invests in Fargo
+    state = engine.apply_move(state, "alice", "invest", {"city": "Fargo"})
+
+    # Bob moves train to Fargo — Alice gets payout
+    state = engine.apply_move(state, "bob", "move_train", {"city": "Fargo"})
+
+    # Alice now has $15. She buys a share in Fargo
+    state = engine.apply_move(state, "alice", "buy_share", {"city": "Fargo"})
+
+    # Calculate final scores (not game over — just test the calculation)
+    scores = engine.calculate_final_scores(state)
+    assert "alice" in scores
+    assert "bob" in scores
+    # Alice: cash 0 + share value 15 (city) + share value 15 (held share) = 30
+    assert scores["alice"] == 30
+    # Bob: cash 0 + 0 shares + 0 city = 0
+    assert scores["bob"] == 0
