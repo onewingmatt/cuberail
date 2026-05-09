@@ -1,67 +1,88 @@
 """
-NPC Bot AI for Northern Pacific.
+NPC Bot AI for Northern Pacific — official rules (2018 Rio Grande Games).
 
-Bots are identified by usernames starting with "Bot_".
-Each bot has a configurable archetype that biases its decisions.
+Bots decide between two actions per turn:
+1. invest: place a standard or enhanced cube in an unconnected city
+2. lay_track: place a locomotive on a track segment extending from the train endpoint
+
+Strategy uses scoring heuristics with random jitter for variety.
 """
 
 import random
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional, Tuple, Set
 
-# NP graph — cities and their connections
-NP_GRAPH = {
-    "StPaul":       ["Duluth", "Fargo", "Aberdeen", "SiouxFalls"],
-    "Duluth":       ["GrandForks", "Fargo"],
-    "GrandForks":   ["Fargo"],
-    "Fargo":        ["Minot", "Bismarck", "Aberdeen"],
-    "SiouxFalls":   ["Aberdeen", "RapidCity"],
-    "Aberdeen":     ["Bismarck", "RapidCity"],
-    "Minot":        ["Glasgow", "Bismarck"],
-    "Bismarck":     ["Terry"],
-    "RapidCity":    ["Terry", "Billings", "Casper"],
-    "Terry":        ["Glasgow", "GreatFalls", "Billings"],
-    "Glasgow":      ["Chinook", "Terry"],
-    "Casper":       ["Billings", "Butte"],
-    "Billings":     ["GreatFalls", "Butte"],
-    "Chinook":      ["Shelby", "GreatFalls"],
-    "Shelby":       ["BonnersFerry", "GreatFalls"],
-    "GreatFalls":   ["Lewiston", "Butte"],
-    "Butte":        ["Lewiston"],
-    "Lewiston":     ["Spokane", "Richland"],
-    "BonnersFerry": ["Oroville", "Spokane", "Lewiston"],
-    "Oroville":     ["Vancouver", "Spokane"],
-    "Spokane":      ["Richland"],
-    "Vancouver":    ["Seattle", "Portland"],
-    "Richland":     ["Seattle", "Portland"],
-    "Seattle":      [],
-    "Portland":     [],
-}
+from app.engine.games.northern_pacific_data import (
+    TRACK_SEGMENTS,
+    ALL_CITIES,
+    get_outgoing_segments,
+)
 
-# Centrality score: how many connections each city has
-CENTRALITY: Dict[str, int] = {c: len(n) for c, n in NP_GRAPH.items()}
+# Segment lookup by ID
+SEGMENT_MAP = {t[0]: t for t in TRACK_SEGMENTS}
 
-# Regions (West-ish to East-ish)
-REGION_ORDER = [
-    "Vancouver", "Seattle", "Portland",
-    "Oroville", "Spokane", "Richland",
-    "BonnersFerry", "Shelby", "Chinook", "GreatFalls",
-    "Lewiston", "Butte", "Glasgow",
-    "Terry", "Billings", "Casper",
-    "RapidCity", "Bismarck", "Minot",
-    "Aberdeen", "SiouxFalls", "Fargo",
-    "GrandForks", "Duluth", "StPaul",
-]
+
+def _get_connected_cities(state_dict: dict) -> Set[str]:
+    """Recompute connected cities from laid_tracks."""
+    connected = {"StPaul"}
+    for seg_id in state_dict.get("laid_tracks", []):
+        seg = SEGMENT_MAP.get(seg_id)
+        if seg:
+            connected.add(seg[2])
+    return connected
+
+
+def _available_invest_cities(state_dict: dict) -> List[str]:
+    """Return cities that can receive investments."""
+    connected = _get_connected_cities(state_dict)
+    city_cubes: dict = state_dict.get("city_cubes", {})
+    city_enhanced: dict = state_dict.get("city_enhanced", {})
+    capacity = state_dict.get("city_capacity", 3)
+
+    result = []
+    for city in ALL_CITIES:
+        if city in ("StPaul", "Seattle"):
+            continue
+        if city in connected:
+            continue
+        total = sum(city_cubes.get(city, {}).values()) + sum(city_enhanced.get(city, {}).values())
+        if total >= capacity:
+            continue
+        result.append(city)
+    return result
+
+
+def _available_track_segments(state_dict: dict) -> List[tuple]:
+    """Return track segments that can be laid."""
+    endpoint = state_dict.get("train_endpoint", "StPaul")
+    laid = set(state_dict.get("laid_tracks", []))
+    used_bidir = set(state_dict.get("used_bidirectional", []))
+    connected = _get_connected_cities(state_dict)
+
+    result = []
+    for t in TRACK_SEGMENTS:
+        seg_id, source, target, bidir = t
+        if source != endpoint:
+            continue
+        if seg_id in laid:
+            continue
+        if bidir and bidir in used_bidir:
+            continue
+        if target in connected and target != "Seattle":
+            continue
+        result.append(t)
+    return result
 
 
 def _bfs_distance(start: str, target: str) -> int:
-    """BFS shortest path distance between two cities."""
+    """BFS shortest path from start to target using outgoing segments."""
     if start == target:
         return 0
     visited = {start}
     queue = [(start, 0)]
     while queue:
         city, dist = queue.pop(0)
-        for neighbor in NP_GRAPH.get(city, []):
+        for neighbor_seg in get_outgoing_segments(city):
+            neighbor = neighbor_seg[0]
             if neighbor == target:
                 return dist + 1
             if neighbor not in visited:
@@ -70,139 +91,117 @@ def _bfs_distance(start: str, target: str) -> int:
     return 999
 
 
-def _reachable_cities(from_city: str) -> List[str]:
-    """All cities reachable from a given city."""
-    visited = set()
-    queue = [from_city]
-    while queue:
-        city = queue.pop(0)
-        if city in visited:
-            continue
-        visited.add(city)
-        for neighbor in NP_GRAPH.get(city, []):
-            if neighbor not in visited:
-                queue.append(neighbor)
-    return list(visited)
+def _score_invest_city(
+    city: str,
+    state_dict: dict,
+    bot_player_id: str,
+    my_invested_cities: Set[str],
+) -> float:
+    """Score a city for investment potential."""
+    s = 0.0
+    endpoint = state_dict.get("train_endpoint", "StPaul")
+
+    # Centrality: more outgoing connections = more likely train will pass through
+    outgoing = get_outgoing_segments(city)
+    s += len(outgoing) * 4
+
+    # Proximity to train: closer cities pay out sooner
+    dist = _bfs_distance(endpoint, city)
+    if dist < 10:
+        s += (10 - dist) * 2
+
+    # Avoid investing too close — risk of getting skipped
+    if dist <= 1:
+        s -= 3
+
+    # Prefer cities on paths that have multiple branches (more likely to be visited)
+    branch_count = sum(len(get_outgoing_segments(c)) for c, _, _, _ in _available_track_segments(state_dict))
+    s += branch_count * 0.5
+
+    # Synergy: invest near other bot investments
+    for mc in my_invested_cities:
+        d = _bfs_distance(city, mc)
+        if d < 4:
+            s += (4 - d) * 3
+
+    # Random jitter
+    s += random.uniform(-4, 4)
+
+    return s
 
 
-def pick_invest(
-    bot_name: str,
-    train_pos: str,
-    investments: Dict[str, str],
-    all_player_ids: List[str],
-) -> Optional[str]:
-    """
-    Decide which city to invest in.
-    Returns None if no good target.
-    """
-    available = [c for c in NP_GRAPH if c not in investments and c != "StPaul"]
+def _score_track_segment(
+    seg: tuple,
+    state_dict: dict,
+    bot_player_id: str,
+    my_invested_cities: Set[str],
+    opp_invested_cities: Set[str],
+) -> float:
+    """Score a track segment for laying."""
+    seg_id, source, target, bidir = seg
+    s = 0.0
+
+    # Major bonus: moving to a city the bot invested in
+    if target in my_invested_cities:
+        cube_count = sum(state_dict.get("city_cubes", {}).get(target, {}).values())
+        enhanced_count = sum(state_dict.get("city_enhanced", {}).get(target, {}).values())
+        s += 15 + (cube_count + enhanced_count) * 5
+
+    # Moderate bonus: moving toward cities the bot invested in
+    for mc in my_invested_cities:
+        d = _bfs_distance(target, mc)
+        if d < 4:
+            s += (4 - d) * 3
+
+    # Slight penalty: giving opponents a payout
+    payout_to_opp = sum(state_dict.get("city_cubes", {}).get(target, {}).values())
+    if payout_to_opp > 0:
+        s -= payout_to_opp * 3
+
+    # Prefer high-centrality targets (more future options)
+    outgoing = get_outgoing_segments(target)
+    s += len(outgoing) * 2
+
+    # Avoid ending the round too early
+    if target in ("Seattle", "Portland"):
+        s -= 10
+
+    # Random jitter
+    s += random.uniform(-3, 3)
+
+    return s
+
+
+def _should_invest(state_dict: dict, bot_player_id: str) -> bool:
+    """Heuristic: should the bot invest or lay track?"""
+    supply = state_dict.get("player_supply", {}).get(bot_player_id, 0)
+    enhanced = state_dict.get("player_enhanced", {}).get(bot_player_id, 0)
+    total_cubes = supply + enhanced
+
+    if total_cubes == 0:
+        return False  # No cubes to place
+
+    # More likely to invest when we have lots of cubes and the game is early
+    available = _available_invest_cities(state_dict)
     if not available:
-        return None
+        return False  # No valid investment targets
 
-    # Cities already invested by this bot
-    my_cities = {c for c, owner in investments.items() if owner == bot_name}
+    # Early game: invest more
+    round_num = state_dict.get("current_round", 1)
+    # Use total_rounds = 3 by default
+    invested_count = sum(
+        1 for c in state_dict.get("city_cubes", {})
+        if bot_player_id in state_dict["city_cubes"].get(c, {})
+    ) + sum(
+        1 for c in state_dict.get("city_enhanced", {})
+        if bot_player_id in state_dict["city_enhanced"].get(c, {})
+    )
 
-    # Score each available city
-    def score(city: str) -> float:
-        s = 0.0
+    # Bias toward investing when we have unplaced cubes
+    invest_bias = 0.5 + (total_cubes / 4) * 0.3
+    invest_bias -= invested_count * 0.05  # Less eager after each investment
 
-        # Centrality bonus: more connections = more likely train visits
-        s += CENTRALITY.get(city, 0) * 3
-
-        # Distance from train: prefer closer for early payout
-        dist = _bfs_distance(train_pos, city)
-        if dist < 10:
-            s += (10 - dist) * 2
-
-        # Avoid cities very close to train if they're too obvious
-        if dist <= 1:
-            s -= 5
-
-        # Prefer cities on paths toward Seattle/Portland (westward)
-        # Cities further west (lower index in REGION_ORDER) get bonus
-        west_idx = REGION_ORDER.index(city) if city in REGION_ORDER else 99
-        s += (len(REGION_ORDER) - west_idx) * 0.5
-
-        # Synergy: prefer cities near our existing investments
-        for mc in my_cities:
-            d = _bfs_distance(city, mc)
-            if d < 4:
-                s += (4 - d) * 2
-
-        # Blocking: extra value for cities near opponent investments
-        for opp_city, owner in investments.items():
-            if owner != bot_name:
-                d = _bfs_distance(city, opp_city)
-                if d < 3:
-                    s += (3 - d) * 1.5
-
-        # Random jitter for variety
-        s += random.uniform(-3, 3)
-
-        return s
-
-    scored = [(c, score(c)) for c in available]
-    scored.sort(key=lambda x: -x[1])
-
-    # Return top choice
-    return scored[0][0]
-
-
-def pick_move(
-    bot_name: str,
-    train_pos: str,
-    investments: Dict[str, str],
-    player_ids: List[str],
-) -> Optional[str]:
-    """
-    Decide where to move the train.
-    Returns a connected city, or None to pass (not applicable in NP).
-    Raises if no valid moves.
-    """
-    options = NP_GRAPH.get(train_pos, [])
-    if not options:
-        return None
-
-    # My invested cities
-    my_cities = {c for c, owner in investments.items() if owner == bot_name}
-
-    # Opponent investments
-    opp_cities = {c for c, owner in investments.items() if owner != bot_name}
-
-    def score(city: str) -> float:
-        s = 0.0
-
-        # Major bonus: moving to a city I own pays out
-        if city in my_cities:
-            s += 20
-
-        # Bonus for moving closer to my cities
-        for mc in my_cities:
-            dist = _bfs_distance(city, mc)
-            if dist < 5:
-                s += (5 - dist) * 2
-
-        # Prefer moving to unclaimed cities over opponent cities
-        if city in opp_cities:
-            s -= 3  # Still OK, but less ideal — gives opponent payout
-        else:
-            s += 2  # Unclaimed is better
-
-        # Avoid moving toward terminals too fast (end game early)
-        if city in ("Seattle", "Portland"):
-            s -= 8
-
-        # Prefer high-centrality cities
-        s += CENTRALITY.get(city, 0) * 1.5
-
-        # Random jitter
-        s += random.uniform(-2, 2)
-
-        return s
-
-    scored = [(c, score(c)) for c in options]
-    scored.sort(key=lambda x: -x[1])
-    return scored[0][0]
+    return random.random() < invest_bias
 
 
 def decide_move(
@@ -211,41 +210,59 @@ def decide_move(
     state_dict: dict,
 ) -> Tuple[str, dict]:
     """
-    Given the current game state (as dict from to_dict()),
-    decide what action to take.
+    Decide what action to take based on game state.
+
     Returns (action_type, payload).
     """
-    train_pos = state_dict.get("train_pos", "StPaul")
-    investments = state_dict.get("investments", {})
+    # Gather bot's investment positions
+    city_cubes: dict = state_dict.get("city_cubes", {})
+    city_enhanced: dict = state_dict.get("city_enhanced", {})
 
-    # Determine all player IDs from balances
-    balances = state_dict.get("balances", {})
-    player_ids = list(balances.keys())
+    my_invested: Set[str] = set()
+    opp_invested: Set[str] = set()
 
-    # Simple heuristic: if we don't have many investments, invest
-    my_invest_count = sum(
-        1 for c, owner in investments.items() if owner == bot_player_id
-    )
-    total_investments = len(investments)
-    total_cities = len([c for c in NP_GRAPH if c != "StPaul"])
+    for city, owners in city_cubes.items():
+        for pid in owners:
+            if pid == bot_player_id:
+                my_invested.add(city)
+            else:
+                opp_invested.add(city)
+    for city, owners in city_enhanced.items():
+        for pid in owners:
+            if pid == bot_player_id:
+                my_invested.add(city)
+            else:
+                opp_invested.add(city)
 
-    # Bias toward investing until about half the cities are claimed
-    invest_bias = 0.6 - (total_investments / total_cities) * 0.3
-    invest_bias -= my_invest_count * 0.05  # Less eager after each investment
+    # Decision: invest or lay track?
+    if _should_invest(state_dict, bot_player_id):
+        available = _available_invest_cities(state_dict)
+        if available:
+            # Score each
+            scored = [(c, _score_invest_city(c, state_dict, bot_player_id, my_invested)) for c in available]
+            scored.sort(key=lambda x: -x[1])
+            best_city = scored[0][0]
 
-    if random.random() < invest_bias and total_investments < total_cities:
-        city = pick_invest(bot_player_id, train_pos, investments, player_ids)
-        if city:
-            return ("invest", {"city": city})
+            # Decide enhanced vs standard
+            supply = state_dict.get("player_supply", {}).get(bot_player_id, 0)
+            enhanced = state_dict.get("player_enhanced", {}).get(bot_player_id, 0)
 
-    # Otherwise move the train
-    target = pick_move(bot_player_id, train_pos, investments, player_ids)
-    if target:
-        return ("move_train", {"city": target})
+            # Use enhanced on high-value cities (central ones)
+            is_high_value = len(get_outgoing_segments(best_city)) >= 3
+            use_enhanced = is_high_value and enhanced > 0 and random.random() < 0.4
 
-    # Fallback: invest in anything
-    fallback_city = pick_invest(bot_player_id, train_pos, investments, player_ids)
-    if fallback_city:
-        return ("invest", {"city": fallback_city})
+            if use_enhanced:
+                return ("invest", {"city": best_city, "enhanced": True})
+            else:
+                return ("invest", {"city": best_city, "enhanced": False})
 
-    return ("move_train", {"city": NP_GRAPH[train_pos][0]})
+    # Lay track
+    available_tracks = _available_track_segments(state_dict)
+    if available_tracks:
+        scored = [(t, _score_track_segment(t, state_dict, bot_player_id, my_invested, opp_invested)) for t in available_tracks]
+        scored.sort(key=lambda x: -x[1])
+        best_seg = scored[0][0]
+        return ("lay_track", {"segment_id": best_seg[0]})
+
+    # Fallback: pass if truly no options (shouldn't happen in normal play)
+    return ("pass", {})

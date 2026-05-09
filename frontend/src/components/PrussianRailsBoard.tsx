@@ -1,20 +1,33 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useGameStore, useAuthStore } from '../store';
+import { useGameStore } from '../store';
 import { useWebSocket } from '../hooks/useWebSocket';
 import { InteractiveMapBoard } from './InteractiveMapBoard';
+
+// Decode JWT from localStorage to get current user ID.
+// The token's `sub` claim is the user UUID — more reliable than Zustand store
+// which resets on navigation/reload.
+const getCurrentUserId = (): string | null => {
+  const token = localStorage.getItem('token');
+  if (!token) return null;
+  try {
+    return JSON.parse(atob(token.split('.')[1])).sub || null;
+  } catch {
+    return null;
+  }
+};
 
 export const PrussianRailsBoard: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { gameState } = useGameStore();
-  const { user } = useAuthStore();
   const { sendMove } = useWebSocket(id || '', false);
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
 
   if (!gameState || !gameState.map_data) return null;
 
-  const isMyTurn = gameState.current_player === user?.id;
+  const myUserId = getCurrentUserId();
+  const isMyTurn = gameState.current_player === myUserId;
   const isAuctionPhase = gameState.phase === 'auction';
 
   const handleCityClick = (city: string) => {

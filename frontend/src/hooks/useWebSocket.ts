@@ -9,7 +9,7 @@ let globalSocket: Socket | null = null;
 
 export const useWebSocket = (gameId: string, autoConnect = true) => {
   const { setGameState } = useGameStore();
-  const { token, user } = useAuthStore();
+  const { token } = useAuthStore();
 
   useEffect(() => {
     if (!gameId || !autoConnect) return;
@@ -38,7 +38,13 @@ export const useWebSocket = (gameId: string, autoConnect = true) => {
 
     globalSocket.on('STATE_UPDATED', (data) => {
       if (data && data.payload) {
-        setGameState(data.payload);
+        // WS payload doesn't include game_type/players — preserve from current state
+        const currentState = useGameStore.getState().gameState;
+        setGameState({
+          ...data.payload,
+          game_type: currentState?.game_type || data.payload.game_type,
+          players: currentState?.players || data.payload.players,
+        });
       }
     });
 
@@ -49,7 +55,7 @@ export const useWebSocket = (gameId: string, autoConnect = true) => {
   }, [gameId, setGameState, token, autoConnect]);
 
   const sendMove = async (action_type: string, payload: any) => {
-    if (!token || !user) return;
+    if (!token) return;
     try {
       await axios.post(
         `${API_BASE}/api/games/${gameId}/moves`,
