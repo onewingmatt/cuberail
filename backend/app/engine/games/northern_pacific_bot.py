@@ -145,7 +145,8 @@ def _score_track_segment(
     if target in my_invested_cities:
         cube_count = sum(state_dict.get("city_cubes", {}).get(target, {}).values())
         enhanced_count = sum(state_dict.get("city_enhanced", {}).get(target, {}).values())
-        s += 15 + (cube_count + enhanced_count) * 5
+        total_my = cube_count + enhanced_count
+        s += 20 + total_my * 8  # Strong incentive to collect payout
 
     # Moderate bonus: moving toward cities the bot invested in
     for mc in my_invested_cities:
