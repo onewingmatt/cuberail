@@ -7,6 +7,7 @@ from app.db import get_db
 from app.models.schema import Game, GamePlayer, GameMove, User
 from app.engine.games.simple_rail import SimpleRailEngine, SimpleRailState
 from app.engine.games.northern_pacific import NPEngine, NPState
+from app.engine.games.prussian_rails import PrussianRailsEngine, PrussianRailsState
 import uuid
 from typing import List, Dict, Any, Optional
 
@@ -207,6 +208,8 @@ async def _load_game(
         engine = SimpleRailEngine()
     elif game.game_type == "northern_pacific":
         engine = NPEngine()
+    elif game.game_type == "prussian_rails":
+        engine = PrussianRailsEngine()
     else:
         raise ValueError("Unknown game type")
 
@@ -287,6 +290,12 @@ async def _process_bot_turns(
 async def get_state(game_id: str, db: AsyncSession = Depends(get_db)):
     _, state, _ = await _load_game(game_id, db)
     result = state.to_dict()
+
+    # Inject game_type for frontend routing
+    game_result = await db.execute(select(Game).where(Game.id == uuid.UUID(game_id)))
+    game = game_result.scalars().first()
+    if game:
+        result["game_type"] = game.game_type
 
     # Enrich with player info (usernames, bot status)
     result["players"] = []
