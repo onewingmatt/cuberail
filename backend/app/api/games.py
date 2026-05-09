@@ -255,7 +255,7 @@ async def _process_bot_turns(
     After a human move, auto-process any consecutive bot turns.
     Returns the final state after all bot moves.
     """
-    from app.engine.games.northern_pacific_bot import decide_move
+    from app.engine.games.northern_pacific_bot import decide_move, _available_track_segments
 
     while not state.is_game_over:
         current = state.get_current_actor()
@@ -275,12 +275,18 @@ async def _process_bot_turns(
         except Exception as exc:
             import logging
             logging.getLogger("cuberail").warning(
-                "Bot move failed for %s (%s): %s — forcing pass", current, username, exc
+                "Bot move failed for %s (%s): %s — forcing lay_track", current, username, exc
             )
-            new_state = engine.apply_move(state, current, "pass", {})
+            # Force the first available track to keep the game moving
+            fallback_tracks = _available_track_segments(state.to_dict())
+            if fallback_tracks:
+                action_type = "lay_track"
+                payload = {"segment_id": fallback_tracks[0][0]}
+            else:
+                action_type = "pass"
+                payload = {}
+            new_state = engine.apply_move(state, current, action_type, payload)
             state = new_state
-            action_type = "pass"
-            payload = {}
 
         # Save the move
         move = GameMove(

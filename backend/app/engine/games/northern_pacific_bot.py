@@ -261,13 +261,9 @@ def decide_move(
                 return ("invest", {"city": best_city, "enhanced": False})
             # If neither standard nor enhanced available, fall through to lay track
 
-    # Lay track
+    # Lay track — always available unless game is over
     available_tracks = _available_track_segments(state_dict)
-    if available_tracks:
-        scored = [(t, _score_track_segment(t, state_dict, bot_player_id, my_invested, opp_invested)) for t in available_tracks]
-        scored.sort(key=lambda x: -x[1])
-        best_seg = scored[0][0]
-        return ("lay_track", {"segment_id": best_seg[0]})
-
-    # Fallback: pass if truly no options (shouldn't happen in normal play)
-    return ("pass", {})
+    scored = [(t, _score_track_segment(t, state_dict, bot_player_id, my_invested, opp_invested)) for t in available_tracks]
+    scored.sort(key=lambda x: -x[1])
+    best_seg = scored[0][0]
+    return ("lay_track", {"segment_id": best_seg[0]})
