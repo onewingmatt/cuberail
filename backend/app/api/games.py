@@ -265,14 +265,24 @@ async def _process_bot_turns(
         if not is_bot:
             break
 
-        # Bot decides
-        action_type, payload = decide_move(current, username, state.to_dict())
+        # Bot decides — guard against individual move failures
+        action_type = "pass"
+        payload = {}
+        try:
+            action_type, payload = decide_move(current, username, state.to_dict())
+            new_state = engine.apply_move(state, current, action_type, payload)
+            state = new_state
+        except Exception as exc:
+            import logging
+            logging.getLogger("cuberail").warning(
+                "Bot move failed for %s (%s): %s — forcing pass", current, username, exc
+            )
+            new_state = engine.apply_move(state, current, "pass", {})
+            state = new_state
+            action_type = "pass"
+            payload = {}
 
-        # Apply
-        new_state = engine.apply_move(state, current, action_type, payload)
-        state = new_state
-
-        # Save move
+        # Save the move
         move = GameMove(
             game_id=uuid.UUID(game_id),
             user_id=uuid.UUID(current),

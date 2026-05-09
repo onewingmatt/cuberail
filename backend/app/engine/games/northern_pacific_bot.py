@@ -238,23 +238,28 @@ def decide_move(
     if _should_invest(state_dict, bot_player_id):
         available = _available_invest_cities(state_dict)
         if available:
+            supply = state_dict.get("player_supply", {}).get(bot_player_id, 0)
+            enhanced = state_dict.get("player_enhanced", {}).get(bot_player_id, 0)
+
             # Score each
             scored = [(c, _score_invest_city(c, state_dict, bot_player_id, my_invested)) for c in available]
             scored.sort(key=lambda x: -x[1])
             best_city = scored[0][0]
 
-            # Decide enhanced vs standard
-            supply = state_dict.get("player_supply", {}).get(bot_player_id, 0)
-            enhanced = state_dict.get("player_enhanced", {}).get(bot_player_id, 0)
-
-            # Use enhanced on high-value cities (central ones)
+            # Decide enhanced vs standard — only choose options we can actually afford
             is_high_value = len(get_outgoing_segments(best_city)) >= 3
-            use_enhanced = is_high_value and enhanced > 0 and random.random() < 0.4
+            use_enhanced = False
+            if enhanced > 0 and supply == 0:
+                # No standard cubes left — must use enhanced
+                use_enhanced = True
+            elif enhanced > 0 and supply > 0 and is_high_value and random.random() < 0.4:
+                use_enhanced = True
 
             if use_enhanced:
                 return ("invest", {"city": best_city, "enhanced": True})
-            else:
+            elif supply > 0:
                 return ("invest", {"city": best_city, "enhanced": False})
+            # If neither standard nor enhanced available, fall through to lay track
 
     # Lay track
     available_tracks = _available_track_segments(state_dict)
