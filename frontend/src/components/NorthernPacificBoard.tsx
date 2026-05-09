@@ -444,69 +444,87 @@ export const NorthernPacificBoard: React.FC = () => {
             <div className="bg-white/80 border border-gray-300 rounded text-xs text-center py-1 px-1 shadow-sm select-none">{zoomPercent}%</div>
           </div>
         </div>
-        <div className="w-56 flex flex-col gap-3">
+        <div className="w-64 flex flex-col gap-3">
           {/* Controls panel */}
           <div className="bg-white p-4 rounded shadow">
             <h3 className="font-bold border-b pb-2 mb-2">Controls</h3>
-            <p className="text-sm mb-1">
+            <p className="text-sm mb-2">
               Turn: {(() => {
                 const cp = gameState.current_player;
                 const player = gameState.players?.find((p: any) => p.id === cp);
                 return player ? player.username : cp?.slice(0, 6);
               })()}
+              {gameState.current_round && <span className="ml-2 text-xs text-gray-400">Round {gameState.current_round}/3</span>}
             </p>
-            {selectedCity ? (
-              <div className="flex flex-col gap-2 mt-2">
-                <p className="text-sm font-medium">{selectedCity.replace(/([A-Z])/g, ' $1').trim()}</p>
-                <label className="flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={useEnhanced}
-                    onChange={(e) => setUseEnhanced(e.target.checked)}
-                  />
-                  Use enhanced cube (have {playerEnhanced[user?.id || ''] ?? 0})
-                </label>
-                <button
-                  onClick={handleInvest}
-                  disabled={!isMyTurn || (useEnhanced ? (playerEnhanced[user?.id || ''] ?? 0) <= 0 : (playerSupply[user?.id || ''] ?? 0) <= 0)}
-                  className="bg-blue-600 text-white px-3 py-1.5 rounded text-sm disabled:opacity-40"
-                >
-                  {useEnhanced ? 'Invest (Enhanced)' : 'Invest'}
-                </button>
-                <button
-                  onClick={() => { setSelectedCity(null); setUseEnhanced(false); }}
-                  className="text-gray-500 text-xs"
-                >
-                  Cancel
-                </button>
-              </div>
-            ) : selectedSegment ? (
-              <div className="flex flex-col gap-2 mt-2">
-                <p className="text-sm font-medium">Lay track: {selectedSegment}</p>
-                <button
-                  onClick={handleLayTrack}
-                  disabled={!isMyTurn}
-                  className="bg-red-600 text-white px-3 py-1.5 rounded text-sm disabled:opacity-40"
-                >
-                  Lay Track
-                </button>
-                <button
-                  onClick={() => setSelectedSegment(null)}
-                  className="text-gray-500 text-xs"
-                >
-                  Cancel
-                </button>
-              </div>
+            <p className="text-xs text-gray-500 mb-2">Train at: {trainEndpoint.replace(/([A-Z])/g, ' $1').trim()}</p>
+
+            {!isMyTurn ? (
+              <p className="text-sm text-gray-500">Waiting for opponent...</p>
             ) : (
-              <div className="text-sm text-gray-500 mt-2">
-                {isMyTurn ? (
-                  <div>
-                    <p>Click a <span className="text-green-600 font-medium">green-outlined</span> city to invest, or a <span className="text-green-600 font-medium">green dashed</span> track to lay track.</p>
-                    <p className="mt-1 text-xs text-gray-400">Train at: {trainEndpoint.replace(/([A-Z])/g, ' $1').trim()}</p>
-                  </div>
-                ) : (
-                  <p>Waiting for opponent...</p>
-                )}
+              <div className="space-y-3">
+                {/* Invest section */}
+                <div>
+                  <h4 className="text-xs font-semibold text-gray-600 mb-1">Place Investment Cube</h4>
+                  {availableInvestCities.length === 0 ? (
+                    <p className="text-xs text-gray-400">No cities available</p>
+                  ) : (
+                    <div className="max-h-32 overflow-y-auto space-y-1">
+                      {availableInvestCities.slice(0, 10).map(city => {
+                        const label = city.replace(/([A-Z])/g, ' $1').trim();
+                        const canStd = (playerSupply[user?.id || ''] ?? 0) > 0;
+                        const canEnh = (playerEnhanced[user?.id || ''] ?? 0) > 0;
+                        return (
+                          <div key={city} className="flex items-center gap-1">
+                            <button
+                              onClick={() => sendMove('invest', { city, enhanced: false })}
+                              disabled={!canStd}
+                              className="bg-blue-500 text-white px-2 py-0.5 rounded text-xs disabled:opacity-30 hover:bg-blue-600"
+                              title="Place standard cube"
+                            >
+                              {label}
+                            </button>
+                            {canEnh && (
+                              <button
+                                onClick={() => sendMove('invest', { city, enhanced: true })}
+                                className="bg-purple-500 text-white px-2 py-0.5 rounded text-xs hover:bg-purple-600"
+                                title="Place enhanced cube"
+                              >
+                                E
+                              </button>
+                            )}
+                          </div>
+                        );
+                      })}
+                      {availableInvestCities.length > 10 && (
+                        <p className="text-xs text-gray-400">+{availableInvestCities.length - 10} more...</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Lay Track section */}
+                <div>
+                  <h4 className="text-xs font-semibold text-gray-600 mb-1">Lay Track</h4>
+                  {gameState.available_tracks?.length === 0 ? (
+                    <p className="text-xs text-gray-400">No tracks available</p>
+                  ) : (
+                    <div className="max-h-32 overflow-y-auto space-y-1">
+                      {(gameState.available_tracks || []).map((t: any) => {
+                        const srcLabel = t.source.replace(/([A-Z])/g, ' $1').trim();
+                        const tgtLabel = t.target.replace(/([A-Z])/g, ' $1').trim();
+                        return (
+                          <button
+                            key={t.segment_id}
+                            onClick={() => sendMove('lay_track', { segment_id: t.segment_id })}
+                            className="block w-full text-left bg-red-50 hover:bg-red-100 border border-red-200 text-red-800 px-2 py-1 rounded text-xs"
+                          >
+                            {srcLabel} &rarr; {tgtLabel}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
