@@ -137,4 +137,41 @@ class StockMarket:
     """
     Mixin for managing typical Cube Rail share markets.
     """
-    pass
+
+    def buy_share(self, state: GameState, player_id: str, company_id: str, price: int):
+        """Allows a player to buy a share if available and they have enough funds."""
+        if not hasattr(state, "shares"):
+            raise ValueError("GameState does not support shares.")
+        if not hasattr(state, "balances"):
+            raise ValueError("GameState does not support balances.")
+
+        company = state.companies.get(company_id)
+        if not company:
+            raise ValueError("Invalid company.")
+
+        if company.unissued_shares <= 0:
+            raise ValueError("No unissued shares available.")
+
+        if state.balances.get(player_id, 0) < price:
+            raise ValueError("Insufficient funds.")
+
+        # Deduct funds and add share
+        state.balances[player_id] -= price
+        company.unissued_shares -= 1
+
+        if player_id not in state.shares:
+            state.shares[player_id] = {}
+        state.shares[player_id][company_id] = state.shares[player_id].get(company_id, 0) + 1
+
+    def pay_dividends(self, state: GameState, company_id: str, amount_per_share: int):
+        """Pays dividends to all shareholders of a given company."""
+        if not hasattr(state, "shares"):
+            raise ValueError("GameState does not support shares.")
+        if not hasattr(state, "balances"):
+            raise ValueError("GameState does not support balances.")
+
+        for player_id, portfolio in state.shares.items():
+            shares_owned = portfolio.get(company_id, 0)
+            if shares_owned > 0:
+                payout = shares_owned * amount_per_share
+                state.balances[player_id] = state.balances.get(player_id, 0) + payout

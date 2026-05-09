@@ -1,18 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuthStore } from '../store';
+import { API_BASE } from '../config';
+
+interface OpenGame {
+  id: string;
+  game_type: string;
+  mode: string;
+  created_by: string;
+  human_players: number;
+  total_players: number;
+  created_at: string;
+}
 
 export const Lobby: React.FC = () => {
   const navigate = useNavigate();
   const { token } = useAuthStore();
   const [mode, setMode] = useState<'async' | 'realtime'>('async');
   const [botCount, setBotCount] = useState(0);
+  const [openGames, setOpenGames] = useState<OpenGame[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchOpenGames = async () => {
+    try {
+      const response = await axios.get(`${API_BASE}/api/games/`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      setOpenGames(response.data);
+    } catch (err) {
+      console.error('Failed to fetch open games', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOpenGames();
+    const interval = setInterval(fetchOpenGames, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleCreateGame = async (gameType: string) => {
     try {
       const response = await axios.post(
-        `http://localhost:8000/api/games/?game_type=${gameType}&mode=${mode}&bot_count=${botCount}`,
+        `${API_BASE}/api/games/?game_type=${gameType}&mode=${mode}&bot_count=${botCount}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -20,7 +52,28 @@ export const Lobby: React.FC = () => {
         navigate(`/game/${response.data.game_id}`);
       }
     } catch (err) {
-      console.error("Failed to create game", err);
+      console.error('Failed to create game', err);
+    }
+  };
+
+  const handleJoinGame = async (gameId: string) => {
+    try {
+      await axios.post(
+        `${API_BASE}/api/games/${gameId}/join`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      navigate(`/game/${gameId}`);
+    } catch (err) {
+      console.error('Failed to join game', err);
+    }
+  };
+
+  const gameTypeLabel = (gt: string) => {
+    switch (gt) {
+      case 'northern_pacific': return 'Northern Pacific';
+      case 'simple_rail': return 'Simple Rail';
+      default: return gt;
     }
   };
 
@@ -31,7 +84,6 @@ export const Lobby: React.FC = () => {
       <div className="bg-white p-6 rounded-lg shadow">
         <h2 className="text-xl font-semibold mb-4">Start a New Game</h2>
 
-        {/* Mode toggle */}
         <div className="flex items-center gap-4 mb-4">
           <span className="text-sm font-medium text-gray-700">Game mode:</span>
           <div className="flex rounded border border-gray-300 overflow-hidden">
@@ -60,7 +112,6 @@ export const Lobby: React.FC = () => {
           </span>
         </div>
 
-        {/* Bot count */}
         <div className="flex items-center gap-4 mb-4">
           <span className="text-sm font-medium text-gray-700">Bot opponents:</span>
           <div className="flex rounded border border-gray-300 overflow-hidden">
@@ -105,7 +156,33 @@ export const Lobby: React.FC = () => {
 
       <div className="mt-8 bg-white p-6 rounded-lg shadow">
         <h2 className="text-xl font-semibold mb-4">Open Games</h2>
-        <p className="text-gray-500">No open games available.</p>
+        {loading ? (
+          <p className="text-gray-500">Loading...</p>
+        ) : openGames.length === 0 ? (
+          <p className="text-gray-500">No open games available. Create one!</p>
+        ) : (
+          <div className="space-y-3">
+            {openGames.map((g) => (
+              <div key={g.id} className="flex items-center justify-between border border-gray-200 rounded p-3 hover:bg-gray-50">
+                <div>
+                  <span className="font-medium">{gameTypeLabel(g.game_type)}</span>
+                  <span className={`ml-2 text-xs px-2 py-0.5 rounded ${g.mode === 'async' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
+                    {g.mode}
+                  </span>
+                  <div className="text-sm text-gray-600 mt-1">
+                    by {g.created_by} &middot; {g.human_players}/{g.total_players} players
+                  </div>
+                </div>
+                <button
+                  onClick={() => handleJoinGame(g.id)}
+                  className="bg-indigo-600 text-white px-4 py-1.5 rounded text-sm hover:bg-indigo-700 cursor-pointer"
+                >
+                  Join
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

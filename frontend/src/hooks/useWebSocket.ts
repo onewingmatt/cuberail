@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { io, Socket } from 'socket.io-client';
 import axios from 'axios';
 import { useGameStore, useAuthStore } from '../store';
+import { API_BASE, WS_URL } from '../config';
 
 // Ensure we don't duplicate sockets if called multiple times
 let globalSocket: Socket | null = null;
@@ -16,7 +17,7 @@ export const useWebSocket = (gameId: string, autoConnect = true) => {
     // Fetch initial state
     const fetchState = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/games/${gameId}/state`, {
+        const response = await axios.get(`${API_BASE}/api/games/${gameId}/state`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {}
         });
         setGameState(response.data);
@@ -27,7 +28,7 @@ export const useWebSocket = (gameId: string, autoConnect = true) => {
     fetchState();
 
     if (!globalSocket) {
-      globalSocket = io('http://localhost:8000');
+      globalSocket = io(WS_URL);
     }
 
     globalSocket.on('connect', () => {
@@ -42,7 +43,6 @@ export const useWebSocket = (gameId: string, autoConnect = true) => {
     });
 
     return () => {
-      // Don't disconnect on unmount if it's managed globally, but remove listeners to prevent duplicates
       globalSocket?.off('STATE_UPDATED');
       globalSocket?.off('connect');
     };
@@ -52,7 +52,7 @@ export const useWebSocket = (gameId: string, autoConnect = true) => {
     if (!token || !user) return;
     try {
       await axios.post(
-        `http://localhost:8000/api/games/${gameId}/moves`,
+        `${API_BASE}/api/games/${gameId}/moves`,
         { action_type, payload },
         { headers: { Authorization: `Bearer ${token}` } }
       );
