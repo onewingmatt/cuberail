@@ -367,6 +367,19 @@ async def make_move(
     next_move_num += 1
 
     from app.main import sio
+
+    # Auto-process bot turns BEFORE any WS emit, so the first STATE_UPDATED
+    # already includes the bot's move. This prevents the frontend from
+    # seeing an intermediate "bot's turn" state.
+    try:
+        await _process_bot_turns(
+            game_id, engine, new_state, db, sio, next_move_num
+        )
+    except Exception as exc:
+        import logging
+        logging.getLogger("cuberail").exception("Bot processing failed: %s", exc)
+
+    # Emit final state (after human + bot processing)
     try:
         await sio.emit("STATE_UPDATED", {"payload": new_state.to_dict()}, room=game_id)
     except Exception:
@@ -399,13 +412,4 @@ async def make_move(
                 if not is_bot:
                     await notify_your_turn(next_player, game_id, mover_name, db)
 
-    # Auto-process bot turns (don't notify for bot moves)
-    try:
-        await _process_bot_turns(
-            game_id, engine, new_state, db, sio, next_move_num
-        )
-    except Exception as exc:
-        import logging
-        logging.getLogger("cuberail").exception("Bot processing failed: %s", exc)
-
-    return {"message": "Move accepted"}
+    return {"message": "Move accepted", "state": new_state.to_dict()}

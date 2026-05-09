@@ -57,11 +57,20 @@ export const useWebSocket = (gameId: string, autoConnect = true) => {
   const sendMove = async (action_type: string, payload: any) => {
     if (!token) return;
     try {
-      await axios.post(
+      const response = await axios.post(
         `${API_BASE}/api/games/${gameId}/moves`,
         { action_type, payload },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      // Apply state from response immediately (includes bot processing)
+      if (response.data && response.data.state) {
+        const currentState = useGameStore.getState().gameState;
+        setGameState({
+          ...response.data.state,
+          game_type: currentState?.game_type || response.data.state.game_type,
+          players: currentState?.players || response.data.state.players,
+        });
+      }
     } catch (err) {
       console.error('Failed to submit move:', err);
       alert('Move failed. Check turn order or validity.');
