@@ -189,6 +189,70 @@ export const NorthernPacificBoard: React.FC = () => {
 
   const handleMouseUp = useCallback(() => setIsPanning(false), []);
 
+  // --- CityActions sub-component ---
+  const CityActions: React.FC<{
+    city: string;
+    isReachable: boolean;
+    isInvestable: boolean;
+    hasStd: boolean;
+    hasEnh: boolean;
+    onLayTrack: () => void;
+    onInvest: (enhanced: boolean) => void;
+    onCancel: () => void;
+  }> = ({ city, isReachable, isInvestable, hasStd, hasEnh, onLayTrack, onInvest, onCancel }) => {
+    const label = city.replace(/([A-Z])/g, ' $1').trim();
+    const cityCubes = gameState?.city_cubes || {};
+    const cityEnh = gameState?.city_enhanced || {};
+    const stdCount = cityCubes[city]?.[user?.id || ''] || 0;
+    const enhCount = cityEnh[city]?.[user?.id || ''] || 0;
+    const hasMyCubes = stdCount > 0 || enhCount > 0;
+
+    return (
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h4 className="text-base font-bold">{label}</h4>
+          <button onClick={onCancel} className="text-gray-400 hover:text-gray-600 text-sm">X</button>
+        </div>
+        <p className="text-xs text-gray-500">
+          {isReachable && isInvestable ? 'You can lay track here or invest.' :
+           isReachable ? 'You can lay track here.' :
+           isInvestable ? 'You can invest here.' : 'No actions available for this city.'}
+        </p>
+
+        <div className="flex flex-wrap gap-2">
+          {isReachable && (
+            <button
+              onClick={onLayTrack}
+              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm font-medium"
+            >
+              Lay Track
+            </button>
+          )}
+          {isInvestable && hasStd && (
+            <button
+              onClick={() => onInvest(false)}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-medium"
+            >
+              Invest Cube
+            </button>
+          )}
+          {isInvestable && hasEnh && (
+            <button
+              onClick={() => onInvest(true)}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded text-sm font-medium"
+            >
+              Invest Enhanced
+            </button>
+          )}
+        </div>
+
+        {hasMyCubes && (
+          <p className="text-xs text-gray-500">You have {stdCount + enhCount} cube{stdCount + enhCount > 1 ? 's' : ''} here.</p>
+        )}
+      </div>
+    );
+  };
+
   if (!gameState) return null;
 
   const socket = (window as any).__socket;
@@ -291,6 +355,15 @@ export const NorthernPacificBoard: React.FC = () => {
     const isSelected = selectedCity === city;
     const isEndpoint = trainEndpoint === city;
     const canInvest = availableInvestCities.includes(city);
+    const canReach = !!(gameState.available_tracks || []).find((t: any) => t.target === city);
+    const isClickable = canInvest || canReach;
+
+    // Determine stroke color
+    let strokeColor = '#999';
+    if (isEndpoint) strokeColor = '#dc2626';
+    else if (isSelected) strokeColor = '#ef4444';
+    else if (canReach) strokeColor = '#dc2626'; // red for reachable by track
+    else if (canInvest) strokeColor = '#22c55e'; // green for investable
 
     // Count cubes in this city
     const stdCubes = cityCubes[city] || {};
@@ -358,11 +431,11 @@ export const NorthernPacificBoard: React.FC = () => {
           cy={px.y}
           r={9}
           fill={isEndpoint ? '#fee2e2' : '#fff'}
-          stroke={isSelected ? '#ef4444' : (canInvest ? '#22c55e' : (isEndpoint ? '#dc2626' : '#999'))}
-          strokeWidth={isSelected ? 3 : (canInvest ? 2.5 : 1.5)}
+          stroke={strokeColor}
+          strokeWidth={isSelected ? 3 : (isClickable ? 2.5 : 1.5)}
           opacity={isAtCapacity ? 0.5 : 0.9}
-          style={{ cursor: canInvest ? 'pointer' : 'default' }}
-          onClick={() => canInvest && handleCityClick(city)}
+          style={{ cursor: isClickable ? 'pointer' : 'default' }}
+          onClick={() => isClickable && handleCityClick(city)}
         />
         {/* City label */}
         <text
@@ -460,110 +533,27 @@ export const NorthernPacificBoard: React.FC = () => {
 
             {!isMyTurn ? (
               <p className="text-sm text-gray-500">Waiting for opponent...</p>
+            ) : selectedCity ? (
+              <CityActions
+                city={selectedCity}
+                isReachable={!!(gameState.available_tracks || []).find((t: any) => t.target === selectedCity)}
+                isInvestable={availableInvestCities.includes(selectedCity)}
+                hasStd={(playerSupply[user?.id || ''] ?? 0) > 0}
+                hasEnh={(playerEnhanced[user?.id || ''] ?? 0) > 0}
+                onLayTrack={() => {
+                  const seg = (gameState.available_tracks || []).find((t: any) => t.target === selectedCity);
+                  if (seg) sendMove('lay_track', { segment_id: seg.segment_id });
+                  setSelectedCity(null);
+                }}
+                onInvest={(enhanced: boolean) => {
+                  sendMove('invest', { city: selectedCity, enhanced });
+                  setSelectedCity(null);
+                }}
+                onCancel={() => setSelectedCity(null)}
+              />
             ) : (
-              <div className="space-y-3">
-                {/* Build a set of cities reachable by track from current endpoint */}
-                {(() => {
-                  const trackCities = new Set((gameState.available_tracks || []).map((t: any) => t.target));
-                  const hasStd = (playerSupply[user?.id || ''] ?? 0) > 0;
-                  const hasEnh = (playerEnhanced[user?.id || ''] ?? 0) > 0;
-
-                  const reachableCities = (gameState.available_tracks || []).map((t: any) => t.target);
-                  
-                  return (
-                    <>
-                      {/* Reachable cities — can lay track OR invest */}
-                      {reachableCities.length > 0 && (
-                        <div>
-                          <h4 className="text-xs font-semibold text-gray-600 mb-1">Extend rail to...</h4>
-                          <div className="space-y-1">
-                            {reachableCities.map((city: string) => {
-                              const label = city.replace(/([A-Z])/g, ' $1').trim();
-                              return (
-                                <div key={city} className="flex items-center gap-1">
-                                  <span className="text-xs w-16 truncate font-medium">{label}</span>
-                                  <button
-                                    onClick={() => {
-                                      const seg = (gameState.available_tracks || []).find((t: any) => t.target === city);
-                                      if (seg) sendMove('lay_track', { segment_id: seg.segment_id });
-                                    }}
-                                    className="bg-red-500 text-white px-2 py-0.5 rounded text-xs hover:bg-red-600"
-                                  >
-                                    Track
-                                  </button>
-                                  {hasStd && (
-                                    <button
-                                      onClick={() => sendMove('invest', { city, enhanced: false })}
-                                      className="bg-blue-500 text-white px-2 py-0.5 rounded text-xs hover:bg-blue-600"
-                                    >
-                                      Invest
-                                    </button>
-                                  )}
-                                  {hasEnh && (
-                                    <button
-                                      onClick={() => sendMove('invest', { city, enhanced: true })}
-                                      className="bg-purple-500 text-white px-2 py-0.5 rounded text-xs hover:bg-purple-600"
-                                      title="Enhanced cube"
-                                    >
-                                      E
-                                    </button>
-                                  )}
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Other investable cities (not directly reachable) */}
-                      {availableInvestCities.length > 0 && (
-                        <div>
-                          <h4 className="text-xs font-semibold text-gray-600 mb-1">
-                            {reachableCities.length > 0 ? 'Invest in other cities...' : 'Invest in...'}
-                          </h4>
-                          <div className="max-h-40 overflow-y-auto space-y-1">
-                            {availableInvestCities
-                              .filter(city => !trackCities.has(city))
-                              .slice(0, 12)
-                              .map(city => {
-                                const label = city.replace(/([A-Z])/g, ' $1').trim();
-                                return (
-                                  <div key={city} className="flex items-center gap-1">
-                                    <span className="text-xs w-16 truncate">{label}</span>
-                                    {hasStd && (
-                                      <button
-                                        onClick={() => sendMove('invest', { city, enhanced: false })}
-                                        className="bg-blue-500 text-white px-2 py-0.5 rounded text-xs hover:bg-blue-600"
-                                      >
-                                        Invest
-                                      </button>
-                                    )}
-                                    {hasEnh && (
-                                      <button
-                                        onClick={() => sendMove('invest', { city, enhanced: true })}
-                                        className="bg-purple-500 text-white px-2 py-0.5 rounded text-xs hover:bg-purple-600"
-                                        title="Enhanced cube"
-                                      >
-                                        E
-                                      </button>
-                                    )}
-                                  </div>
-                                );
-                              })}
-                            {availableInvestCities.filter(c => !trackCities.has(c)).length > 12 && (
-                              <p className="text-xs text-gray-400">+ more...</p>
-                            )}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* No actions available */}
-                      {reachableCities.length === 0 && availableInvestCities.length === 0 && (
-                        <p className="text-xs text-gray-400">No actions available</p>
-                      )}
-                    </>
-                  );
-                })()}
+              <div className="text-sm text-gray-500">
+                <p>Click a city on the map <span className="text-green-600 font-medium">outlined in green</span> to see available actions.</p>
               </div>
             )}
           </div>
