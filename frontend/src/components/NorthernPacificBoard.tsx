@@ -314,6 +314,38 @@ export const NorthernPacificBoard: React.FC = () => {
       allPlayersWithCubes.push({ playerId: pid, count: count as number, isEnhanced: true });
     }
 
+    // Render colored dots for each investor
+    allPlayersWithCubes.forEach((inv, idx) => {
+      const dotColor = getPlayerColor(inv.playerId, gameState.players);
+      const dotX = px.x - 8 + idx * 7;
+      // Show a small circle per cube (up to 3 dots, then +N)
+      const showCount = Math.min(inv.count, 3);
+      for (let c = 0; c < showCount; c++) {
+        cubeDots.push(
+          <circle
+            key={`dot-${city}-${inv.playerId}-${c}`}
+            cx={dotX + c * 5}
+            cy={px.y + 15}
+            r={3}
+            fill={dotColor}
+            stroke="#fff"
+            strokeWidth={0.5}
+          />
+        );
+        dotIdx++;
+      }
+      if (inv.count > 3) {
+        cubeDots.push(
+          <text key={`more-${city}-${inv.playerId}`}
+            x={dotX + 12}
+            y={px.y + 18}
+            fontSize={6}
+            fill="#666"
+          >+{inv.count - 3}</text>
+        );
+      }
+    });
+
     return (
       <g key={city}>
         {/* Train endpoint indicator */}
@@ -344,19 +376,19 @@ export const NorthernPacificBoard: React.FC = () => {
         >
           {label}
         </text>
-        {/* Cube count indicator */}
-        {totalCubes > 0 && (
+        {/* Investment cube dots */}
+        {cubeDots}
+        {/* Capacity indicator */}
+        {isAtCapacity && (
           <text
             x={px.x}
-            y={px.y + 20}
+            y={px.y + 28}
             textAnchor="middle"
-            fontSize={8}
-            fill="#333"
-            fontWeight="bold"
+            fontSize={6}
+            fill="#999"
             style={{ userSelect: 'none', pointerEvents: 'none' }}
           >
-            {totalCubes}
-            {isAtCapacity && ' MAX'}
+            FULL
           </text>
         )}
       </g>
@@ -517,6 +549,20 @@ export const NorthernPacificBoard: React.FC = () => {
               </div>
             ))}
           </div>
+
+          {/* Move history */}
+          {(gameState.move_history || []).length > 0 && (
+            <div className="bg-white p-4 rounded shadow">
+              <h3 className="font-bold border-b pb-2 mb-2">Game Log</h3>
+              <div className="max-h-40 overflow-y-auto text-xs space-y-0.5">
+                {(gameState.move_history || []).slice(-15).reverse().map((entry: string, i: number) => (
+                  <div key={i} className={`py-0.5 ${entry.startsWith('---') ? 'font-bold text-gray-600 mt-1' : 'text-gray-700'}`}>
+                    {entry}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

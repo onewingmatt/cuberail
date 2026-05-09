@@ -44,6 +44,9 @@ class NPState(GameState):
         self.cumulative_good: Dict[str, int] = {p: 0 for p in players}
         self.cumulative_bad: Dict[str, int] = {p: 0 for p in players}
 
+        # Move log
+        self.move_history: List[str] = []
+
         # Track state
         self.train_endpoint: str = "StPaul"
         self.laid_tracks: List[str] = []          # segment IDs in order
@@ -162,6 +165,7 @@ class NPState(GameState):
                 {"segment_id": t[0], "source": t[1], "target": t[2]}
                 for t in self._available_track_segments()
             ],
+            "move_history": self.move_history[-20:],  # last 20 moves
         }
 
 
@@ -227,6 +231,9 @@ class NPEngineOfficial(GameEngine):
             target_dict[city] = {}
         target_dict[city][player_id] = target_dict[city].get(player_id, 0) + 1
 
+        cube_type = "enhanced" if enhanced else "standard"
+        state.move_history.append(f"{player_id[:8]} invested {cube_type} cube in {city}")
+
     def _do_lay_track(self, state: NPState, player_id: str, payload: dict):
         segment_id = payload.get("segment_id", "")
 
@@ -254,6 +261,10 @@ class NPEngineOfficial(GameEngine):
             state.used_bidirectional.add(bidir)
         state.train_endpoint = target
         state.last_track_layer = player_id
+        import re
+        source_name = re.sub(r'([A-Z])', r' \1', source).strip()
+        target_name = re.sub(r'([A-Z])', r' \1', target).strip()
+        state.move_history.append(f"{player_id[:8]} laid track {source_name} -> {target_name}")
 
         # Payout: when railroad reaches a city with investments
         self._process_payout(state, target)
@@ -274,6 +285,7 @@ class NPEngineOfficial(GameEngine):
                     del state.city_cubes[city][owner]
                     # Return cube + 1 bonus per standard cube
                     state.player_supply[owner] = state.player_supply.get(owner, 0) + count * 2
+                    state.move_history.append(f"{owner[:8]} collected {count*2} cubes from {city} (payout)")
 
         # Enhanced cubes payout
         if city in state.city_enhanced:
@@ -284,6 +296,7 @@ class NPEngineOfficial(GameEngine):
                     state.player_supply[owner] = state.player_supply.get(owner, 0) + count * 2
                     # Also return the enhanced cube itself back to the pool
                     state.player_enhanced[owner] = state.player_enhanced.get(owner, 0) + count
+                    state.move_history.append(f"{owner[:8]} collected {count*2}s bonuses from {city} (enhanced payout)")
 
         # Clean up empty entries
         if city in state.city_cubes and not state.city_cubes[city]:
@@ -293,11 +306,12 @@ class NPEngineOfficial(GameEngine):
 
     def _end_round(self, state: NPState):
         """Score the round, reset for next round or end game."""
-        # Count good investments (cubes in hand)
+        # Score the round
         for p in state.turn_order:
             supply = state.player_supply.get(p, 0)
             enhanced = state.player_enhanced.get(p, 0)
             state.cumulative_good[p] += supply + enhanced
+        state.move_history.append(f"--- Round {state.current_round} end: Seattle reached ---")
 
         # Count bad investments (cubes on map) for tiebreaking
         for p in state.turn_order:
