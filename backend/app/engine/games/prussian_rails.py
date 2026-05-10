@@ -51,7 +51,7 @@ class PrussianRailsState(GameState):
         self.current_player_index = 0
         self.active_player_stack: List[str] = []
         self.is_game_over = False
-        self.phase = "initial_auction"
+        self.phase = "auction"
         self.round_phase: Optional[str] = None
 
         # Player resources
@@ -181,7 +181,7 @@ class PrussianRailsEngine(GameEngine, AuctionManager, StockMarket):
                 f"Not your turn. Expected {state.get_current_actor()}, got {player_id}"
             )
 
-        if state.phase == "initial_auction":
+        if state.phase == "auction" and state.round_phase is None:
             self._handle_initial_auction_move(state, player_id, action_type, payload)
         elif state.phase == "round":
             self._handle_round_move(state, player_id, action_type, payload)

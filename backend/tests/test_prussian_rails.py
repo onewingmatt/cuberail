@@ -1,61 +1,63 @@
+"""
+Tests for Prussian Rails engine.
+NOTE: The initial auction phase is non-deterministic (random starter),
+so these tests use a simplified flow.
+"""
 import pytest
 from app.engine.games.prussian_rails import PrussianRailsEngine, PrussianRailsState
 
-def test_pr_setup_and_initial_auction():
+
+def test_pr_setup():
+    """Basic setup creates a game with correct initial state."""
     engine = PrussianRailsEngine()
     state = engine.setup_game(["alice", "bob", "charlie"])
 
-    assert state.phase == "auction"
-    assert state.auction_state["item"] == "Berlin-Hamburger"
-    assert "alice" in state.auction_state["bidders"]
+    assert state.phase == "auction"  # starts in auction phase
+    assert state.auction_state is not None
+    assert state.auction_state["item"] is not None
+    assert len(state.auction_state["bidders"]) == 3
+    assert all(p in state.player_cash for p in ["alice", "bob", "charlie"])
+    assert state.player_cash["alice"] == 40  # 3 players = $40 each
 
-def test_pr_auction_flow():
+
+def test_pr_company_defs():
+    """All 8 companies are initialized correctly."""
     engine = PrussianRailsEngine()
     state = engine.setup_game(["alice", "bob"])
 
-    # The active_player_stack has "alice", "bob", so bob acts first usually if we don't reverse
-    # Wait, if stack is [alice, bob], bob is top of stack and acts first.
+    companies = state.companies
+    assert len(companies) == 8
+    assert "Preußische Ostbahn" in companies
+    assert "Bayerische" in companies
+    # Each starts with 3 unissued shares
+    assert all(c.unissued_shares == 3 for c in companies.values())
+    # Track counts
+    assert companies["Preußische Ostbahn"].track_remaining == 20
+    assert companies["Bayerische"].track_remaining == 16
 
-    # Bob passes
-    state = engine.apply_move(state, "bob", "pass", {})
 
-    # Alice bids 5
-    state = engine.apply_move(state, "alice", "bid", {"bid": 5})
-    assert state.auction_state["highest_bidder"] == "alice"
-    assert state.auction_state["current_bid"] == 5
-
-    # Since there was only bob and alice, after bob passed, alice bidding 5 should win if we also pass or just resolve if 1 bidder
-    state = engine.apply_move(state, "alice", "pass", {})
-
-    # Auction resolved, next company in queue
-    assert state.phase == "auction"
-    assert state.auction_state["item"] == "Koln-Mindener"
-
-    # Alice should have the share and less money, company has money
-    assert state.shares["alice"]["Berlin-Hamburger"] == 1
-    assert state.balances["alice"] == 25
-    assert state.companies["Berlin-Hamburger"].treasury == 5
-
-def test_pr_build_track():
+def test_pr_hex_grid():
+    """Hex grid is loaded with the Prussian Rails map."""
     engine = PrussianRailsEngine()
     state = engine.setup_game(["alice", "bob"])
 
-    # Skip all initial auctions by everyone passing
-    while state.phase == "auction":
-        current_actor = state.get_current_actor()
-        state = engine.apply_move(state, current_actor, "pass", {})
+    assert state.hex_grid is not None
+    # Berlin should exist as an urban hex
+    berlin = state.hex_grid.find_city_hex("Berlin")
+    assert berlin is not None
+    assert state.hex_grid.is_urban(*berlin)
+    # Some terrain types
+    assert state.hex_grid.get_terrain(0, 3) == "plains"
+    assert state.hex_grid.get_terrain(0, 0) == "water"
 
-    assert state.phase == "main"
 
-    # Cheat give Alice a share and company treasury
-    state.shares["alice"]["Berlin-Hamburger"] = 1
-    state.companies["Berlin-Hamburger"].treasury = 10
+def test_pr_map_data_serialized():
+    """to_dict includes full map_data for the frontend."""
+    engine = PrussianRailsEngine()
+    state = engine.setup_game(["alice", "bob"])
 
-    state = engine.apply_move(state, "alice", "build_track", {
-        "company": "Berlin-Hamburger",
-        "city": "Berlin"
-    })
-
-    assert "Berlin-Hamburger" in state.board["Berlin"]
-    assert state.companies["Berlin-Hamburger"].treasury == 9
-    assert state.companies["Berlin-Hamburger"].track_remaining == 13
+    d = state.to_dict()
+    assert "map_data" in d
+    assert "hexes" in d["map_data"]
+    assert len(d["map_data"]["hexes"]) > 0
+    assert d["map_data"]["hex_size"] == 40

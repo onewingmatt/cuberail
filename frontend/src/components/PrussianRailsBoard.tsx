@@ -26,7 +26,7 @@ export const PrussianRailsBoard: React.FC = () => {
 
   const myUserId = getCurrentUserId();
   const isMyTurn = gameState.current_player === myUserId;
-  const isAuctionPhase = gameState.phase === 'initial_auction' || (gameState.phase === 'round' && gameState.auction_state);
+  const isAuctionPhase = gameState.phase === 'auction' && !gameState.round_phase;
 
   // Convert board (list of [key, companies]) to dict for hex renderer
   const boardDict: Record<string, string[]> = {};
@@ -72,7 +72,7 @@ export const PrussianRailsBoard: React.FC = () => {
   const auction = gameState.auction_state;
   const companies = Object.values(gameState.companies || {}) as any[];
 
-  const phaseLabel = gameState.phase === 'initial_auction' ? 'Initial Auction' :
+  const phaseLabel = gameState.phase === 'auction' && !gameState.round_phase ? 'Initial Auction' :
     gameState.phase === 'round' && gameState.auction_state ? 'Share Auction' :
     gameState.phase === 'round' ? `Round ${gameState.round_number || ''} — ${gameState.round_phase || ''}` :
     gameState.phase;
