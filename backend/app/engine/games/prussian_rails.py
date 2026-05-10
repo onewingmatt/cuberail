@@ -107,6 +107,9 @@ class PrussianRailsState(GameState):
         # Income bonus tracking
         self._main_wesel_best_city_income: Dict[str, int] = {}  # company -> best city income
 
+        # Move history for frontend display
+        self.move_history: List[str] = []
+
         # Map
         self._raw_map = MapLoader.load_map("prussian_rails_hex")
         self.hex_grid = HexGrid(
@@ -150,6 +153,7 @@ class PrussianRailsState(GameState):
             "player_turn_order": self.player_turn_order,
             "turn_position": self.turn_position,
             "connected_pairs": [[a, b] for a, b in self.connected_pairs],
+            "move_history": self.move_history[-30:],  # last 30 entries
         }
 
 
@@ -160,11 +164,13 @@ class PrussianRailsEngine(GameEngine, AuctionManager, StockMarket):
 
     def setup_game(self, players: List[str]) -> PrussianRailsState:
         state = PrussianRailsState(players)
-        # Start the first initial auction with random starting bidder
+        # Start the first initial auction with deterministic starter
+        # (first player in turn order always starts first auction;
+        #  subsequent auction starters are determined by previous winner)
         first_company = state.company_auction_queue.pop(0)
-        starter = random.choice(state.turn_order)
+        starter = state.turn_order[0]
         bidder_order = self._build_bidder_order(state.turn_order, starter)
-        self.start_auction(state, first_company, bidder_order, starting_bid=1)
+        self.start_auction(state, first_company, bidder_order, starting_bid=5)
         return state
 
     # ── Move dispatch ──────────────────────────────────────────────
@@ -200,7 +206,9 @@ class PrussianRailsEngine(GameEngine, AuctionManager, StockMarket):
             bid_amount = payload.get("bid", 0)
             if state.player_cash[player_id] < bid_amount:
                 raise ValueError("Not enough cash to bid that amount")
-            self.handle_auction_bid(state, player_id, bid_amount)
+            concluded = self.handle_auction_bid(state, player_id, bid_amount)
+            if concluded:
+                self._resolve_auction(state)
 
         elif action_type == "pass":
             concluded = self.handle_auction_pass(state, player_id)
@@ -230,7 +238,11 @@ class PrussianRailsEngine(GameEngine, AuctionManager, StockMarket):
         company.unissued_shares -= 1
 
         # Give share to winner (or free to first bidder if no one bid)
-        share_recipient = winner if (winner and bid >= 1) else auction.get("bidders", [None])[0]
+        if winner and bid >= 1:
+            share_recipient = winner
+        else:
+            # Nobody bid — first person in the bid order gets it free
+            share_recipient = (auction.get("passed_bidders") or auction.get("bidders") or [None])[0]
         if share_recipient:
             if company_id not in state.shares[share_recipient]:
                 state.shares[share_recipient][company_id] = 0
@@ -239,9 +251,24 @@ class PrussianRailsEngine(GameEngine, AuctionManager, StockMarket):
             # Update player income immediately (share value = company income)
             state.player_income[share_recipient] += state.company_income[company_id]
 
+            state.move_history.append(
+                f"{share_recipient[:6]} won {company_id} for ${bid}"
+            )
+
         # Cleanup
         state.auction_state = None
         state.active_player_stack = []
+
+        # Place company's home hex on the board (free, part of initial network)
+        home_city = state.company_home.get(company_id)
+        if home_city:
+            home_hex = state.hex_grid.find_city_hex(home_city)
+            if home_hex:
+                hk = f"{home_hex[0]},{home_hex[1]}"
+                if hk not in state.board:
+                    state.board[hk] = []
+                if company_id not in state.board[hk]:
+                    state.board[hk].append(company_id)
 
         # Determine next auction starter (winner of this auction starts next)
         next_starter = share_recipient if share_recipient else state.turn_order[0]
@@ -251,7 +278,7 @@ class PrussianRailsEngine(GameEngine, AuctionManager, StockMarket):
             next_company = state.company_auction_queue.pop(0)
             # Build bidder order starting with previous winner
             bidder_order = self._build_bidder_order(state.turn_order, next_starter)
-            self.start_auction(state, next_company, bidder_order, starting_bid=1)
+            self.start_auction(state, next_company, bidder_order, starting_bid=5)
         else:
             # All initial auctions done → start first round
             state.phase = "round"
@@ -317,8 +344,28 @@ class PrussianRailsEngine(GameEngine, AuctionManager, StockMarket):
         """Move to the next player's turn in the round. Start new round if all done."""
         state.turn_position += 1
         if state.turn_position >= len(state.player_turn_order):
-            # All players have acted this round → start new round
+            # All players have acted this round → start new round or end game
+            if self._check_game_over(state):
+                return
             self._start_new_round(state)
+
+    def _check_game_over(self, state: PrussianRailsState) -> bool:
+        """Check if game-end conditions are met. Sets is_game_over if so."""
+        # Condition 1: All companies have exhausted track cubes
+        all_exhausted = all(
+            c.track_remaining == 0 for c in state.companies.values()
+        )
+        # Condition 2: Any company has reached Berlin
+        berlin_reached = any(
+            state.berlin_approach_used.get(cid, False)
+            for cid in state.companies
+        )
+        # Condition 3: Maximum rounds reached (safety limit)
+        max_rounds = 10
+        if all_exhausted or berlin_reached or state.current_round_number >= max_rounds:
+            state.is_game_over = True
+            return True
+        return False
 
     # ── Round moves ─────────────────────────────────────────────────
 
@@ -389,22 +436,10 @@ class PrussianRailsEngine(GameEngine, AuctionManager, StockMarket):
         if not auction:
             raise ValueError("No active auction")
 
-        if player_id not in auction["bidders"]:
-            raise ValueError("Player not in auction")
-
         bid = payload.get("bid", 0)
-        if bid <= auction["current_bid"]:
-            raise ValueError(f"Bid must be higher than {auction['current_bid']}")
-
-        if state.player_cash[player_id] < bid:
-            raise ValueError("Not enough cash")
-
-        auction["current_bid"] = bid
-        auction["highest_bidder"] = player_id
-
-        # Rotate active stack: current bidder goes to bottom
-        current = state.active_player_stack.pop()
-        state.active_player_stack.insert(0, current)
+        concluded = self.handle_auction_bid(state, player_id, bid)
+        if concluded:
+            self._resolve_round_auction(state)
 
     def _handle_round_auction_pass(self, state: PrussianRailsState, player_id: str):
         """Called when player passes during a round auction."""
@@ -504,6 +539,11 @@ class PrussianRailsEngine(GameEngine, AuctionManager, StockMarket):
             h = state.hex_grid.get_hex(q, r)
             if not h or not state.hex_grid.is_playable(q, r):
                 raise ValueError(f"Hex ({q},{r}) is not playable")
+
+            # Cannot build on a hex already occupied by this company
+            k = f"{q},{r}"
+            if k in state.board and company_id in state.board[k]:
+                raise ValueError(f"Hex ({q},{r}) already has {company_id} track")
 
             # Check adjacency: each hex must be adjacent to previous
             if i > 0 and not is_adjacent(path[i - 1], hex_coord):
@@ -606,6 +646,10 @@ class PrussianRailsEngine(GameEngine, AuctionManager, StockMarket):
 
         # Check for dividend triggers (new connections between companies)
         self._check_dividends(state, company_id, path)
+
+        state.move_history.append(
+            f"{player_id[:6]} built {len(path)} track with {company_id}"
+        )
 
         # Advance turn
         self._advance_turn(state)
