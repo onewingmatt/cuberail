@@ -11,9 +11,12 @@ const AXIAL_DIRECTIONS = [
 ];
 
 export function hexToPixel(q: number, r: number, size: number): { x: number; y: number } {
+  // Pointy-top axial layout:
+  // x = size * (sqrt(3) * q + sqrt(3)/2 * r)
+  // y = size * (3/2 * r)
   return {
-    x: size * (3 / 2 * q),
-    y: size * (Math.sqrt(3) / 2 * q + Math.sqrt(3) * r),
+    x: size * (Math.sqrt(3) * q + Math.sqrt(3) / 2 * r),
+    y: size * (3 / 2 * r),
   };
 }
 
@@ -30,8 +33,9 @@ export function hexCornerPath(q: number, r: number, size: number): string {
 }
 
 export function pixelToHex(px: number, py: number, size: number): [number, number] {
-  const q = (2 / 3 * px) / size;
-  const r = (-1 / 3 * px + Math.sqrt(3) / 3 * py) / size;
+  // Inverse of pointy-top axial layout
+  const q = (Math.sqrt(3) / 3 * px - 1 / 3 * py) / size;
+  const r = (2 / 3 * py) / size;
   return hexRound(q, r);
 }
 
