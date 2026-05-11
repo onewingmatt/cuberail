@@ -33,9 +33,10 @@ export const PrussianRailsBoard: React.FC = () => {
   const [overlayScaleX, setOverlayScaleX] = useState(1.06);
   const [overlayScaleY, setOverlayScaleY] = useState(1.057);
   const [overlayRotation, setOverlayRotation] = useState(0);
-  const [overlayOpacity, setOverlayOpacity] = useState(0.2);
-  const [showOverlay, setShowOverlay] = useState(false);
+  const [overlayOpacity, setOverlayOpacity] = useState(0.45);
+  const [showOverlay, setShowOverlay] = useState(true);
   const [hexSpacing, setHexSpacing] = useState(1.16);
+  const [showOverlayControls, setShowOverlayControls] = useState(false);
   const historyEndRef = useRef<HTMLDivElement>(null);
 
   if (!gameState || !gameState.map_data) return null;
@@ -119,12 +120,18 @@ export const PrussianRailsBoard: React.FC = () => {
           onClick={() => setShowOverlay(v => !v)}
           className={`px-3 py-1 rounded text-sm cursor-pointer ${showOverlay ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-900'}`}
         >
-          {showOverlay ? 'Hide logic overlay' : 'Show logic overlay'}
+          {showOverlay ? 'Hide hex overlay' : 'Show hex overlay'}
+        </button>
+        <button
+          onClick={() => setShowOverlayControls(v => !v)}
+          className={`px-3 py-1 rounded text-sm cursor-pointer ${showOverlayControls ? 'bg-amber-600 text-white' : 'bg-slate-200 text-slate-900'}`}
+        >
+          {showOverlayControls ? 'Hide alignment' : 'Align overlay'}
         </button>
         <span className="text-xs text-gray-600">Move/scale/rotate the overlay until it matches the board image. Logic stays in JSON underneath.</span>
       </div>
 
-      {!calibrationMode && (
+      {!calibrationMode && showOverlayControls && (
         <div className="mb-4 w-full max-w-6xl bg-white border rounded p-3 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-7 gap-3 text-xs">
           <label className="flex flex-col gap-1">TX
             <input type="range" min={-300} max={300} step={0.5} value={overlayTranslateX} onChange={e => setOverlayTranslateX(Number(e.target.value))} />
