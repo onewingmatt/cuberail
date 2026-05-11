@@ -10,18 +10,18 @@ const AXIAL_DIRECTIONS = [
   [0, -1],  // NW
 ];
 
-export function hexToPixel(q: number, r: number, size: number): { x: number; y: number } {
-  // Pointy-top axial layout:
+export function hexToPixel(q: number, r: number, size: number, spacing = 1): { x: number; y: number } {
+  // Pointy-top axial layout with adjustable center spacing
   // x = size * (sqrt(3) * q + sqrt(3)/2 * r)
   // y = size * (3/2 * r)
   return {
-    x: size * (Math.sqrt(3) * q + Math.sqrt(3) / 2 * r),
-    y: size * (3 / 2 * r),
+    x: spacing * size * (Math.sqrt(3) * q + Math.sqrt(3) / 2 * r),
+    y: spacing * size * (3 / 2 * r),
   };
 }
 
-export function hexCornerPath(q: number, r: number, size: number): string {
-  const { x: cx, y: cy } = hexToPixel(q, r, size);
+export function hexCornerPath(q: number, r: number, size: number, spacing = 1): string {
+  const { x: cx, y: cy } = hexToPixel(q, r, size, spacing);
   const corners: string[] = [];
   // Slightly oversize the drawn polygon so adjacent hex fills overlap by ~1px.
   // This avoids hairline gaps from SVG antialiasing and tiny geometry mismatch.
@@ -35,10 +35,10 @@ export function hexCornerPath(q: number, r: number, size: number): string {
   return `M ${corners.join(' L ')} Z`;
 }
 
-export function pixelToHex(px: number, py: number, size: number): [number, number] {
+export function pixelToHex(px: number, py: number, size: number, spacing = 1): [number, number] {
   // Inverse of pointy-top axial layout
-  const q = (Math.sqrt(3) / 3 * px - 1 / 3 * py) / size;
-  const r = (2 / 3 * py) / size;
+  const q = (Math.sqrt(3) / 3 * (px / spacing) - 1 / 3 * (py / spacing)) / size;
+  const r = (2 / 3 * (py / spacing)) / size;
   return hexRound(q, r);
 }
 
@@ -85,6 +85,7 @@ interface HexData {
 interface HexGridBoardProps {
   hexes: Record<string, HexData>;
   hexSize?: number;
+  hexSpacing?: number;
   boardData?: Record<string, string[]>;  // "q,r" -> company color hexes
   companies?: Record<string, { color: string }>;
   onHexClick?: (q: number, r: number) => void;
@@ -114,6 +115,7 @@ interface HexGridBoardProps {
 export const HexGridBoard: React.FC<HexGridBoardProps> = ({
   hexes,
   hexSize = 40,
+  hexSpacing = 1,
   boardData = {},
   companies = {},
   onHexClick,
@@ -165,7 +167,7 @@ export const HexGridBoard: React.FC<HexGridBoardProps> = ({
     });
     const pixelPositions = validHexes.map(key => {
       const [q, r] = key.split(',').map(Number);
-      return hexToPixel(q, r, hexSize);
+      return hexToPixel(q, r, hexSize, hexSpacing);
     });
     const xs = pixelPositions.map(p => p.x);
     const ys = pixelPositions.map(p => p.y);
@@ -273,8 +275,8 @@ export const HexGridBoard: React.FC<HexGridBoardProps> = ({
     const strokeColor = terrain === 'berlin_approach' ? '#e65100' : '#999';
     const isSelected = selectedHex === key;
     const isHighlighted = highlightedHexes.includes(key);
-    const path = hexCornerPath(q, r, hexSize);
-    const center = hexToPixel(q, r, hexSize);
+    const path = hexCornerPath(q, r, hexSize, hexSpacing);
+    const center = hexToPixel(q, r, hexSize, hexSpacing);
 
     // Company track cubes in this hex
     const tracks = boardData[key] || [];

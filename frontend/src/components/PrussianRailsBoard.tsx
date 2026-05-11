@@ -35,6 +35,7 @@ export const PrussianRailsBoard: React.FC = () => {
   const [overlayRotation, setOverlayRotation] = useState(0);
   const [overlayOpacity, setOverlayOpacity] = useState(0.35);
   const [showOverlay, setShowOverlay] = useState(true);
+  const [hexSpacing, setHexSpacing] = useState(1);
   const historyEndRef = useRef<HTMLDivElement>(null);
 
   if (!gameState || !gameState.map_data) return null;
@@ -149,6 +150,10 @@ export const PrussianRailsBoard: React.FC = () => {
             <input type="range" min={0} max={1} step={0.01} value={overlayOpacity} onChange={e => setOverlayOpacity(Number(e.target.value))} />
             <input type="number" min={0} max={1} step={0.01} value={overlayOpacity} onChange={e => setOverlayOpacity(Number(e.target.value))} className="border rounded px-2 py-1" />
           </label>
+          <label className="flex flex-col gap-1">Spacing
+            <input type="range" min={0.85} max={1.15} step={0.001} value={hexSpacing} onChange={e => setHexSpacing(Number(e.target.value))} />
+            <input type="number" step={0.001} value={hexSpacing} onChange={e => setHexSpacing(Number(e.target.value))} className="border rounded px-2 py-1" />
+          </label>
           <button
             onClick={() => {
               setOverlayTranslateX(0); setOverlayTranslateY(0); setOverlayScaleX(1); setOverlayScaleY(1); setOverlayRotation(0); setOverlayOpacity(0.35);
@@ -195,6 +200,7 @@ export const PrussianRailsBoard: React.FC = () => {
           overlayRotation={overlayRotation}
           overlayOpacity={overlayOpacity}
           showOverlay={showOverlay}
+          hexSpacing={hexSpacing}
         />
 
         {/* Sidebar */}
