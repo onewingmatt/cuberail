@@ -33,8 +33,8 @@ export const PrussianRailsBoard: React.FC = () => {
   const [overlayScaleX, setOverlayScaleX] = useState(1.06);
   const [overlayScaleY, setOverlayScaleY] = useState(1.057);
   const [overlayRotation, setOverlayRotation] = useState(0);
-  const [overlayOpacity, setOverlayOpacity] = useState(0.35);
-  const [showOverlay, setShowOverlay] = useState(true);
+  const [overlayOpacity, setOverlayOpacity] = useState(0.2);
+  const [showOverlay, setShowOverlay] = useState(false);
   const [hexSpacing, setHexSpacing] = useState(1.16);
   const historyEndRef = useRef<HTMLDivElement>(null);
 
