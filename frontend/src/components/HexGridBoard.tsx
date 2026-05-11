@@ -396,18 +396,16 @@ export const HexGridBoard: React.FC<HexGridBoardProps> = ({
               style={{ opacity: 1, pointerEvents: 'none', imageRendering: 'auto' }}
             />
           )}
-          {showOverlay && (
-            <g
-              transform={
-                `translate(${overlayTranslateX} ${overlayTranslateY}) ` +
-                `rotate(${overlayRotation}) ` +
-                `scale(${overlayScaleX} ${overlayScaleY})`
-              }
-              style={{ transformOrigin: '0 0' }}
-            >
-              {hexElements}
-            </g>
-          )}
+          <g
+            transform={
+              `translate(${overlayTranslateX} ${overlayTranslateY}) ` +
+              `rotate(${overlayRotation}) ` +
+              `scale(${overlayScaleX} ${overlayScaleY})`
+            }
+            style={{ transformOrigin: '0 0', opacity: showOverlay ? 1 : 0 }}
+          >
+            {hexElements}
+          </g>
         </g>
       </svg>
       {/* Zoom controls */}
