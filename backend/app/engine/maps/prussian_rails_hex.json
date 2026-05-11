@@ -5,8 +5,8 @@
   "grid_bounds": {
     "q_min": 0,
     "q_max": 17,
-    "r_min": -5,
-    "r_max": 24
+    "r_min": -3,
+    "r_max": 23
   },
   "background_image": "/prussian_rails_board.png",
   "terrain_costs": {
@@ -25,7 +25,15 @@
   "berlin_approach_hexes": [
     {
       "q": 10,
+      "r": 6
+    },
+    {
+      "q": 10,
       "r": 7
+    },
+    {
+      "q": 10,
+      "r": 8
     },
     {
       "q": 11,
@@ -33,10 +41,30 @@
     },
     {
       "q": 11,
+      "r": 6
+    },
+    {
+      "q": 11,
       "r": 7
     },
     {
       "q": 11,
+      "r": 8
+    },
+    {
+      "q": 12,
+      "r": 4
+    },
+    {
+      "q": 12,
+      "r": 5
+    },
+    {
+      "q": 12,
+      "r": 7
+    },
+    {
+      "q": 12,
       "r": 8
     },
     {
@@ -49,11 +77,23 @@
     },
     {
       "q": 13,
+      "r": 6
+    },
+    {
+      "q": 13,
       "r": 7
     },
     {
       "q": 14,
+      "r": 4
+    },
+    {
+      "q": 14,
       "r": 5
+    },
+    {
+      "q": 14,
+      "r": 6
     }
   ],
   "auction_order": [
@@ -110,7 +150,7 @@
       "start_income": 2,
       "track_count": 14,
       "ability": "double_best_income",
-      "ability_desc": "Doubles the income of the highest-income Urban hex in its network"
+      "ability_desc": "Doubles the income of highest-income Urban hex in network"
     },
     {
       "id": "Großherzoglich Badische",
@@ -134,64 +174,30 @@
       "id": "Berlin-Hamburger",
       "color": "#006400",
       "home": "Hamburg",
-      "start_income": 3,
-      "track_count": 16,
+      "start_income": 1,
+      "track_count": 13,
       "ability": "connect_both",
       "ability_desc": "Must connect to both Berlin and Hamburg to receive dividends"
     }
   ],
   "hexes": {
-    "15,-3": {
-      "terrain": "plains"
-    },
-    "17,-3": {
-      "terrain": "plains"
-    },
-    "14,-2": {
-      "terrain": "plains"
-    },
-    "15,-2": {
-      "terrain": "plains"
-    },
-    "16,-2": {
-      "terrain": "plains"
-    },
-    "17,-2": {
-      "terrain": "plains"
-    },
-    "3,-1": {
-      "terrain": "plains"
-    },
-    "7,-1": {
-      "terrain": "plains"
-    },
-    "8,-1": {
-      "terrain": "plains"
-    },
-    "12,-1": {
-      "terrain": "plains"
-    },
-    "13,-1": {
-      "terrain": "plains"
-    },
-    "14,-1": {
-      "terrain": "plains"
-    },
     "15,-1": {
-      "terrain": "plains",
-      "city": "Danzig"
+      "terrain": "urban",
+      "city": "Danzig",
+      "income": 0
     },
     "16,-1": {
       "terrain": "plains"
     },
     "17,-1": {
-      "terrain": "plains",
+      "terrain": "urban",
       "city": "Königsberg",
       "income": 3
     },
     "0,0": {
-      "terrain": "plains",
-      "city": "Flensburg"
+      "terrain": "urban",
+      "city": "Flensburg",
+      "income": 0
     },
     "1,0": {
       "terrain": "plains"
@@ -200,10 +206,14 @@
       "terrain": "plains"
     },
     "3,0": {
-      "terrain": "plains",
-      "city": "Kiel"
+      "terrain": "urban",
+      "city": "Kiel",
+      "income": 0
     },
     "4,0": {
+      "terrain": "plains"
+    },
+    "5,0": {
       "terrain": "plains"
     },
     "6,0": {
@@ -213,8 +223,9 @@
       "terrain": "plains"
     },
     "8,0": {
-      "terrain": "plains",
-      "city": "Stralsund"
+      "terrain": "urban",
+      "city": "Stralsund",
+      "income": 0
     },
     "9,0": {
       "terrain": "plains"
@@ -229,8 +240,9 @@
       "terrain": "plains"
     },
     "13,0": {
-      "terrain": "plains",
-      "city": "Stolp"
+      "terrain": "urban",
+      "city": "Stolp",
+      "income": 0
     },
     "14,0": {
       "terrain": "plains"
@@ -266,8 +278,9 @@
       "terrain": "plains"
     },
     "7,1": {
-      "terrain": "plains",
-      "city": "Rostock"
+      "terrain": "urban",
+      "city": "Rostock",
+      "income": 0
     },
     "8,1": {
       "terrain": "plains"
@@ -315,8 +328,9 @@
       "terrain": "plains"
     },
     "5,2": {
-      "terrain": "plains",
-      "city": "Lübeck"
+      "terrain": "urban",
+      "city": "Lübeck",
+      "income": 0
     },
     "6,2": {
       "terrain": "plains"
@@ -331,26 +345,30 @@
       "terrain": "plains"
     },
     "10,2": {
-      "terrain": "plains",
-      "city": "Neu Brandenburg"
+      "terrain": "urban",
+      "city": "Neu Brandenburg",
+      "income": 0
     },
     "11,2": {
       "terrain": "plains"
     },
     "12,2": {
-      "terrain": "plains",
-      "city": "Stettin"
+      "terrain": "urban",
+      "city": "Stettin",
+      "income": 0
     },
     "13,2": {
       "terrain": "plains"
     },
     "14,2": {
-      "terrain": "plains",
-      "city": "Schneidemühl"
+      "terrain": "urban",
+      "city": "Schneidemühl",
+      "income": 0
     },
     "15,2": {
-      "terrain": "plains",
-      "city": "Bromberg"
+      "terrain": "urban",
+      "city": "Bromberg",
+      "income": 0
     },
     "16,2": {
       "terrain": "plains"
@@ -419,8 +437,9 @@
       "terrain": "plains"
     },
     "2,4": {
-      "terrain": "plains",
-      "city": "Oldenburg"
+      "terrain": "urban",
+      "city": "Oldenburg",
+      "income": 0
     },
     "3,4": {
       "terrain": "plains"
@@ -429,7 +448,7 @@
       "terrain": "plains"
     },
     "5,4": {
-      "terrain": "plains",
+      "terrain": "urban",
       "city": "Hamburg",
       "income": 3
     },
@@ -452,14 +471,15 @@
       "terrain": "plains"
     },
     "12,4": {
-      "terrain": "plains"
+      "terrain": "berlin_approach"
     },
     "13,4": {
       "terrain": "berlin_approach"
     },
     "14,4": {
-      "terrain": "plains",
-      "city": "Kreuz"
+      "terrain": "urban",
+      "city": "Kreuz",
+      "income": 0
     },
     "15,4": {
       "terrain": "plains"
@@ -483,8 +503,9 @@
       "terrain": "plains"
     },
     "4,5": {
-      "terrain": "plains",
-      "city": "Bremen"
+      "terrain": "urban",
+      "city": "Bremen",
+      "income": 0
     },
     "5,5": {
       "terrain": "plains"
@@ -496,8 +517,9 @@
       "terrain": "plains"
     },
     "8,5": {
-      "terrain": "plains",
-      "city": "Wittenberge"
+      "terrain": "urban",
+      "city": "Wittenberge",
+      "income": 0
     },
     "9,5": {
       "terrain": "plains"
@@ -509,7 +531,7 @@
       "terrain": "berlin_approach"
     },
     "12,5": {
-      "terrain": "plains"
+      "terrain": "berlin_approach"
     },
     "13,5": {
       "terrain": "berlin_approach"
@@ -536,8 +558,9 @@
       "terrain": "plains"
     },
     "3,6": {
-      "terrain": "plains",
-      "city": "Osnabrück"
+      "terrain": "urban",
+      "city": "Osnabrück",
+      "income": 0
     },
     "4,6": {
       "terrain": "plains"
@@ -558,21 +581,21 @@
       "terrain": "plains"
     },
     "10,6": {
-      "terrain": "plains"
+      "terrain": "berlin_approach"
     },
     "11,6": {
-      "terrain": "plains"
+      "terrain": "berlin_approach"
     },
     "12,6": {
-      "terrain": "plains",
+      "terrain": "urban",
       "city": "Berlin",
       "income": 3
     },
     "13,6": {
-      "terrain": "plains"
+      "terrain": "berlin_approach"
     },
     "14,6": {
-      "terrain": "plains"
+      "terrain": "berlin_approach"
     },
     "15,6": {
       "terrain": "plains"
@@ -599,22 +622,25 @@
       "terrain": "plains"
     },
     "5,7": {
-      "terrain": "plains",
-      "city": "Bielefeld"
+      "terrain": "urban",
+      "city": "Bielefeld",
+      "income": 0
     },
     "6,7": {
       "terrain": "plains"
     },
     "7,7": {
-      "terrain": "plains",
-      "city": "Hannover"
+      "terrain": "urban",
+      "city": "Hannover",
+      "income": 0
     },
     "8,7": {
       "terrain": "plains"
     },
     "9,7": {
-      "terrain": "plains",
-      "city": "Braunschweig"
+      "terrain": "urban",
+      "city": "Braunschweig",
+      "income": 0
     },
     "10,7": {
       "terrain": "berlin_approach"
@@ -623,7 +649,7 @@
       "terrain": "berlin_approach"
     },
     "12,7": {
-      "terrain": "plains"
+      "terrain": "berlin_approach"
     },
     "13,7": {
       "terrain": "berlin_approach"
@@ -635,8 +661,9 @@
       "terrain": "plains"
     },
     "16,7": {
-      "terrain": "plains",
-      "city": "Posen"
+      "terrain": "urban",
+      "city": "Posen",
+      "income": 0
     },
     "17,7": {
       "terrain": "plains"
@@ -645,22 +672,25 @@
       "terrain": "plains"
     },
     "1,8": {
-      "terrain": "plains",
-      "city": "Wesel"
+      "terrain": "urban",
+      "city": "Wesel",
+      "income": 0
     },
     "2,8": {
       "terrain": "plains"
     },
     "3,8": {
-      "terrain": "plains",
-      "city": "Münster"
+      "terrain": "urban",
+      "city": "Münster",
+      "income": 0
     },
     "4,8": {
       "terrain": "plains"
     },
     "5,8": {
-      "terrain": "plains",
-      "city": "Hamm"
+      "terrain": "urban",
+      "city": "Hamm",
+      "income": 0
     },
     "6,8": {
       "terrain": "plains"
@@ -675,14 +705,15 @@
       "terrain": "plains"
     },
     "10,8": {
-      "terrain": "plains",
-      "city": "Magdeburg"
+      "terrain": "urban",
+      "city": "Magdeburg",
+      "income": 0
     },
     "11,8": {
       "terrain": "berlin_approach"
     },
     "12,8": {
-      "terrain": "plains"
+      "terrain": "berlin_approach"
     },
     "13,8": {
       "terrain": "plains"
@@ -691,8 +722,9 @@
       "terrain": "plains"
     },
     "15,8": {
-      "terrain": "plains",
-      "city": "Frankfurt an der Oder"
+      "terrain": "urban",
+      "city": "Frankfurt an der Oder",
+      "income": 0
     },
     "16,8": {
       "terrain": "plains"
@@ -725,8 +757,9 @@
       "terrain": "plains"
     },
     "8,9": {
-      "terrain": "plains",
-      "city": "Göttingen"
+      "terrain": "urban",
+      "city": "Göttingen",
+      "income": 0
     },
     "9,9": {
       "terrain": "plains"
@@ -756,22 +789,25 @@
       "terrain": "plains"
     },
     "0,10": {
-      "terrain": "plains",
-      "city": "Duisburg"
+      "terrain": "urban",
+      "city": "Duisburg",
+      "income": 0
     },
     "1,10": {
       "terrain": "plains"
     },
     "2,10": {
-      "terrain": "plains",
-      "city": "Essen"
+      "terrain": "urban",
+      "city": "Essen",
+      "income": 0
     },
     "3,10": {
       "terrain": "plains"
     },
     "4,10": {
-      "terrain": "plains",
-      "city": "Dortmund"
+      "terrain": "urban",
+      "city": "Dortmund",
+      "income": 0
     },
     "5,10": {
       "terrain": "hills"
@@ -792,14 +828,15 @@
       "terrain": "plains"
     },
     "11,10": {
-      "terrain": "plains",
-      "city": "Halle"
+      "terrain": "urban",
+      "city": "Halle",
+      "income": 0
     },
     "12,10": {
       "terrain": "plains"
     },
     "13,10": {
-      "terrain": "plains",
+      "terrain": "urban",
       "city": "Leipzig",
       "income": 2
     },
@@ -807,12 +844,14 @@
       "terrain": "plains"
     },
     "15,10": {
-      "terrain": "plains",
-      "city": "Kottbus"
+      "terrain": "urban",
+      "city": "Kottbus",
+      "income": 0
     },
     "16,10": {
-      "terrain": "plains",
-      "city": "Liegnitz"
+      "terrain": "urban",
+      "city": "Liegnitz",
+      "income": 0
     },
     "17,10": {
       "terrain": "plains"
@@ -842,15 +881,17 @@
       "terrain": "hills"
     },
     "8,11": {
-      "terrain": "plains",
-      "city": "Kassel"
+      "terrain": "urban",
+      "city": "Kassel",
+      "income": 0
     },
     "9,11": {
       "terrain": "plains"
     },
     "10,11": {
-      "terrain": "hills",
-      "city": "Mühlhausen"
+      "terrain": "urban",
+      "city": "Mühlhausen",
+      "income": 0
     },
     "11,11": {
       "terrain": "plains"
@@ -871,7 +912,7 @@
       "terrain": "plains"
     },
     "17,11": {
-      "terrain": "plains",
+      "terrain": "urban",
       "city": "Breslau",
       "income": 2
     },
@@ -879,8 +920,9 @@
       "terrain": "hills"
     },
     "1,12": {
-      "terrain": "hills",
-      "city": "Düsseldorf"
+      "terrain": "urban",
+      "city": "Düsseldorf",
+      "income": 0
     },
     "2,12": {
       "terrain": "hills"
@@ -910,8 +952,9 @@
       "terrain": "plains"
     },
     "11,12": {
-      "terrain": "plains",
-      "city": "Erfurt"
+      "terrain": "urban",
+      "city": "Erfurt",
+      "income": 0
     },
     "12,12": {
       "terrain": "plains"
@@ -920,13 +963,14 @@
       "terrain": "plains"
     },
     "14,12": {
-      "terrain": "plains",
+      "terrain": "urban",
       "city": "Dresden",
       "income": 2
     },
     "15,12": {
-      "terrain": "plains",
-      "city": "Görlitz"
+      "terrain": "urban",
+      "city": "Görlitz",
+      "income": 0
     },
     "16,12": {
       "terrain": "plains"
@@ -944,7 +988,7 @@
       "terrain": "hills"
     },
     "3,13": {
-      "terrain": "hills",
+      "terrain": "urban",
       "city": "Köln",
       "income": 2
     },
@@ -952,8 +996,9 @@
       "terrain": "hills"
     },
     "5,13": {
-      "terrain": "hills",
-      "city": "Koblenz"
+      "terrain": "urban",
+      "city": "Koblenz",
+      "income": 0
     },
     "6,13": {
       "terrain": "hills"
@@ -977,8 +1022,9 @@
       "terrain": "plains"
     },
     "13,13": {
-      "terrain": "plains",
-      "city": "Chemnitz"
+      "terrain": "urban",
+      "city": "Chemnitz",
+      "income": 0
     },
     "14,13": {
       "terrain": "plains"
@@ -990,12 +1036,14 @@
       "terrain": "plains"
     },
     "17,13": {
-      "terrain": "plains",
-      "city": "Waldenburg"
+      "terrain": "urban",
+      "city": "Waldenburg",
+      "income": 0
     },
     "0,14": {
-      "terrain": "hills",
-      "city": "Aachen"
+      "terrain": "urban",
+      "city": "Aachen",
+      "income": 0
     },
     "1,14": {
       "terrain": "hills"
@@ -1019,7 +1067,7 @@
       "terrain": "hills"
     },
     "8,14": {
-      "terrain": "hills",
+      "terrain": "urban",
       "city": "Frankfurt am Main",
       "income": 2
     },
@@ -1033,8 +1081,9 @@
       "terrain": "hills"
     },
     "12,14": {
-      "terrain": "hills",
-      "city": "Plauen"
+      "terrain": "urban",
+      "city": "Plauen",
+      "income": 0
     },
     "13,14": {
       "terrain": "hills"
@@ -1070,8 +1119,9 @@
       "terrain": "hills"
     },
     "6,15": {
-      "terrain": "hills",
-      "city": "Mainz"
+      "terrain": "urban",
+      "city": "Mainz",
+      "income": 0
     },
     "7,15": {
       "terrain": "hills"
@@ -1083,15 +1133,17 @@
       "terrain": "hills"
     },
     "10,15": {
-      "terrain": "hills",
-      "city": "Würzburg"
+      "terrain": "urban",
+      "city": "Würzburg",
+      "income": 0
     },
     "11,15": {
       "terrain": "hills"
     },
     "12,15": {
-      "terrain": "hills",
-      "city": "Bamberg"
+      "terrain": "urban",
+      "city": "Bamberg",
+      "income": 0
     },
     "13,15": {
       "terrain": "hills"
@@ -1118,8 +1170,9 @@
       "terrain": "hills"
     },
     "3,16": {
-      "terrain": "hills",
-      "city": "Saarbrücken"
+      "terrain": "urban",
+      "city": "Saarbrücken",
+      "income": 0
     },
     "4,16": {
       "terrain": "hills"
@@ -1188,7 +1241,7 @@
       "terrain": "hills"
     },
     "8,17": {
-      "terrain": "hills",
+      "terrain": "urban",
       "city": "Mannheim",
       "income": 1
     },
@@ -1205,8 +1258,9 @@
       "terrain": "hills"
     },
     "13,17": {
-      "terrain": "hills",
-      "city": "Nürnberg"
+      "terrain": "urban",
+      "city": "Nürnberg",
+      "income": 0
     },
     "14,17": {
       "terrain": "hills"
@@ -1266,8 +1320,15 @@
       "terrain": "hills"
     },
     "15,18": {
-      "terrain": "plains",
-      "city": "Regensburg"
+      "terrain": "urban",
+      "city": "Regensburg",
+      "income": 0
+    },
+    "16,18": {
+      "terrain": "plains"
+    },
+    "17,18": {
+      "terrain": "plains"
     },
     "0,19": {
       "terrain": "mountains"
@@ -1288,15 +1349,17 @@
       "terrain": "mountains"
     },
     "6,19": {
-      "terrain": "mountains",
-      "city": "Karlsruhe"
+      "terrain": "urban",
+      "city": "Karlsruhe",
+      "income": 0
     },
     "7,19": {
       "terrain": "mountains"
     },
     "8,19": {
-      "terrain": "plains",
-      "city": "Heilbronn"
+      "terrain": "urban",
+      "city": "Heilbronn",
+      "income": 0
     },
     "9,19": {
       "terrain": "plains"
@@ -1308,6 +1371,15 @@
       "terrain": "plains"
     },
     "12,19": {
+      "terrain": "plains"
+    },
+    "13,19": {
+      "terrain": "plains"
+    },
+    "14,19": {
+      "terrain": "plains"
+    },
+    "15,19": {
       "terrain": "plains"
     },
     "0,20": {
@@ -1323,8 +1395,9 @@
       "terrain": "mountains"
     },
     "4,20": {
-      "terrain": "plains",
-      "city": "Strasbourg"
+      "terrain": "urban",
+      "city": "Strasbourg",
+      "income": 0
     },
     "5,20": {
       "terrain": "mountains"
@@ -1339,36 +1412,54 @@
       "terrain": "mountains"
     },
     "9,20": {
-      "terrain": "plains",
-      "city": "Stuttgart"
+      "terrain": "urban",
+      "city": "Stuttgart",
+      "income": 0
     },
-    "0,21": {
+    "10,20": {
       "terrain": "mountains"
     },
-    "1,21": {
+    "11,20": {
       "terrain": "mountains"
     },
-    "2,21": {
+    "12,20": {
       "terrain": "mountains"
     },
-    "3,21": {
-      "terrain": "mountains"
-    },
-    "4,21": {
+    "14,20": {
       "terrain": "plains"
     },
+    "5,21": {
+      "terrain": "mountains"
+    },
+    "6,21": {
+      "terrain": "mountains"
+    },
+    "7,21": {
+      "terrain": "mountains"
+    },
+    "8,21": {
+      "terrain": "mountains"
+    },
     "12,21": {
-      "terrain": "plains",
-      "city": "Augsburg"
+      "terrain": "urban",
+      "city": "Augsburg",
+      "income": 0
+    },
+    "14,21": {
+      "terrain": "mountains"
+    },
+    "5,22": {
+      "terrain": "mountains"
     },
     "14,22": {
-      "terrain": "plains",
+      "terrain": "urban",
       "city": "München",
       "income": 3
     },
     "5,23": {
-      "terrain": "plains",
-      "city": "Freiburg im Breisgau"
+      "terrain": "urban",
+      "city": "Freiburg im Breisgau",
+      "income": 0
     }
   }
 }
