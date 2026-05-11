@@ -28,14 +28,14 @@ export const PrussianRailsBoard: React.FC = () => {
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [calibrationMode, setCalibrationMode] = useState(false);
-  const [overlayTranslateX, setOverlayTranslateX] = useState(0);
-  const [overlayTranslateY, setOverlayTranslateY] = useState(0);
-  const [overlayScaleX, setOverlayScaleX] = useState(1);
-  const [overlayScaleY, setOverlayScaleY] = useState(1);
+  const [overlayTranslateX, setOverlayTranslateX] = useState(-320);
+  const [overlayTranslateY, setOverlayTranslateY] = useState(56.5);
+  const [overlayScaleX, setOverlayScaleX] = useState(1.06);
+  const [overlayScaleY, setOverlayScaleY] = useState(1.057);
   const [overlayRotation, setOverlayRotation] = useState(0);
   const [overlayOpacity, setOverlayOpacity] = useState(0.35);
   const [showOverlay, setShowOverlay] = useState(true);
-  const [hexSpacing, setHexSpacing] = useState(1);
+  const [hexSpacing, setHexSpacing] = useState(1.16);
   const historyEndRef = useRef<HTMLDivElement>(null);
 
   if (!gameState || !gameState.map_data) return null;
