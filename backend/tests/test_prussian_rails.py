@@ -586,7 +586,6 @@ class TestGameOver:
         for cid in state.companies:
             state.companies[cid].track_remaining = 0
         # Pass to trigger _advance_turn -> _check_game_over
-        # May need to pass multiple times to cycle through players and end a round
         for _ in range(10):
             if state.is_game_over:
                 break
@@ -597,13 +596,16 @@ class TestGameOver:
         assert state.is_game_over, "Game should end when all track cubes exhausted"
 
     def test_game_over_berlin_reached(self, engine, two_player_state):
-        """Game can end when Berlin is reached."""
+        """Game ends when a company builds track on a Berlin city hex."""
         state = complete_initial_auctions(engine, two_player_state, list(two_player_state.player_cash.keys()))
-        # Force Berlin approach used + no tracks left
-        state.berlin_approach_used = {cid: True for cid in state.companies}
-        for cid in state.companies:
-            state.companies[cid].track_remaining = 0
-        for _ in range(10):
+        p = state.get_current_actor()
+        my_companies = [c for c, ct in state.shares.get(p, {}).items() if ct > 0]
+        if not my_companies:
+            pytest.skip("Player won no companies")
+        # Add Berlin city hexes to board to simulate having reached Berlin
+        state.board["14,6"] = [my_companies[0]]
+        # Trigger game-over check
+        for _ in range(5):
             if state.is_game_over:
                 break
             current = state.get_current_actor()

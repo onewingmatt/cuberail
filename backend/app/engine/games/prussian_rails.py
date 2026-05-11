@@ -394,10 +394,16 @@ class PrussianRailsEngine(GameEngine, AuctionManager, StockMarket):
         all_exhausted = all(
             c.track_remaining == 0 for c in state.companies.values()
         )
-        # Condition 2: Any company has reached Berlin
+        # Condition 2: Any company has reached Berlin's city hexes
+        # (not just the approach ring — approach hexes are gateways,
+        # game ends when a company builds into Berlin itself)
+        berlin_city_hexes = set()
+        for key, val in state.hex_grid._hexes.items():
+            city = val.get("city", "")
+            if city == "Berlin" or city.startswith("Berlin_"):
+                berlin_city_hexes.add(key)
         berlin_reached = any(
-            state.berlin_approach_used.get(cid, False)
-            for cid in state.companies
+            k in state.board for k in berlin_city_hexes
         )
         # Condition 3: Maximum rounds reached (safety limit)
         max_rounds = 50
