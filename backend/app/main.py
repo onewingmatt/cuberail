@@ -11,8 +11,11 @@ fastapi_app = FastAPI(title="Cube Rail API")
 
 from app.config import settings
 
+from datetime import timedelta
+
 class JWTSettings(BaseModel):
     authjwt_secret_key: str = settings.SECRET_KEY
+    authjwt_access_token_expires: timedelta = timedelta(days=7)
 
 @AuthJWT.load_config
 def get_config():

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuthStore } from '../store';
@@ -21,9 +21,13 @@ export const Lobby: React.FC = () => {
   const [botCount, setBotCount] = useState(0);
   const [openGames, setOpenGames] = useState<OpenGame[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const clearError = useCallback(() => setError(null), []);
 
   const fetchOpenGames = async () => {
     try {
+      setError(null);
       const response = await axios.get(`${API_BASE}/api/games/`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
@@ -42,7 +46,12 @@ export const Lobby: React.FC = () => {
   }, []);
 
   const handleCreateGame = async (gameType: string) => {
+    setError(null);
     try {
+      if (!token) {
+        setError('Not logged in. Please log in first.');
+        return;
+      }
       const response = await axios.post(
         `${API_BASE}/api/games/?game_type=${gameType}&mode=${mode}&bot_count=${botCount}`,
         {},
@@ -51,12 +60,18 @@ export const Lobby: React.FC = () => {
       if (response.data && response.data.game_id) {
         navigate(`/game/${response.data.game_id}`);
       }
-    } catch (err) {
-      console.error('Failed to create game', err);
+    } catch (err: any) {
+      const msg = err?.response?.data?.detail || err?.message || 'Failed to create game';
+      if (msg.includes('expired') || msg.includes('Signature')) {
+        setError('Session expired. Please log out and log in again.');
+      } else {
+        setError(msg);
+      }
     }
   };
 
   const handleJoinGame = async (gameId: string) => {
+    setError(null);
     try {
       await axios.post(
         `${API_BASE}/api/games/${gameId}/join`,
@@ -64,8 +79,9 @@ export const Lobby: React.FC = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       navigate(`/game/${gameId}`);
-    } catch (err) {
-      console.error('Failed to join game', err);
+    } catch (err: any) {
+      const msg = err?.response?.data?.detail || err?.message || 'Failed to join game';
+      setError(msg);
     }
   };
 
@@ -80,6 +96,13 @@ export const Lobby: React.FC = () => {
   return (
     <div className="p-8 max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Game Lobby</h1>
+
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 flex justify-between items-start">
+          <span className="text-sm">{error}</span>
+          <button onClick={clearError} className="ml-2 text-red-500 hover:text-red-700 cursor-pointer">&times;</button>
+        </div>
+      )}
 
       <div className="bg-white p-6 rounded-lg shadow">
         <h2 className="text-xl font-semibold mb-4">Start a New Game</h2>
