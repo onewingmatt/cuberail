@@ -115,6 +115,10 @@ export const PrussianRailsBoard: React.FC = () => {
           onHexClick={isMyTurn && gameState.phase === 'round' && !gameState.auction_state ? handleHexClick : undefined}
           selectedHex={selectedHex}
           showTerrainLabels={false}
+          minQ={mapData.grid_bounds?.q_min ?? 0}
+          maxQ={mapData.grid_bounds?.q_max ?? 17}
+          minR={mapData.grid_bounds?.r_min ?? 0}
+          maxR={mapData.grid_bounds?.r_max ?? 17}
         />
 
         {/* Sidebar */}

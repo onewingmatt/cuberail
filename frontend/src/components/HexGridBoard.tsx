@@ -117,24 +117,71 @@ export const HexGridBoard: React.FC<HexGridBoardProps> = ({
   const panStart = useRef({ x: 0, y: 0 });
   const offsetAtPanStart = useRef({ x: 0, y: 0 });
   const svgRef = useRef<SVGSVGElement>(null);
+  const [viewDims, setViewDims] = useState({ w: 800, h: 600 });
 
   const effectiveScale = scale * internalScale;
   const effectiveOffsetX = offsetX + internalOffsetX;
   const effectiveOffsetY = offsetY + internalOffsetY;
 
-  // Compute grid dimensions for viewport
+  // Compute grid bounds from actual hex data
   const allHexes = Object.keys(hexes);
-  let gridW = 800, gridH = 600;
+  let gridMinX = 0, gridMaxX = 800, gridMinY = 0, gridMaxY = 600;
   if (allHexes.length > 0) {
-    const pixelPositions = allHexes.map(key => {
+    const validHexes = allHexes.filter(key => {
+      const [q, r] = key.split(',').map(Number);
+      if (q < minQ || q > maxQ || r < minR || r > maxR) return false;
+      const h = hexes[key];
+      return h && h.terrain !== 'water';
+    });
+    const pixelPositions = validHexes.map(key => {
       const [q, r] = key.split(',').map(Number);
       return hexToPixel(q, r, hexSize);
     });
     const xs = pixelPositions.map(p => p.x);
     const ys = pixelPositions.map(p => p.y);
-    gridW = Math.max(...xs) - Math.min(...xs) + hexSize * 3;
-    gridH = Math.max(...ys) - Math.min(...ys) + hexSize * 3;
+    gridMinX = Math.min(...xs) - hexSize;
+    gridMaxX = Math.max(...xs) + hexSize;
+    gridMinY = Math.min(...ys) - hexSize;
+    gridMaxY = Math.max(...ys) + hexSize;
   }
+
+  // Auto-fit on mount: scale to fill viewport
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg || allHexes.length === 0) return;
+    const parent = svg.parentElement;
+    const vw = parent?.clientWidth || 800;
+    const vh = parent?.clientHeight || 600;
+    setViewDims({ w: vw, h: vh });
+
+    const gridW = gridMaxX - gridMinX;
+    const gridH = gridMaxY - gridMinY;
+    if (gridW <= 0 || gridH <= 0) return;
+    const fitScale = Math.min(vw / gridW, vh / gridH, 1.5);
+    const cx = (gridMinX + gridMaxX) / 2;
+    const cy = (gridMinY + gridMaxY) / 2;
+    setInternalScale(fitScale);
+    setInternalOffsetX(vw / 2 - cx * fitScale);
+    setInternalOffsetY(vh / 2 - cy * fitScale);
+  }, []); // run once on mount
+
+  const fitToView = () => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    const parent = svg.parentElement;
+    const vw = parent?.clientWidth || 800;
+    const vh = parent?.clientHeight || 600;
+    setViewDims({ w: vw, h: vh });
+    const gridW = gridMaxX - gridMinX;
+    const gridH = gridMaxY - gridMinY;
+    if (gridW <= 0 || gridH <= 0) return;
+    const fitScale = Math.min(vw / gridW, vh / gridH, 1.5);
+    const cx = (gridMinX + gridMaxX) / 2;
+    const cy = (gridMinY + gridMaxY) / 2;
+    setInternalScale(fitScale);
+    setInternalOffsetX(vw / 2 - cx * fitScale);
+    setInternalOffsetY(vh / 2 - cy * fitScale);
+  };
 
   // Wheel zoom
   useEffect(() => {
@@ -277,13 +324,16 @@ export const HexGridBoard: React.FC<HexGridBoardProps> = ({
     <div className="relative">
       <svg
         ref={svgRef}
-        width={800}
-        height={600}
+        width={viewDims.w}
+        height={viewDims.h}
         style={{
           border: '1px solid #ccc',
           borderRadius: 4,
           cursor: isPanning ? 'grabbing' : 'grab',
           background: '#7ab8e0', // water color
+          width: '100%',
+          height: '100%',
+          minHeight: 500,
         }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
@@ -306,7 +356,7 @@ export const HexGridBoard: React.FC<HexGridBoardProps> = ({
           className="bg-white/80 hover:bg-white border border-gray-300 rounded w-8 h-8 flex items-center justify-center text-lg font-bold shadow-sm cursor-pointer"
         >-</button>
         <button
-          onClick={() => { setInternalScale(1); setInternalOffsetX(0); setInternalOffsetY(0); }}
+          onClick={fitToView}
           className="bg-white/80 hover:bg-white border border-gray-300 rounded w-8 h-8 flex items-center justify-center text-xs font-bold shadow-sm cursor-pointer"
         >Fit</button>
         <div className="bg-white/80 border border-gray-300 rounded text-xs text-center py-1 px-1 shadow-sm select-none">{zoomPercent}%</div>
