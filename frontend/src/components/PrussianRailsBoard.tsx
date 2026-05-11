@@ -119,6 +119,7 @@ export const PrussianRailsBoard: React.FC = () => {
           maxQ={mapData.grid_bounds?.q_max ?? 17}
           minR={mapData.grid_bounds?.r_min ?? 0}
           maxR={mapData.grid_bounds?.r_max ?? 17}
+          backgroundImage={mapData.background_image || null}
         />
 
         {/* Sidebar */}

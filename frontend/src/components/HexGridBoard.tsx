@@ -90,6 +90,10 @@ interface HexGridBoardProps {
   maxQ?: number;
   minR?: number;
   maxR?: number;
+  backgroundImage?: string | null;
+  imageOffsetX?: number;
+  imageOffsetY?: number;
+  imageScale?: number;
 }
 
 export const HexGridBoard: React.FC<HexGridBoardProps> = ({
@@ -108,6 +112,10 @@ export const HexGridBoard: React.FC<HexGridBoardProps> = ({
   maxQ = 17,
   minR = 0,
   maxR = 17,
+  backgroundImage = null,
+  imageOffsetX = 0,
+  imageOffsetY = 0,
+  imageScale = 1,
 }) => {
   const [internalScale, setInternalScale] = useState(1);
   const [internalOffsetX, setInternalOffsetX] = useState(0);
@@ -320,6 +328,12 @@ export const HexGridBoard: React.FC<HexGridBoardProps> = ({
 
   const zoomPercent = Math.round(effectiveScale * 100);
 
+  // Compute background image dimensions to cover the grid
+  const gridPixelW = gridMaxX - gridMinX;
+  const gridPixelH = gridMaxY - gridMinY;
+  const imgW = gridPixelW * imageScale;
+  const imgH = gridPixelH * imageScale;
+
   return (
     <div className="relative">
       <svg
@@ -342,6 +356,17 @@ export const HexGridBoard: React.FC<HexGridBoardProps> = ({
       >
         <g transform={`translate(${effectiveOffsetX}, ${effectiveOffsetY}) scale(${effectiveScale})`}
            style={{ transformOrigin: '0 0' }}>
+          {/* Background image */}
+          {backgroundImage && (
+            <image
+              href={backgroundImage}
+              x={gridMinX + imageOffsetX}
+              y={gridMinY + imageOffsetY}
+              width={imgW}
+              height={imgH}
+              style={{ opacity: 0.4, pointerEvents: 'none' }}
+            />
+          )}
           {hexElements}
         </g>
       </svg>
