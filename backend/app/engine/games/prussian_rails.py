@@ -149,6 +149,7 @@ class PrussianRailsState(GameState):
             "board": board_serializable,
             "auction_state": self.auction_state,
             "game_over": self.is_game_over,
+            "winner": getattr(self, "winner", None),
             "map_data": self._raw_map,
             "player_turn_order": self.player_turn_order,
             "turn_position": self.turn_position,
@@ -389,26 +390,32 @@ class PrussianRailsEngine(GameEngine, AuctionManager, StockMarket):
                 self._start_new_round(state)
 
     def _check_game_over(self, state: PrussianRailsState) -> bool:
-        """Check if game-end conditions are met. Sets is_game_over if so."""
-        # Condition 1: All companies have exhausted track cubes
-        all_exhausted = all(
-            c.track_remaining == 0 for c in state.companies.values()
-        )
-        # Condition 2: Any company has reached Berlin's city hexes
-        # (not just the approach ring — approach hexes are gateways,
-        # game ends when a company builds into Berlin itself)
-        berlin_city_hexes = set()
-        for key, val in state.hex_grid._hexes.items():
-            city = val.get("city", "")
-            if city == "Berlin" or city.startswith("Berlin_"):
-                berlin_city_hexes.add(key)
-        berlin_reached = any(
-            k in state.board for k in berlin_city_hexes
-        )
-        # Condition 3: Maximum rounds reached (safety limit)
+        """
+        Real rules: game ends when ALL companies are connected to
+        at least TWO other companies (or when no further connections are possible).
+        Most cash wins at game end.
+        """
+        # Count connections per company
+        connection_count: Dict[str, int] = {cid: 0 for cid in state.companies}
+        for cid_a, cid_b in state.connected_pairs:
+            connection_count[cid_a] = connection_count.get(cid_a, 0) + 1
+            connection_count[cid_b] = connection_count.get(cid_b, 0) + 1
+
+        # Condition: every company has >= 2 connections
+        all_connected = all(count >= 2 for count in connection_count.values())
+
+        # Safety: max rounds
         max_rounds = 50
-        if all_exhausted or berlin_reached or state.current_round_number >= max_rounds:
+
+        if all_connected or state.current_round_number >= max_rounds:
             state.is_game_over = True
+            # Determine winner: most cash
+            if state.player_cash:
+                winner = max(state.player_cash, key=lambda p: state.player_cash[p])
+                state.winner = winner
+                state.move_history.append(
+                    f"Game over! {winner} wins with ${state.player_cash[winner]}"
+                )
             return True
         return False
 

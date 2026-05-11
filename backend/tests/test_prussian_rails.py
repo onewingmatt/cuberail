@@ -579,32 +579,33 @@ class TestCompanyAbilities:
 class TestGameOver:
     """Test game-end conditions."""
 
-    def test_game_over_all_tracks_exhausted(self, engine, two_player_state):
-        """Game ends when all tracks cubes are used."""
+    def test_game_over_all_connected(self, engine, two_player_state):
+        """Game ends when all companies have >= 2 connections."""
         state = complete_initial_auctions(engine, two_player_state, list(two_player_state.player_cash.keys()))
-        # Exhaust all track cubes
-        for cid in state.companies:
-            state.companies[cid].track_remaining = 0
+        # Simulate all companies having at least 2 connections each
+        state.connected_pairs.add(("Preußische Ostbahn", "Niederschlesisch-Märkische"))
+        state.connected_pairs.add(("Preußische Ostbahn", "Königlich-Sächsische"))
+        state.connected_pairs.add(("Niederschlesisch-Märkische", "Königlich-Bayerische"))
+        state.connected_pairs.add(("Königlich-Sächsische", "Main-Weser-Bahn"))
+        state.connected_pairs.add(("Main-Weser-Bahn", "Großherzoglich Badische"))
+        state.connected_pairs.add(("Großherzoglich Badische", "Köln-Mindener"))
+        state.connected_pairs.add(("Köln-Mindener", "Berlin-Hamburger"))
+        state.connected_pairs.add(("Königlich-Bayerische", "Berlin-Hamburger"))
         # Pass to trigger _advance_turn -> _check_game_over
-        for _ in range(10):
+        for _ in range(5):
             if state.is_game_over:
                 break
             current = state.get_current_actor()
             if not current:
                 break
             state = do_pass(engine, state, current)
-        assert state.is_game_over, "Game should end when all track cubes exhausted"
+        assert state.is_game_over, "Game should end when all companies have 2+ connections"
+        assert hasattr(state, 'winner'), "Game over should declare a winner"
 
-    def test_game_over_berlin_reached(self, engine, two_player_state):
-        """Game ends when a company builds track on a Berlin city hex."""
+    def test_game_over_max_rounds(self, engine, two_player_state):
+        """Safety limit: game ends at 50 rounds."""
         state = complete_initial_auctions(engine, two_player_state, list(two_player_state.player_cash.keys()))
-        p = state.get_current_actor()
-        my_companies = [c for c, ct in state.shares.get(p, {}).items() if ct > 0]
-        if not my_companies:
-            pytest.skip("Player won no companies")
-        # Add Berlin city hexes to board to simulate having reached Berlin
-        state.board["14,6"] = [my_companies[0]]
-        # Trigger game-over check
+        state.current_round_number = 50
         for _ in range(5):
             if state.is_game_over:
                 break
