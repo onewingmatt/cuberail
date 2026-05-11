@@ -365,7 +365,7 @@ export const HexGridBoard: React.FC<HexGridBoardProps> = ({
   const imgH = gridPixelH * imageScale;
 
   return (
-    <div className="relative">
+    <div class="relative h-full">
       <svg
           ref={svgRef}
           width="100%"
@@ -375,7 +375,7 @@ export const HexGridBoard: React.FC<HexGridBoardProps> = ({
             borderRadius: 4,
             cursor: isPanning ? 'grabbing' : 'grab',
             background: '#fff',
-            minHeight: 500,
+            minHeight: '100%',
           }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}

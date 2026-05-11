@@ -109,8 +109,8 @@ export const PrussianRailsBoard: React.FC = () => {
   const winnerName = winnerId ? getUserName(winnerId, players) : null;
 
   return (
-    <div className="flex flex-col items-center p-4">
-      <h2 className="text-2xl font-bold mb-1">Prussian Rails</h2>
+    <div class="flex flex-col items-center p-4 min-h-screen">
+      <h2 class="text-2xl font-bold mb-1">Prussian Rails</h2>
       <div className="mb-3 flex gap-2 flex-wrap items-center">
         <button
           onClick={() => setCalibrationMode(v => !v)}
@@ -180,7 +180,7 @@ export const PrussianRailsBoard: React.FC = () => {
         </div>
       )}
 
-      <div class="flex gap-4 w-full max-w-[1600px] mx-auto">
+      <div class="flex gap-4 w-full max-w-[1600px] mx-auto flex-1 min-h-0">
         {calibrationMode ? (
           <PrussianRailsCalibrator
             hexes={hexes}
@@ -189,7 +189,7 @@ export const PrussianRailsBoard: React.FC = () => {
         ) : (
           <>
         {/* Hex Map */}
-        <div class="flex-1 min-w-0">
+        <div class="flex-1 min-w-0 h-full flex flex-col">
         <HexGridBoard
           hexes={hexes}
           hexSize={mapData.hex_size || 40}
