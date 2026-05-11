@@ -405,7 +405,7 @@ export const HexGridBoard: React.FC<HexGridBoardProps> = ({
               `rotate(${overlayRotation}) ` +
               `scale(${overlayScaleX} ${overlayScaleY})`
             }
-            style={{ transformOrigin: '0 0', opacity: showOverlay ? 1 : 0 }}
+            style={{ transformOrigin: '0 0' }}
           >
             {hexElements}
           </g>
