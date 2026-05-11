@@ -313,8 +313,8 @@ export const HexGridBoard: React.FC<HexGridBoardProps> = ({
             {TERRAIN_LABELS[terrain] || terrain[0].toUpperCase()}
           </text>
         )}
-        {/* City name */}
-        {hex.city && (
+        {/* City name — only when overlay is on (board image has printed labels) */}
+        {hex.city && showOverlay && (
           <text
             x={center.x}
             y={center.y - 4}
