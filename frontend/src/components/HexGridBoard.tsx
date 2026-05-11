@@ -374,7 +374,7 @@ export const HexGridBoard: React.FC<HexGridBoardProps> = ({
           border: '1px solid #ccc',
           borderRadius: 4,
           cursor: isPanning ? 'grabbing' : 'grab',
-          background: '#7ab8e0', // water color
+          background: '#fff',
           width: '100%',
           height: '100%',
           minHeight: 500,
@@ -394,7 +394,7 @@ export const HexGridBoard: React.FC<HexGridBoardProps> = ({
               y={0}
               width={1409}
               height={1046}
-              style={{ opacity: 0.35, pointerEvents: 'none', imageRendering: 'auto' }}
+              style={{ opacity: 1, pointerEvents: 'none', imageRendering: 'auto' }}
             />
           )}
           {showOverlay && (
