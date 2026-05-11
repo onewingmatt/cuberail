@@ -23,11 +23,14 @@ export function hexToPixel(q: number, r: number, size: number): { x: number; y: 
 export function hexCornerPath(q: number, r: number, size: number): string {
   const { x: cx, y: cy } = hexToPixel(q, r, size);
   const corners: string[] = [];
+  // Slightly oversize the drawn polygon so adjacent hex fills overlap by ~1px.
+  // This avoids hairline gaps from SVG antialiasing and tiny geometry mismatch.
+  const renderSize = size + 0.9;
   for (let i = 0; i < 6; i++) {
     // Rotate 30° so the hex is pointy-top (points face north/south)
     const angleDeg = 60 * i + 30;
     const angleRad = Math.PI / 180 * angleDeg;
-    corners.push(`${cx + size * Math.cos(angleRad)},${cy + size * Math.sin(angleRad)}`);
+    corners.push(`${cx + renderSize * Math.cos(angleRad)},${cy + renderSize * Math.sin(angleRad)}`);
   }
   return `M ${corners.join(' L ')} Z`;
 }
@@ -287,6 +290,9 @@ export const HexGridBoard: React.FC<HexGridBoardProps> = ({
           strokeWidth={isSelected ? 3 : (isHighlighted ? 2.5 : 1)}
           opacity={overlayOpacity}
           style={{ transition: 'opacity 0.2s' }}
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          shapeRendering="geometricPrecision"
           onMouseEnter={(e) => { if (!isSelected) (e.currentTarget as SVGElement).style.opacity = String(Math.min(1, overlayOpacity + 0.2)); }}
           onMouseLeave={(e) => { if (!isSelected) (e.currentTarget as SVGElement).style.opacity = String(overlayOpacity); }}
         />
