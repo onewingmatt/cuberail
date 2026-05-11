@@ -344,14 +344,14 @@ export const HexGridBoard: React.FC<HexGridBoardProps> = ({
         {tracks.map((companyColor: string, idx: number) => (
           <rect
             key={idx}
-            x={center.x - 9 + (idx * 5)}
-            y={center.y + (hex.city ? 16 : 10)}
-            width={4}
-            height={4}
+            x={center.x - 12 + (idx * 7)}
+            y={center.y + (hex.city ? 18 : 12)}
+            width={6}
+            height={6}
             fill={companyColor}
             stroke="#fff"
-            strokeWidth={0.5}
-            rx={0.5}
+            strokeWidth={1}
+            rx={1}
           />
         ))}
         </g>
