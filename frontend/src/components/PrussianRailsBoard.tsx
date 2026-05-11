@@ -1,10 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useGameStore } from '../store';
 import { useWebSocket } from '../hooks/useWebSocket';
 import { HexGridBoard } from './HexGridBoard';
 
-// Decode JWT from localStorage to get current user ID.
 const getCurrentUserId = (): string | null => {
   const token = localStorage.getItem('token');
   if (!token) return null;
@@ -15,20 +14,27 @@ const getCurrentUserId = (): string | null => {
   }
 };
 
+const getUserName = (playerId: string, players: any[]): string => {
+  const p = players?.find((pl: any) => pl.id === playerId);
+  return p?.username || playerId.slice(0, 8);
+};
+
 export const PrussianRailsBoard: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { gameState } = useGameStore();
   const { sendMove } = useWebSocket(id || '', false);
   const [selectedHex, setSelectedHex] = useState<string | null>(null);
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const historyEndRef = useRef<HTMLDivElement>(null);
 
   if (!gameState || !gameState.map_data) return null;
 
   const myUserId = getCurrentUserId();
   const isMyTurn = gameState.current_player === myUserId;
   const isAuctionPhase = gameState.phase === 'auction' && !gameState.round_phase;
+  const players = (gameState as any).players || [];
 
-  // Convert board (list of [key, companies]) to dict for hex renderer
   const boardDict: Record<string, string[]> = {};
   if (Array.isArray(gameState.board)) {
     for (const [key, companies] of gameState.board) {
@@ -46,7 +52,6 @@ export const PrussianRailsBoard: React.FC = () => {
 
   const handleHexClick = useCallback((q: number, r: number) => {
     setSelectedHex(`${q},${r}`);
-    // If in build phase with a company selected, auto-build
     if (selectedCompany && gameState.phase === 'round' && !gameState.auction_state) {
       sendMove('build_track', { hex_path: [[q, r]], company: selectedCompany });
       setSelectedHex(null);
@@ -69,20 +74,35 @@ export const PrussianRailsBoard: React.FC = () => {
     sendMove('pass', {});
   };
 
+  const handleAuctionShare = (companyId: string) => {
+    sendMove('auction_share', { company: companyId });
+  };
+
   const auction = gameState.auction_state;
   const companies = Object.values(gameState.companies || {}) as any[];
+  const moveHistory: string[] = (gameState as any).move_history || [];
+
+  useEffect(() => {
+    if (historyOpen && historyEndRef.current) {
+      historyEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [moveHistory.length, historyOpen]);
 
   const phaseLabel = gameState.phase === 'auction' && !gameState.round_phase ? 'Initial Auction' :
     gameState.phase === 'round' && gameState.auction_state ? 'Share Auction' :
     gameState.phase === 'round' ? `Round ${gameState.round_number || ''} — ${gameState.round_phase || ''}` :
     gameState.phase;
 
+  const currentPlayerName = getUserName(gameState.current_player || '', players);
+
   return (
     <div className="flex flex-col items-center p-4">
       <h2 className="text-2xl font-bold mb-1">Prussian Rails</h2>
 
       {gameState.game_over && (
-        <div className="bg-red-100 text-red-800 p-3 mb-3 rounded">Game Over!</div>
+        <div className="bg-yellow-100 text-yellow-800 p-3 mb-3 rounded font-semibold">
+          Game Over!
+        </div>
       )}
 
       <div className="flex gap-4 w-full justify-center">
@@ -98,17 +118,14 @@ export const PrussianRailsBoard: React.FC = () => {
         />
 
         {/* Sidebar */}
-        <div className="w-64 flex flex-col gap-3">
+        <div className="w-72 flex flex-col gap-3">
           {/* Status */}
           <div className="bg-white p-4 rounded shadow border border-gray-200">
             <h3 className="font-bold border-b pb-2 mb-2">Game Status</h3>
             <p className="text-sm"><span className="font-semibold">Phase:</span> <span className="capitalize">{phaseLabel}</span></p>
             <p className="text-sm">
-              <span className="font-semibold">Turn:</span> {(() => {
-                const cp = gameState.current_player;
-                // Try to find player info
-                return cp ? cp.slice(0, 8) : '—';
-              })()}
+              <span className="font-semibold">Turn:</span> {currentPlayerName}
+              {isMyTurn && <span className="text-green-600 ml-1">(you)</span>}
             </p>
           </div>
 
@@ -123,7 +140,7 @@ export const PrussianRailsBoard: React.FC = () => {
                   </span>
                 </p>
                 <p>Current Bid: ${auction.current_bid}</p>
-                <p>Highest: {auction.highest_bidder ? auction.highest_bidder.slice(0, 8) : 'None'}</p>
+                <p>Highest: {auction.highest_bidder ? getUserName(auction.highest_bidder, players) : 'None'}</p>
               </div>
               {isMyTurn && (
                 <div className="flex gap-2 mt-2">
@@ -157,10 +174,21 @@ export const PrussianRailsBoard: React.FC = () => {
                   <option value="">-- Select Company --</option>
                   {companies.map((c: any) => (
                     <option key={c.id} value={c.id} style={{ color: c.color }}>
-                      {c.id} ({c.track_remaining || '?'} cubes)
+                      {c.id} ({c.track_remaining || '?'} left)
                     </option>
                   ))}
                 </select>
+
+                {selectedCompany && (
+                  <div className="text-xs text-gray-600 space-y-0.5 bg-gray-50 p-2 rounded">
+                    <p>Treasury: <span className="font-medium text-green-700">
+                      ${(gameState as any).company_treasury?.[selectedCompany] || 0}</span>
+                    </p>
+                    <p>Income: <span className="font-medium">
+                      {(gameState as any).company_income?.[selectedCompany] || 0}</span>
+                    </p>
+                  </div>
+                )}
 
                 {selectedHex && selectedCompany ? (
                   <button
@@ -179,30 +207,113 @@ export const PrussianRailsBoard: React.FC = () => {
             </div>
           )}
 
+          {/* Share Auction button */}
+          {gameState.phase === 'round' && !gameState.auction_state && isMyTurn && (
+            <div className="bg-white p-4 rounded shadow border border-gray-200">
+              <h3 className="font-bold border-b pb-2 mb-2">Actions</h3>
+              <div className="flex gap-2">
+                <button onClick={handlePass}
+                  className="bg-gray-500 text-white px-3 py-1 rounded text-xs cursor-pointer hover:bg-gray-600">
+                  Pass Turn
+                </button>
+              </div>
+              <div className="mt-2">
+                <p className="text-xs text-gray-500 mb-1">Auction a share:</p>
+                <select
+                  className="border rounded p-1 text-xs w-full"
+                  onChange={(e) => { if (e.target.value) handleAuctionShare(e.target.value); }}
+                  value=""
+                >
+                  <option value="">-- Select company --</option>
+                  {companies.filter((c: any) => c.unissued_shares > 0).map((c: any) => (
+                    <option key={c.id} value={c.id} style={{ color: c.color }}>
+                      {c.id} ({c.unissued_shares} left)
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          )}
+
           {/* Players */}
           <div className="bg-white p-4 rounded shadow border border-gray-200">
             <h3 className="font-bold border-b pb-2 mb-2">Players</h3>
             {Object.entries(gameState.player_cash || {}).map(([pId, cash]) => {
               const income = gameState.player_income?.[pId] || 0;
+              const pName = getUserName(pId, players);
+              const isCurrent = gameState.current_player === pId;
               return (
-                <div key={pId} className="mb-2 border-b border-gray-100 pb-1">
+                <div key={pId} className={`mb-2 border-b border-gray-100 pb-1 ${isCurrent ? 'bg-blue-50 -mx-4 px-4' : ''}`}>
                   <div className="flex justify-between text-sm items-center font-medium">
-                    <span>{pId.slice(0, 8)}</span>
-                    <span className="text-green-600">${cash as number}</span>
+                    <span>{pName} {isCurrent && '(current)'}</span>
+                    <span className="text-green-600 font-mono">${cash as number}</span>
                   </div>
                   <div className="text-xs text-gray-500 mt-0.5">
-                    Income: ${income}
+                    Income: <span className="font-mono">${income}</span>
                   </div>
-                  <div className="text-xs text-gray-500 mt-0.5 flex flex-wrap gap-1">
+                  <div className="text-xs mt-0.5 flex flex-wrap gap-1">
                     {Object.entries(gameState.shares?.[pId] || {}).map(([cId, count]) => (
-                      count ? <span key={cId} style={{ color: gameState.companies?.[cId]?.color }}>
-                        {cId.slice(0, 6)}:{count as number}
-                      </span> : null
+                      count ? (
+                        <span key={cId} style={{
+                          color: gameState.companies?.[cId]?.color || '#000',
+                          background: (gameState.companies?.[cId]?.color || '#000') + '20',
+                          padding: '0 4px',
+                          borderRadius: 3,
+                        }}>
+                          {(gameState.companies as any)?.[cId]?.id?.slice(0, 3) || cId.slice(0, 3)} x{count as number}
+                        </span>
+                      ) : null
                     ))}
                   </div>
                 </div>
               );
             })}
+          </div>
+
+          {/* Company State */}
+          {!auction && (
+            <div className="bg-white p-4 rounded shadow border border-gray-200">
+              <h3 className="font-bold border-b pb-2 mb-2">Companies</h3>
+              <div className="max-h-48 overflow-y-auto space-y-1">
+                {companies.map((c: any) => (
+                  <div key={c.id} className="flex justify-between text-xs items-center">
+                    <span style={{ color: c.color }} className="font-medium truncate max-w-[120px]">
+                      {c.id}
+                    </span>
+                    <span className="text-gray-500">
+                      ${(gameState as any).company_treasury?.[c.id] || 0} /
+                      <span className="text-blue-600">{(gameState as any).company_income?.[c.id] || 0}i</span> /
+                      {c.track_remaining || 0}t
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Move History */}
+          <div className="bg-white rounded shadow border border-gray-200">
+            <button
+              onClick={() => setHistoryOpen(!historyOpen)}
+              className="w-full text-left p-3 font-bold text-sm flex justify-between items-center cursor-pointer hover:bg-gray-50"
+            >
+              <span>Move History ({moveHistory.length})</span>
+              <span className="text-xs text-gray-400">{historyOpen ? '▲' : '▼'}</span>
+            </button>
+            {historyOpen && (
+              <div className="max-h-48 overflow-y-auto px-3 pb-3">
+                {moveHistory.length === 0 ? (
+                  <p className="text-xs text-gray-400 italic">No moves yet</p>
+                ) : (
+                  moveHistory.map((entry, i) => (
+                    <div key={i} className="text-xs py-0.5 border-b border-gray-50 last:border-0">
+                      {entry}
+                    </div>
+                  ))
+                )}
+                <div ref={historyEndRef} />
+              </div>
+            )}
           </div>
         </div>
       </div>

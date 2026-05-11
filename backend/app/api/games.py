@@ -147,9 +147,11 @@ async def join_game(
     db.add(player)
     await db.commit()
 
-    from app.services.notifications import notify_player_joined
-
-    await notify_player_joined(str(game.created_by_id), joiner_name, game_id, db)
+    try:
+        from app.services.notifications import notify_player_joined
+        await notify_player_joined(str(game.created_by_id), joiner_name, game_id, db)
+    except ImportError:
+        pass
 
     return {"message": "Joined"}
 
@@ -226,7 +228,16 @@ async def _load_game(
     )
     moves = result.scalars().all()
     for move in moves:
-        state = engine.apply_move(state, str(move.user_id), move.action_type, move.payload)
+        try:
+            state = engine.apply_move(state, str(move.user_id), move.action_type, move.payload)
+        except ValueError as e:
+            # During replay, random cup-draw can produce different turn order.
+            # Skip moves that don't match — they were already validated when made.
+            import logging
+            logging.getLogger("cuberail").warning(
+                "Skipping move %d during replay: %s", move.move_number, e
+            )
+            continue
 
     return engine, state, player_ids
 
@@ -255,7 +266,17 @@ async def _process_bot_turns(
     After a human move, auto-process any consecutive bot turns.
     Returns the final state after all bot moves.
     """
-    from app.engine.games.northern_pacific_bot import decide_move, _available_track_segments
+    # Import the right bot for this game type
+    engine_name = type(engine).__name__
+    if engine_name == "NPEngineOfficial":
+        from app.engine.games.northern_pacific_bot import decide_move, _available_track_segments
+    elif engine_name == "PrussianRailsEngine":
+        from app.engine.games.prussian_rails_bot import decide_move
+        # For Prussian Rails, the fallback is handled differently
+        _available_track_segments = None
+    else:
+        # Unknown game type — no bot support
+        return
 
     while not state.is_game_over:
         current = state.get_current_actor()
@@ -275,13 +296,17 @@ async def _process_bot_turns(
         except Exception as exc:
             import logging
             logging.getLogger("cuberail").warning(
-                "Bot move failed for %s (%s): %s — forcing lay_track", current, username, exc
+                "Bot move failed for %s (%s): %s — forcing pass", current, username, exc
             )
-            # Force the first available track to keep the game moving
-            fallback_tracks = _available_track_segments(state.to_dict())
-            if fallback_tracks:
-                action_type = "lay_track"
-                payload = {"segment_id": fallback_tracks[0][0]}
+            # NP bot has track segment fallback; PR bot just passes
+            if _available_track_segments is not None:
+                fallback_tracks = _available_track_segments(state.to_dict())
+                if fallback_tracks:
+                    action_type = "lay_track"
+                    payload = {"segment_id": fallback_tracks[0][0]}
+                else:
+                    action_type = "pass"
+                    payload = {}
             else:
                 action_type = "pass"
                 payload = {}
@@ -327,11 +352,15 @@ async def get_state(game_id: str, db: AsyncSession = Depends(get_db)):
     for gp in gp_result.scalars().all():
         user_result = await db.execute(select(User).where(User.id == gp.user_id))
         user = user_result.scalars().first()
+        pid = str(gp.user_id)
         if user:
             result["players"].append({
-                "id": str(user.id),
+                "id": pid,
                 "username": user.username,
                 "is_bot": user.username.startswith("Bot_") or user.username.startswith("Bot ") if user.username else False,
+                "cash": result.get("player_cash", {}).get(pid),
+                "income": result.get("player_income", {}).get(pid),
+                "shares": result.get("shares", {}).get(pid, {}),
             })
 
     return result

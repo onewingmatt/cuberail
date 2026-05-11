@@ -50,14 +50,14 @@ function hexRound(qF: number, rF: number): [number, number] {
   return [qi, ri];
 }
 
-// Terrain colors
+// Terrain colors — visibly distinct hues
 const TERRAIN_COLORS: Record<string, string> = {
-  water: '#b3d9ff',
-  plains: '#e8f5e9',
-  hills: '#c8e6c9',
-  mountains: '#a5d6a7',
-  urban: '#ffecb3',
-  berlin_approach: '#ffe0b2',
+  water: '#7ab8e0',
+  plains: '#f5e6c8',
+  hills: '#91c788',
+  mountains: '#bc9a7c',
+  urban: '#d4c5a9',
+  berlin_approach: '#f0c27a',
 };
 
 const TERRAIN_LABELS: Record<string, string> = {
@@ -211,7 +211,7 @@ export const HexGridBoard: React.FC<HexGridBoardProps> = ({
           fill={fillColor}
           stroke={isSelected ? '#ef4444' : (isHighlighted ? '#22c55e' : strokeColor)}
           strokeWidth={isSelected ? 3 : (isHighlighted ? 2.5 : 1)}
-          opacity={hasTracks ? 0.85 : 0.6}
+          opacity={hasTracks ? 1 : 0.95}
         />
         {/* Terrain label */}
         {showTerrainLabels && !hex.city && (
@@ -283,7 +283,7 @@ export const HexGridBoard: React.FC<HexGridBoardProps> = ({
           border: '1px solid #ccc',
           borderRadius: 4,
           cursor: isPanning ? 'grabbing' : 'grab',
-          background: '#b3d9ff', // water color
+          background: '#7ab8e0', // water color
         }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
