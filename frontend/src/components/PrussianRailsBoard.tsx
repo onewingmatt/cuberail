@@ -124,30 +124,30 @@ export const PrussianRailsBoard: React.FC = () => {
       </div>
 
       {!calibrationMode && (
-        <div className="mb-4 w-full max-w-5xl bg-white border rounded p-3 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 text-xs">
+        <div className="mb-4 w-full max-w-6xl bg-white border rounded p-3 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-7 gap-3 text-xs">
           <label className="flex flex-col gap-1">TX
-            <input type="range" min={-300} max={300} step={1} value={overlayTranslateX} onChange={e => setOverlayTranslateX(Number(e.target.value))} />
-            <span>{overlayTranslateX}</span>
+            <input type="range" min={-300} max={300} step={0.5} value={overlayTranslateX} onChange={e => setOverlayTranslateX(Number(e.target.value))} />
+            <input type="number" step={0.5} value={overlayTranslateX} onChange={e => setOverlayTranslateX(Number(e.target.value))} className="border rounded px-2 py-1" />
           </label>
           <label className="flex flex-col gap-1">TY
-            <input type="range" min={-300} max={300} step={1} value={overlayTranslateY} onChange={e => setOverlayTranslateY(Number(e.target.value))} />
-            <span>{overlayTranslateY}</span>
+            <input type="range" min={-300} max={300} step={0.5} value={overlayTranslateY} onChange={e => setOverlayTranslateY(Number(e.target.value))} />
+            <input type="number" step={0.5} value={overlayTranslateY} onChange={e => setOverlayTranslateY(Number(e.target.value))} className="border rounded px-2 py-1" />
           </label>
           <label className="flex flex-col gap-1">SX
-            <input type="range" min={0.5} max={1.5} step={0.01} value={overlayScaleX} onChange={e => setOverlayScaleX(Number(e.target.value))} />
-            <span>{overlayScaleX.toFixed(2)}</span>
+            <input type="range" min={0.5} max={1.5} step={0.001} value={overlayScaleX} onChange={e => setOverlayScaleX(Number(e.target.value))} />
+            <input type="number" step={0.001} value={overlayScaleX} onChange={e => setOverlayScaleX(Number(e.target.value))} className="border rounded px-2 py-1" />
           </label>
           <label className="flex flex-col gap-1">SY
-            <input type="range" min={0.5} max={1.5} step={0.01} value={overlayScaleY} onChange={e => setOverlayScaleY(Number(e.target.value))} />
-            <span>{overlayScaleY.toFixed(2)}</span>
+            <input type="range" min={0.5} max={1.5} step={0.001} value={overlayScaleY} onChange={e => setOverlayScaleY(Number(e.target.value))} />
+            <input type="number" step={0.001} value={overlayScaleY} onChange={e => setOverlayScaleY(Number(e.target.value))} className="border rounded px-2 py-1" />
           </label>
           <label className="flex flex-col gap-1">Rot
-            <input type="range" min={-15} max={15} step={0.1} value={overlayRotation} onChange={e => setOverlayRotation(Number(e.target.value))} />
-            <span>{overlayRotation.toFixed(1)}°</span>
+            <input type="range" min={-15} max={15} step={0.01} value={overlayRotation} onChange={e => setOverlayRotation(Number(e.target.value))} />
+            <input type="number" step={0.01} value={overlayRotation} onChange={e => setOverlayRotation(Number(e.target.value))} className="border rounded px-2 py-1" />
           </label>
           <label className="flex flex-col gap-1">Opacity
             <input type="range" min={0} max={1} step={0.01} value={overlayOpacity} onChange={e => setOverlayOpacity(Number(e.target.value))} />
-            <span>{overlayOpacity.toFixed(2)}</span>
+            <input type="number" min={0} max={1} step={0.01} value={overlayOpacity} onChange={e => setOverlayOpacity(Number(e.target.value))} className="border rounded px-2 py-1" />
           </label>
           <button
             onClick={() => {
