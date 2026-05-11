@@ -109,7 +109,7 @@ export const PrussianRailsBoard: React.FC = () => {
   const winnerName = winnerId ? getUserName(winnerId, players) : null;
 
   return (
-    <div class="flex flex-col items-center p-4 min-h-screen">
+    <div class="flex flex-col items-center p-4 h-screen">
       <h2 class="text-2xl font-bold mb-1">Prussian Rails</h2>
       <div className="mb-3 flex gap-2 flex-wrap items-center">
         <button
@@ -180,7 +180,7 @@ export const PrussianRailsBoard: React.FC = () => {
         </div>
       )}
 
-      <div class="flex gap-4 w-full max-w-[1600px] mx-auto flex-1 min-h-0">
+      <div class="flex gap-4 w-full max-w-[1600px] mx-auto flex-1 min-h-0 overflow-hidden">
         {calibrationMode ? (
           <PrussianRailsCalibrator
             hexes={hexes}
@@ -215,7 +215,7 @@ export const PrussianRailsBoard: React.FC = () => {
         </div>
 
         {/* Sidebar */}
-        <div class="w-80 flex flex-col gap-3 shrink-0">
+        <div class="w-80 flex flex-col gap-3 shrink-0 overflow-y-auto">
           {/* Status */}
           <div className="bg-white p-4 rounded shadow border border-gray-200">
             <h3 className="font-bold border-b pb-2 mb-2">Game Status</h3>
