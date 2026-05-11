@@ -1,0 +1,1562 @@
+[
+  {
+    "key": "hex_1778509526989_ac4mb",
+    "x": 347.3724670410156,
+    "y": 103.09793853759766,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509529497_ihocr",
+    "x": 432.822998046875,
+    "y": 57.58623504638672,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509530711_gswyn",
+    "x": 404.0298767089844,
+    "y": 104.95555877685547,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509531702_67dal",
+    "x": 376.1655578613281,
+    "y": 154.18251037597656,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509532721_dxryg",
+    "x": 435.60943603515625,
+    "y": 157.8977508544922,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509533469_w7h0q",
+    "x": 546.1378784179688,
+    "y": 151.3960723876953,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509534307_4ocr6",
+    "x": 633.446044921875,
+    "y": 113.31484985351562,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509537529_kd80m",
+    "x": 663.16796875,
+    "y": 157.8977508544922,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509539906_c2a8v",
+    "x": 720.754150390625,
+    "y": 155.11131286621094,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509541197_r6pwz",
+    "x": 776.4827880859375,
+    "y": 154.18251037597656,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509542225_laqxy",
+    "x": 835.9266357421875,
+    "y": 155.11131286621094,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509543005_5t8sx",
+    "x": 892.5841064453125,
+    "y": 151.3960723876953,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509544428_19goh",
+    "x": 922.2348022460938,
+    "y": 105.81317901611328,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509548118_a4x9t",
+    "x": 950.09912109375,
+    "y": 155.04013061523438,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509549564_yqcvw",
+    "x": 1006.7565307617188,
+    "y": 155.96893310546875,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509551974_fbnfb",
+    "x": 1010.4718017578125,
+    "y": 55.65742492675781,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509553309_58zii",
+    "x": 1061.556396484375,
+    "y": 51.94218444824219,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509554293_feq68",
+    "x": 1034.620849609375,
+    "y": 104.88436889648438,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509555143_b3jiu",
+    "x": 1089.420654296875,
+    "y": 106.74198913574219,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509556212_4g25t",
+    "x": 1061.556396484375,
+    "y": 155.96893310546875,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509557231_1p1tx",
+    "x": 1121.000244140625,
+    "y": 154.11131286621094,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509558447_2au1b",
+    "x": 1120.0714111328125,
+    "y": 52.870994567871094,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509559120_tlap3",
+    "x": 1179.5152587890625,
+    "y": 154.11131286621094,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509560200_wcofc",
+    "x": 1231.5286865234375,
+    "y": 152.25369262695312,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509561550_6eobh",
+    "x": 1260.32177734375,
+    "y": 104.88436889648438,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509562350_1gca9",
+    "x": 1207.3795166015625,
+    "y": 105.81317901611328,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509563887_rrwmb",
+    "x": 1203.664306640625,
+    "y": 204.26707458496094,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509565067_fhtod",
+    "x": 1145.1492919921875,
+    "y": 205.1958770751953,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509566253_mgg4t",
+    "x": 1092.2071533203125,
+    "y": 203.3382568359375,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509567632_dfk3q",
+    "x": 1030.9056396484375,
+    "y": 205.1958770751953,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509569010_34tvp",
+    "x": 977.0346069335938,
+    "y": 204.26707458496094,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509572384_zxz1f",
+    "x": 918.5195922851562,
+    "y": 206.12469482421875,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509573932_nma47",
+    "x": 865.577392578125,
+    "y": 207.05349731445312,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509575309_5o3lu",
+    "x": 748.5473022460938,
+    "y": 208.91111755371094,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509577093_xdr62",
+    "x": 632.446044921875,
+    "y": 205.1958770751953,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509578262_cv6yz",
+    "x": 574.8598022460938,
+    "y": 205.1958770751953,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509578901_gmgx8",
+    "x": 515.4158935546875,
+    "y": 205.1958770751953,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509580211_s4fms",
+    "x": 464.33135986328125,
+    "y": 209.83993530273438,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509581846_wto78",
+    "x": 344.51483154296875,
+    "y": 204.26707458496094,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509582786_0epoy",
+    "x": 233.9864044189453,
+    "y": 205.1958770751953,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509584457_7y4bv",
+    "x": 204.2644805908203,
+    "y": 253.4940185546875,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509587922_h3rsb",
+    "x": 373.3079528808594,
+    "y": 256.28045654296875,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509589031_sl42v",
+    "x": 430.8941955566406,
+    "y": 255.35162353515625,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509590340_7ldbh",
+    "x": 546.066650390625,
+    "y": 255.35162353515625,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509591236_x7og2",
+    "x": 602.7240600585938,
+    "y": 256.28045654296875,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509592363_rdgkj",
+    "x": 660.310302734375,
+    "y": 252.56520080566406,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509593978_f6e0u",
+    "x": 719.754150390625,
+    "y": 253.4940185546875,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509595521_6b7qg",
+    "x": 778.2692260742188,
+    "y": 253.4940185546875,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509596449_5kstj",
+    "x": 833.9978637695312,
+    "y": 250.70758056640625,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509597726_9god4",
+    "x": 891.5841064453125,
+    "y": 255.35162353515625,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509599116_rh90w",
+    "x": 942.6686401367188,
+    "y": 254.42282104492188,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509600916_68x49",
+    "x": 1117.2850341796875,
+    "y": 257.2092590332031,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509602047_gvidq",
+    "x": 1088.4918212890625,
+    "y": 303.6497802734375,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509602828_d88cp",
+    "x": 1029.976806640625,
+    "y": 302.720947265625,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509604365_pvw3p",
+    "x": 977.9634399414062,
+    "y": 304.5785827636719,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509605525_4kj5h",
+    "x": 861.8621215820312,
+    "y": 304.5785827636719,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509606216_00gcb",
+    "x": 804.3471069335938,
+    "y": 306.4361877441406,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509608808_xomor",
+    "x": 572.14453125,
+    "y": 299.9345397949219,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509609883_9tbgp",
+    "x": 516.4158935546875,
+    "y": 300.86334228515625,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509611064_5np5d",
+    "x": 458.8296813964844,
+    "y": 301.7921447753906,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509612212_t0gx9",
+    "x": 403.10107421875,
+    "y": 304.5785827636719,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509613274_dschs",
+    "x": 343.6571960449219,
+    "y": 300.86334228515625,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509614901_0frd0",
+    "x": 286.9997863769531,
+    "y": 304.5785827636719,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509616386_qgay6",
+    "x": 232.19998168945312,
+    "y": 306.4361877441406,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509619035_xg704",
+    "x": 200.6204376220703,
+    "y": 352.876708984375,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509620122_mls5j",
+    "x": 172.75611877441406,
+    "y": 405.81890869140625,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509621696_25ym6",
+    "x": 229.41354370117188,
+    "y": 403.032470703125,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509624868_wyg8y",
+    "x": 315.79290771484375,
+    "y": 351.9479064941406,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509626843_74z8r",
+    "x": 372.4503173828125,
+    "y": 352.876708984375,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509628074_wwe3c",
+    "x": 431.8941955566406,
+    "y": 351.01910400390625,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509628844_f2i3n",
+    "x": 489.4804382324219,
+    "y": 354.7343444824219,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509630240_y8v6x",
+    "x": 545.2090454101562,
+    "y": 351.9479064941406,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509631956_dcx0y",
+    "x": 520.1311645507812,
+    "y": 402.1036682128906,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509633109_90otv",
+    "x": 489.4804382324219,
+    "y": 450.40179443359375,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509633925_0vl85",
+    "x": 547.066650390625,
+    "y": 449.4729919433594,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509635483_kg92d",
+    "x": 606.510498046875,
+    "y": 453.188232421875,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509636749_csf59",
+    "x": 635.3036499023438,
+    "y": 501.4863586425781,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509638274_gqetc",
+    "x": 687.3170166015625,
+    "y": 505.20159912109375,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509639264_9lyxi",
+    "x": 747.689697265625,
+    "y": 500.55755615234375,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509640174_faxbl",
+    "x": 798.7742309570312,
+    "y": 499.62872314453125,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509646155_entea",
+    "x": 832.21142578125,
+    "y": 353.8055114746094,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509647009_4p82t",
+    "x": 889.7976684570312,
+    "y": 352.876708984375,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509648129_4kywb",
+    "x": 945.5262451171875,
+    "y": 349.1614685058594,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509649650_zn30g",
+    "x": 1003.1124877929688,
+    "y": 355.66314697265625,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509651294_mjiw9",
+    "x": 1060.69873046875,
+    "y": 354.7343444824219,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509652512_sxtnq",
+    "x": 1034.6920166015625,
+    "y": 399.3172302246094,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509653428_74ai3",
+    "x": 918.5907592773438,
+    "y": 404.89007568359375,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509654082_wt39p",
+    "x": 861.0045166015625,
+    "y": 404.89007568359375,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509655011_40iox",
+    "x": 831.2825927734375,
+    "y": 452.2593994140625,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509655836_41c5g",
+    "x": 890.7264404296875,
+    "y": 452.2593994140625,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509656696_eq089",
+    "x": 947.3839111328125,
+    "y": 451.3305969238281,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509658552_qwdhs",
+    "x": 1004.9700927734375,
+    "y": 451.3305969238281,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509659698_khx9i",
+    "x": 859.1469116210938,
+    "y": 504.2727966308594,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509661770_zkhue",
+    "x": 978.9634399414062,
+    "y": 502.4151611328125,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509663671_mfsds",
+    "x": 1030.976806640625,
+    "y": 501.4863586425781,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509665343_ass4f",
+    "x": 945.5262451171875,
+    "y": 553.499755859375,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509666670_2nw3r",
+    "x": 1065.3427734375,
+    "y": 552.5709228515625,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509667976_kzu9a",
+    "x": 1031.9056396484375,
+    "y": 601.8690795898438,
+    "terrain": "plains"
+  },
+  {
+    "key": "hex_1778509676985_gsil9",
+    "x": 347.3724670410156,
+    "y": 402.1748352050781,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509677755_s0gv2",
+    "x": 316.7217102050781,
+    "y": 451.40179443359375,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509678578_yhygx",
+    "x": 372.4503173828125,
+    "y": 452.3305969238281,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509679468_3uiyz",
+    "x": 429.1077575683594,
+    "y": 451.40179443359375,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509680874_2k46y",
+    "x": 289.7862243652344,
+    "y": 503.4151611328125,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509681717_64nkk",
+    "x": 347.3724670410156,
+    "y": 497.8423156738281,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509682966_o2y52",
+    "x": 197.83399963378906,
+    "y": 549.8556518554688,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509683696_2itio",
+    "x": 255.4202423095703,
+    "y": 547.998046875,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509684629_0bhpn",
+    "x": 231.3423614501953,
+    "y": 599.0114135742188,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509686227_jczik",
+    "x": 143.10537719726562,
+    "y": 651.0247802734375,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509687479_4upu1",
+    "x": 111.52583312988281,
+    "y": 703.0382080078125,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509689722_jpc8k",
+    "x": 545.2802124023438,
+    "y": 550.7133178710938,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509690527_3lxqk",
+    "x": 522.98876953125,
+    "y": 603.6554565429688,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509691725_7h4ah",
+    "x": 574.0733642578125,
+    "y": 601.7978515625,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509692777_utnjj",
+    "x": 626.0867309570312,
+    "y": 598.0826416015625,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509693385_7wusg",
+    "x": 659.5238647460938,
+    "y": 552.5709228515625,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509694088_kzpm2",
+    "x": 775.6251831054688,
+    "y": 552.5709228515625,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509695218_wxx3j",
+    "x": 891.7264404296875,
+    "y": 554.4285278320312,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509696850_i2ww7",
+    "x": 543.422607421875,
+    "y": 655.6688842773438,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509698208_whzzh",
+    "x": 427.3213195800781,
+    "y": 652.8824462890625,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509699399_a5o7k",
+    "x": 366.01983642578125,
+    "y": 656.59765625,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509700225_wq6gq",
+    "x": 313.0776672363281,
+    "y": 650.0960083007812,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509701771_qy2wb",
+    "x": 203.47805786132812,
+    "y": 752.26513671875,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509703161_qbbxk",
+    "x": 258.2778625488281,
+    "y": 747.62109375,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509704658_w9zrx",
+    "x": 370.6639099121094,
+    "y": 750.4075317382812,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509705796_cgqpr",
+    "x": 457.0432434082031,
+    "y": 700.2517700195312,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509706981_g4g9z",
+    "x": 542.4937744140625,
+    "y": 749.4786987304688,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509709424_tyqr9",
+    "x": 235.05760192871094,
+    "y": 797.77685546875,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509710373_r0827",
+    "x": 199.76280212402344,
+    "y": 852.57666015625,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509711362_vuesh",
+    "x": 227.6271209716797,
+    "y": 900.874755859375,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509712234_p2vlt",
+    "x": 343.7283935546875,
+    "y": 802.4208984375,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509713191_176qr",
+    "x": 491.40924072265625,
+    "y": 849.7902221679688,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509714103_8kjw7",
+    "x": 512.7718811035156,
+    "y": 897.1595458984375,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509714720_6a1oe",
+    "x": 629.8019409179688,
+    "y": 898.0883178710938,
+    "terrain": "hills"
+  },
+  {
+    "key": "hex_1778509724746_k6z4f",
+    "x": 261.0643005371094,
+    "y": 951.9593505859375,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509725810_asog1",
+    "x": 287.07098388671875,
+    "y": 899.9459838867188,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509726620_o948n",
+    "x": 319.579345703125,
+    "y": 951.9593505859375,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509727197_lkdko",
+    "x": 379.9519958496094,
+    "y": 948.2440795898438,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509727962_r45os",
+    "x": 426.39251708984375,
+    "y": 951.9593505859375,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509728622_htcaj",
+    "x": 459.8296813964844,
+    "y": 906.4476318359375,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509729516_i6yzv",
+    "x": 402.2434387207031,
+    "y": 898.0883178710938,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509730518_x6uda",
+    "x": 369.7350769042969,
+    "y": 850.718994140625,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509731883_4etah",
+    "x": 431.03656005859375,
+    "y": 846.074951171875,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509732662_frq64",
+    "x": 456.0432434082031,
+    "y": 794.1327514648438,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509733864_gr9na",
+    "x": 404.95867919921875,
+    "y": 800.6344604492188,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509734629_xjm94",
+    "x": 422.6060791015625,
+    "y": 756.0515747070312,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509735473_6fh5f",
+    "x": 493.1956787109375,
+    "y": 746.763427734375,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509736565_lbj2c",
+    "x": 575.8598022460938,
+    "y": 703.109375,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509737548_38gjc",
+    "x": 603.7240600585938,
+    "y": 751.4075317382812,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509738262_6l3qq",
+    "x": 573.0733642578125,
+    "y": 802.4920654296875,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509739511_hdi13",
+    "x": 630.6596069335938,
+    "y": 804.3496704101562,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509741661_dwhvh",
+    "x": 547.9954833984375,
+    "y": 846.1461791992188,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509742386_k84xg",
+    "x": 575.8598022460938,
+    "y": 899.0883178710938,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509743754_tal53",
+    "x": 604.6528930664062,
+    "y": 950.1729125976562,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509744708_im8r5",
+    "x": 658.5238647460938,
+    "y": 953.8881225585938,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509745733_gpta7",
+    "x": 686.38818359375,
+    "y": 900.9459838867188,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509746588_ql6mb",
+    "x": 656.666259765625,
+    "y": 853.57666015625,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509748663_yv17h",
+    "x": 141.17657470703125,
+    "y": 847.074951171875,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509749384_r5lo9",
+    "x": 174.61373901367188,
+    "y": 799.7056274414062,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509750031_tfex1",
+    "x": 149.53585815429688,
+    "y": 752.3363037109375,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509750997_smjvv",
+    "x": 171.8273162841797,
+    "y": 703.109375,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509752544_6vy2g",
+    "x": 264.779541015625,
+    "y": 652.95361328125,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509753344_17isc",
+    "x": 283.3557434082031,
+    "y": 605.5842895507812,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509754633_tjguo",
+    "x": 318.6505126953125,
+    "y": 549.8556518554688,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509755416_fzif9",
+    "x": 343.7283935546875,
+    "y": 601.8690795898438,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509756157_1ro45",
+    "x": 398.5281982421875,
+    "y": 598.15380859375,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509757252_3yt3o",
+    "x": 459.8296813964844,
+    "y": 600.9402465820312,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509758221_whmlc",
+    "x": 484.9075622558594,
+    "y": 649.2384033203125,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509760078_333m4",
+    "x": 629.8019409179688,
+    "y": 705.8958129882812,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509760943_c5lfa",
+    "x": 659.5238647460938,
+    "y": 647.3807373046875,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509762402_ah5bp",
+    "x": 455.1856384277344,
+    "y": 499.6999206542969,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509763363_tza1b",
+    "x": 517.4158935546875,
+    "y": 499.6999206542969,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509764646_xkjlc",
+    "x": 745.9032592773438,
+    "y": 603.7266845703125,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509765894_rnr3b",
+    "x": 807.2047119140625,
+    "y": 603.7266845703125,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509767081_h2sdj",
+    "x": 861.0757446289062,
+    "y": 599.0826416015625,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509768313_5xkgq",
+    "x": 922.377197265625,
+    "y": 600.0114135742188,
+    "terrain": "mountains"
+  },
+  {
+    "key": "hex_1778509774608_mf410",
+    "x": 603.7952880859375,
+    "y": 353.876708984375,
+    "terrain": "berlin_approach"
+  },
+  {
+    "key": "hex_1778509775650_wa2jj",
+    "x": 635.3748168945312,
+    "y": 302.7921447753906,
+    "terrain": "berlin_approach"
+  },
+  {
+    "key": "hex_1778509776436_8oh26",
+    "x": 687.38818359375,
+    "y": 299.076904296875,
+    "terrain": "berlin_approach"
+  },
+  {
+    "key": "hex_1778509777381_cr9s3",
+    "x": 742.18798828125,
+    "y": 303.720947265625,
+    "terrain": "berlin_approach"
+  },
+  {
+    "key": "hex_1778509778258_1qwrb",
+    "x": 770.0523071289062,
+    "y": 352.9479064941406,
+    "terrain": "berlin_approach"
+  },
+  {
+    "key": "hex_1778509779135_3kqzj",
+    "x": 744.9744262695312,
+    "y": 396.60198974609375,
+    "terrain": "berlin_approach"
+  },
+  {
+    "key": "hex_1778509779962_g0u2q",
+    "x": 719.8965454101562,
+    "y": 449.5441589355469,
+    "terrain": "berlin_approach"
+  },
+  {
+    "key": "hex_1778509781060_rj6bv",
+    "x": 656.7374877929688,
+    "y": 449.5441589355469,
+    "terrain": "berlin_approach"
+  },
+  {
+    "key": "hex_1778509782011_w1zc4",
+    "x": 631.6596069335938,
+    "y": 405.89007568359375,
+    "terrain": "berlin_approach"
+  },
+  {
+    "key": "city_aachen",
+    "x": 113.2,
+    "y": 599.9,
+    "terrain": "urban",
+    "city_hint": "Aachen"
+  },
+  {
+    "key": "city_augsburg",
+    "x": 489.4,
+    "y": 951.0,
+    "terrain": "urban",
+    "city_hint": "Augsburg"
+  },
+  {
+    "key": "city_bamberg",
+    "x": 516.4,
+    "y": 699.4,
+    "terrain": "urban",
+    "city_hint": "Bamberg"
+  },
+  {
+    "key": "city_bielefeld",
+    "x": 286.9,
+    "y": 402.1,
+    "terrain": "urban",
+    "city_hint": "Bielefeld"
+  },
+  {
+    "key": "city_braunschweig",
+    "x": 457.8,
+    "y": 404.9,
+    "terrain": "urban",
+    "city_hint": "Braunschweig"
+  },
+  {
+    "key": "city_bremen",
+    "x": 318.6,
+    "y": 250.8,
+    "terrain": "urban",
+    "city_hint": "Bremen"
+  },
+  {
+    "key": "city_breslau",
+    "x": 1005.0,
+    "y": 553.6,
+    "terrain": "urban",
+    "city_hint": "Breslau"
+  },
+  {
+    "key": "city_bromberg",
+    "x": 1061.6,
+    "y": 255.4,
+    "terrain": "urban",
+    "city_hint": "Bromberg"
+  },
+  {
+    "key": "city_chemnitz",
+    "x": 691.0,
+    "y": 602.8,
+    "terrain": "urban",
+    "city_hint": "Chemnitz"
+  },
+  {
+    "key": "city_danzig",
+    "x": 1146.1,
+    "y": 104.0,
+    "terrain": "urban",
+    "city_hint": "Danzig"
+  },
+  {
+    "key": "city_dortmund",
+    "x": 229.3,
+    "y": 504.3,
+    "terrain": "urban",
+    "city_hint": "Dortmund"
+  },
+  {
+    "key": "city_dresden",
+    "x": 717.0,
+    "y": 551.7,
+    "terrain": "urban",
+    "city_hint": "Dresden"
+  },
+  {
+    "key": "city_duisburg",
+    "x": 116.0,
+    "y": 505.2,
+    "terrain": "urban",
+    "city_hint": "Duisburg"
+  },
+  {
+    "key": "city_duesseldorf",
+    "x": 144.8,
+    "y": 550.7,
+    "terrain": "urban",
+    "city_hint": "Düsseldorf"
+  },
+  {
+    "key": "city_erfurt",
+    "x": 489.5,
+    "y": 553.6,
+    "terrain": "urban",
+    "city_hint": "Erfurt"
+  },
+  {
+    "key": "city_essen",
+    "x": 174.5,
+    "y": 501.5,
+    "terrain": "urban",
+    "city_hint": "Essen"
+  },
+  {
+    "key": "city_flensburg",
+    "x": 375.2,
+    "y": 52.9,
+    "terrain": "urban",
+    "city_hint": "Flensburg"
+  },
+  {
+    "key": "city_frankfurt_am_main",
+    "x": 287.1,
+    "y": 704.0,
+    "terrain": "urban",
+    "city_hint": "Frankfurt am Main"
+  },
+  {
+    "key": "city_frankfurt_an_der_oder",
+    "x": 805.3,
+    "y": 405.9,
+    "terrain": "urban",
+    "city_hint": "Frankfurt an der Oder"
+  },
+  {
+    "key": "city_freiburg_im_breisgau",
+    "x": 199.6,
+    "y": 950.1,
+    "terrain": "urban",
+    "city_hint": "Freiburg im Breisgau"
+  },
+  {
+    "key": "city_goerlitz",
+    "x": 833.1,
+    "y": 556.4,
+    "terrain": "urban",
+    "city_hint": "Görlitz"
+  },
+  {
+    "key": "city_goettingen",
+    "x": 400.3,
+    "y": 502.5,
+    "terrain": "urban",
+    "city_hint": "Göttingen"
+  },
+  {
+    "key": "city_halle",
+    "x": 574.0,
+    "y": 504.3,
+    "terrain": "urban",
+    "city_hint": "Halle"
+  },
+  {
+    "key": "city_hamburg",
+    "x": 401.2,
+    "y": 206.2,
+    "terrain": "urban",
+    "city_hint": "Hamburg"
+  },
+  {
+    "key": "city_hamm",
+    "x": 260.0,
+    "y": 453.2,
+    "terrain": "urban",
+    "city_hint": "Hamm"
+  },
+  {
+    "key": "city_hannover",
+    "x": 400.3,
+    "y": 405.9,
+    "terrain": "urban",
+    "city_hint": "Hannover"
+  },
+  {
+    "key": "city_heilbronn",
+    "x": 314.9,
+    "y": 848.9,
+    "terrain": "urban",
+    "city_hint": "Heilbronn"
+  },
+  {
+    "key": "city_karlsruhe",
+    "x": 261.0,
+    "y": 851.6,
+    "terrain": "urban",
+    "city_hint": "Karlsruhe"
+  },
+  {
+    "key": "city_kassel",
+    "x": 372.4,
+    "y": 551.6,
+    "terrain": "urban",
+    "city_hint": "Kassel"
+  },
+  {
+    "key": "city_kiel",
+    "x": 460.7,
+    "y": 105.9,
+    "terrain": "urban",
+    "city_hint": "Kiel"
+  },
+  {
+    "key": "city_koblenz",
+    "x": 201.5,
+    "y": 653.8,
+    "terrain": "urban",
+    "city_hint": "Koblenz"
+  },
+  {
+    "key": "city_koeln",
+    "x": 172.7,
+    "y": 603.7,
+    "terrain": "urban",
+    "city_hint": "Köln"
+  },
+  {
+    "key": "city_koenigsberg",
+    "x": 1289.2,
+    "y": 54.8,
+    "terrain": "urban",
+    "city_hint": "Königsberg"
+  },
+  {
+    "key": "city_kottbus",
+    "x": 775.6,
+    "y": 453.3,
+    "terrain": "urban",
+    "city_hint": "Kottbus"
+  },
+  {
+    "key": "city_kreuz",
+    "x": 916.7,
+    "y": 304.6,
+    "terrain": "urban",
+    "city_hint": "Kreuz"
+  },
+  {
+    "key": "city_leipzig",
+    "x": 602.7,
+    "y": 552.6,
+    "terrain": "urban",
+    "city_hint": "Leipzig"
+  },
+  {
+    "key": "city_liegnitz",
+    "x": 917.7,
+    "y": 502.5,
+    "terrain": "urban",
+    "city_hint": "Liegnitz"
+  },
+  {
+    "key": "city_luebeck",
+    "x": 489.5,
+    "y": 155.1,
+    "terrain": "urban",
+    "city_hint": "Lübeck"
+  },
+  {
+    "key": "city_magdeburg",
+    "x": 575.9,
+    "y": 404.0,
+    "terrain": "urban",
+    "city_hint": "Magdeburg"
+  },
+  {
+    "key": "city_mainz",
+    "x": 230.5,
+    "y": 700.3,
+    "terrain": "urban",
+    "city_hint": "Mainz"
+  },
+  {
+    "key": "city_mannheim",
+    "x": 288.9,
+    "y": 797.8,
+    "terrain": "urban",
+    "city_hint": "Mannheim"
+  },
+  {
+    "key": "city_muehlhausen",
+    "x": 430.9,
+    "y": 552.6,
+    "terrain": "urban",
+    "city_hint": "Mühlhausen"
+  },
+  {
+    "key": "city_muenchen",
+    "x": 543.3,
+    "y": 948.2,
+    "terrain": "urban",
+    "city_hint": "München"
+  },
+  {
+    "key": "city_muenster",
+    "x": 201.5,
+    "y": 453.2,
+    "terrain": "urban",
+    "city_hint": "Münster"
+  },
+  {
+    "key": "city_neu_brandenburg",
+    "x": 687.3,
+    "y": 206.2,
+    "terrain": "urban",
+    "city_hint": "Neu Brandenburg"
+  },
+  {
+    "key": "city_nuernberg",
+    "x": 512.7,
+    "y": 798.8,
+    "terrain": "urban",
+    "city_hint": "Nürnberg"
+  },
+  {
+    "key": "city_oldenburg",
+    "x": 261.0,
+    "y": 255.4,
+    "terrain": "urban",
+    "city_hint": "Oldenburg"
+  },
+  {
+    "key": "city_osnabrueck",
+    "x": 259.1,
+    "y": 353.8,
+    "terrain": "urban",
+    "city_hint": "Osnabrück"
+  },
+  {
+    "key": "city_plauen",
+    "x": 601.9,
+    "y": 649.2,
+    "terrain": "urban",
+    "city_hint": "Plauen"
+  },
+  {
+    "key": "city_posen",
+    "x": 976.2,
+    "y": 405.0,
+    "terrain": "urban",
+    "city_hint": "Posen"
+  },
+  {
+    "key": "city_regensburg",
+    "x": 603.7,
+    "y": 849.9,
+    "terrain": "urban",
+    "city_hint": "Regensburg"
+  },
+  {
+    "key": "city_rostock",
+    "x": 601.9,
+    "y": 156.0,
+    "terrain": "urban",
+    "city_hint": "Rostock"
+  },
+  {
+    "key": "city_saarbruecken",
+    "x": 114.2,
+    "y": 798.8,
+    "terrain": "urban",
+    "city_hint": "Saarbrücken"
+  },
+  {
+    "key": "city_schneidemuehl",
+    "x": 1004.0,
+    "y": 256.4,
+    "terrain": "urban",
+    "city_hint": "Schneidemühl"
+  },
+  {
+    "key": "city_stettin",
+    "x": 805.3,
+    "y": 208.1,
+    "terrain": "urban",
+    "city_hint": "Stettin"
+  },
+  {
+    "key": "city_stolp",
+    "x": 978.0,
+    "y": 102.2,
+    "terrain": "urban",
+    "city_hint": "Stolp"
+  },
+  {
+    "key": "city_stralsund",
+    "x": 687.2,
+    "y": 104.0,
+    "terrain": "urban",
+    "city_hint": "Stralsund"
+  },
+  {
+    "key": "city_strasbourg",
+    "x": 172.7,
+    "y": 899.9,
+    "terrain": "urban",
+    "city_hint": "Strasbourg"
+  },
+  {
+    "key": "city_stuttgart",
+    "x": 344.5,
+    "y": 895.3,
+    "terrain": "urban",
+    "city_hint": "Stuttgart"
+  },
+  {
+    "key": "city_waldenburg",
+    "x": 976.2,
+    "y": 604.7,
+    "terrain": "urban",
+    "city_hint": "Waldenburg"
+  },
+  {
+    "key": "city_wesel",
+    "x": 143.0,
+    "y": 450.4,
+    "terrain": "urban",
+    "city_hint": "Wesel"
+  },
+  {
+    "key": "city_wittenberge",
+    "x": 488.4,
+    "y": 253.5,
+    "terrain": "urban",
+    "city_hint": "Wittenberge"
+  },
+  {
+    "key": "city_wuerzburg",
+    "x": 403.1,
+    "y": 699.3,
+    "terrain": "urban",
+    "city_hint": "Würzburg"
+  },
+  {
+    "key": "berlin_city_1",
+    "x": 657.6,
+    "y": 351.1,
+    "terrain": "urban",
+    "city_hint": "Berlin_1"
+  },
+  {
+    "key": "berlin_city_2",
+    "x": 716.1,
+    "y": 353.9,
+    "terrain": "urban",
+    "city_hint": "Berlin_2"
+  },
+  {
+    "key": "berlin_city_3",
+    "x": 688.2,
+    "y": 403.1,
+    "terrain": "urban",
+    "city_hint": "Berlin_3"
+  }
+]

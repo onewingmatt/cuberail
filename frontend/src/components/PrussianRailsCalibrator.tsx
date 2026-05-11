@@ -9,6 +9,8 @@ type CityEntry = {
 };
 
 type HexMap = Record<string, { terrain: string; city?: string; income?: number }>;
+type TerrainBrush = 'plains' | 'hills' | 'mountains' | 'berlin_approach' | 'urban' | 'erase';
+type PaintedHex = { x: number; y: number; terrain: Exclude<TerrainBrush, 'erase'> };
 
 interface Props {
   hexes: HexMap;
@@ -18,6 +20,17 @@ interface Props {
 const BG_W = 1409;
 const BG_H = 1046;
 const STORAGE_KEY = 'prussian-rails-calibration-v1';
+const PAINT_STORAGE_KEY = 'prussian-rails-hex-paint-v1';
+const ASSIGN_STORAGE_KEY = 'prussian-rails-city-hex-assignments-v1';
+const PAINT_PICK_RADIUS = 22;
+
+const TERRAIN_COLORS: Record<Exclude<TerrainBrush, 'erase'>, string> = {
+  plains: 'rgba(245, 230, 200, 0.45)',
+  hills: 'rgba(145, 199, 136, 0.45)',
+  mountains: 'rgba(188, 154, 124, 0.45)',
+  berlin_approach: 'rgba(240, 194, 122, 0.55)',
+  urban: 'rgba(212, 197, 169, 0.55)',
+};
 
 const DEFAULT_CALIBRATION_POSITIONS: Record<string, { x: number; y: number }> = {
   'Aachen': { x: 113.2, y: 599.9 },
@@ -125,6 +138,11 @@ export const PrussianRailsCalibrator: React.FC<Props> = ({ hexes, backgroundImag
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [dragging, setDragging] = useState(false);
   const [draggingPoint, setDraggingPoint] = useState<string | null>(null);
+  const [paintMode, setPaintMode] = useState(false);
+  const [paintBrush, setPaintBrush] = useState<TerrainBrush>('plains');
+  const [paintedHexes, setPaintedHexes] = useState<Record<string, PaintedHex>>({});
+  const [assignMode, setAssignMode] = useState(false);
+  const [cityAssignments, setCityAssignments] = useState<Record<string, string[]>>({});
   const dragStart = useRef({ x: 0, y: 0, ox: 0, oy: 0 });
   const svgRef = useRef<SVGSVGElement>(null);
 
@@ -182,6 +200,91 @@ export const PrussianRailsCalibrator: React.FC<Props> = ({ hexes, backgroundImag
     return () => window.removeEventListener('keydown', onKey);
   }, [selectedPoint]);
 
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(PAINT_STORAGE_KEY);
+      if (raw) {
+        setPaintedHexes(JSON.parse(raw));
+      }
+    } catch {
+      // ignore storage failures
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(ASSIGN_STORAGE_KEY);
+      if (raw) {
+        setCityAssignments(JSON.parse(raw));
+      }
+    } catch {
+      // ignore storage failures
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(PAINT_STORAGE_KEY, JSON.stringify(paintedHexes));
+    } catch {
+      // ignore storage failures
+    }
+  }, [paintedHexes]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(ASSIGN_STORAGE_KEY, JSON.stringify(cityAssignments));
+    } catch {
+      // ignore storage failures
+    }
+  }, [cityAssignments]);
+
+  const paintExportJson = useMemo(() => {
+    return JSON.stringify(
+      Object.entries(paintedHexes).map(([key, value]) => ({ key, ...value })),
+      null,
+      2,
+    );
+  }, [paintedHexes]);
+
+  const assignmentExportJson = useMemo(() => {
+    return JSON.stringify(cityAssignments, null, 2);
+  }, [cityAssignments]);
+
+  const assignCityToNearestHex = (x: number, y: number) => {
+    let nearestKey: string | null = null;
+    let nearestDist = Infinity;
+    for (const [key, value] of Object.entries(paintedHexes)) {
+      const d = Math.hypot(value.x - x, value.y - y);
+      if (d < nearestDist) {
+        nearestDist = d;
+        nearestKey = key;
+      }
+    }
+    if (!nearestKey || nearestDist > PAINT_PICK_RADIUS) return;
+
+    setCityAssignments(prev => {
+      const next = { ...prev };
+      const existing = next[selectedCity] || [];
+      const maxCount = selectedCity === 'Berlin' ? 3 : 1;
+      if (existing.includes(nearestKey)) return next;
+      next[selectedCity] = [...existing, nearestKey].slice(0, maxCount);
+      return next;
+    });
+
+    // Assigned city hexes should be urban for map generation.
+    setPaintedHexes(prev => {
+      const existing = prev[nearestKey!];
+      if (!existing) return prev;
+      return {
+        ...prev,
+        [nearestKey!]: {
+          ...existing,
+          terrain: 'urban',
+        },
+      };
+    });
+  };
+
   const selectedPos = selectedPoint ? positions[selectedPoint] : null;
 
   const exportJson = useMemo(() => {
@@ -196,8 +299,45 @@ export const PrussianRailsCalibrator: React.FC<Props> = ({ hexes, backgroundImag
     return JSON.stringify(out, null, 2);
   }, [cities, positions]);
 
+  const paintHexAt = (x: number, y: number) => {
+    setPaintedHexes(prev => {
+      const next = { ...prev };
+
+      // Find nearest existing painted hex for selection/erase
+      let nearestKey: string | null = null;
+      let nearestDist = Infinity;
+      for (const [key, value] of Object.entries(prev)) {
+        const d = Math.hypot(value.x - x, value.y - y);
+        if (d < nearestDist) {
+          nearestDist = d;
+          nearestKey = key;
+        }
+      }
+
+      if (paintBrush === 'erase') {
+        if (nearestKey && nearestDist <= PAINT_PICK_RADIUS) {
+          delete next[nearestKey];
+        }
+        return next;
+      }
+
+      // If clicking near an existing hex center, repaint that one
+      if (nearestKey && nearestDist <= PAINT_PICK_RADIUS) {
+        next[nearestKey] = { ...next[nearestKey], terrain: paintBrush };
+        return next;
+      }
+
+      // Otherwise create a brand new hex center where clicked
+      const key = `hex_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+      next[key] = { x, y, terrain: paintBrush };
+      return next;
+    });
+  };
+
+
+
   const handleBoardClick = (e: React.MouseEvent<SVGSVGElement>) => {
-    if (!selectedCity || !svgRef.current) return;
+    if (!svgRef.current) return;
 
     const svg = svgRef.current;
     const pt = svg.createSVGPoint();
@@ -207,13 +347,22 @@ export const PrussianRailsCalibrator: React.FC<Props> = ({ hexes, backgroundImag
     const screenCTM = svg.getScreenCTM();
     if (!screenCTM) return;
 
-    // Convert from screen space into SVG viewBox space
     const svgPoint = pt.matrixTransform(screenCTM.inverse());
-
-    // Then undo the current pan/zoom group transform
     const x = (svgPoint.x - offset.x) / zoom;
     const y = (svgPoint.y - offset.y) / zoom;
 
+    if (paintMode) {
+      paintHexAt(x, y);
+      return;
+    }
+
+    if (assignMode) {
+      if (!selectedCity) return;
+      assignCityToNearestHex(x, y);
+      return;
+    }
+
+    if (!selectedCity) return;
     setPositions(prev => ({ ...prev, [selectedCity]: { x, y } }));
     setSelectedPoint(selectedCity);
   };
@@ -279,7 +428,37 @@ export const PrussianRailsCalibrator: React.FC<Props> = ({ hexes, backgroundImag
         }} className="px-2 py-1 border rounded cursor-pointer">
           Reset calibration
         </button>
-        <span className="text-sm text-gray-600">Click the board to place the selected city. Arrow keys nudge selected point, Shift+Arrow = 10px.</span>
+        <button onClick={() => setPaintMode(v => !v)} className={`px-2 py-1 border rounded cursor-pointer ${paintMode ? 'bg-amber-200 border-amber-400' : ''}`}>
+          {paintMode ? 'Paint mode on' : 'Paint mode off'}
+        </button>
+        <button onClick={() => setAssignMode(v => !v)} className={`px-2 py-1 border rounded cursor-pointer ${assignMode ? 'bg-emerald-200 border-emerald-400' : ''}`}>
+          {assignMode ? 'Assign mode on' : 'Assign mode off'}
+        </button>
+        <select
+          value={paintBrush}
+          onChange={(e) => setPaintBrush(e.target.value as TerrainBrush)}
+          className="px-2 py-1 border rounded text-sm"
+        >
+          <option value="plains">plains</option>
+          <option value="hills">hills</option>
+          <option value="mountains">mountains</option>
+          <option value="berlin_approach">berlin approach</option>
+          <option value="urban">urban</option>
+          <option value="erase">erase</option>
+        </select>
+        <button onClick={() => {
+          localStorage.removeItem(PAINT_STORAGE_KEY);
+          setPaintedHexes({});
+        }} className="px-2 py-1 border rounded cursor-pointer">
+          Clear painted hexes
+        </button>
+        <button onClick={() => {
+          localStorage.removeItem(ASSIGN_STORAGE_KEY);
+          setCityAssignments({});
+        }} className="px-2 py-1 border rounded cursor-pointer">
+          Clear assignments
+        </button>
+        <span className="text-sm text-gray-600">{paintMode ? 'Paint mode: click to create hex centers exactly where you want them. Click near an existing hex to repaint it. Use erase to remove the nearest hex.' : assignMode ? 'Assign mode: select a city, then click a painted hex to bind it. Berlin can bind to 3 hexes.' : 'City mode: click the board to place the selected city. Arrow keys nudge selected point, Shift+Arrow = 10px.'}</span>
       </div>
 
       <div className="grid grid-cols-[320px_1fr] gap-4">
@@ -312,7 +491,25 @@ export const PrussianRailsCalibrator: React.FC<Props> = ({ hexes, backgroundImag
             <textarea
               readOnly
               value={exportJson}
-              className="w-full h-[420px] border rounded p-2 text-xs font-mono"
+              className="w-full h-[220px] border rounded p-2 text-xs font-mono"
+            />
+          </div>
+
+          <div>
+            <div className="text-sm font-medium mb-1">Painted hex export</div>
+            <textarea
+              readOnly
+              value={paintExportJson}
+              className="w-full h-[120px] border rounded p-2 text-xs font-mono"
+            />
+          </div>
+
+          <div>
+            <div className="text-sm font-medium mb-1">City → painted hex assignments</div>
+            <textarea
+              readOnly
+              value={assignmentExportJson}
+              className="w-full h-[120px] border rounded p-2 text-xs font-mono"
             />
           </div>
         </div>
@@ -334,6 +531,53 @@ export const PrussianRailsCalibrator: React.FC<Props> = ({ hexes, backgroundImag
               {showBoard && backgroundImage && (
                 <image href={backgroundImage} x={0} y={0} width={BG_W} height={BG_H} opacity={1} />
               )}
+
+              {(paintMode || assignMode) && Object.entries(paintedHexes).map(([key, painted]) => {
+                const assignedCities = Object.entries(cityAssignments)
+                  .filter(([, keys]) => keys.includes(key))
+                  .map(([city]) => city);
+                return (
+                <g key={`paint-${key}`}>
+                  <circle
+                    cx={painted.x}
+                    cy={painted.y}
+                    r={12}
+                    fill={TERRAIN_COLORS[painted.terrain]}
+                    stroke={'rgba(0,0,0,0.45)'}
+                    strokeWidth={2}
+                    pointerEvents="none"
+                  />
+                  <text
+                    x={painted.x}
+                    y={painted.y + 4}
+                    textAnchor="middle"
+                    fontSize={10}
+                    fontWeight="bold"
+                    fill="#111827"
+                    stroke="#fff"
+                    strokeWidth={2}
+                    paintOrder="stroke"
+                    pointerEvents="none"
+                  >
+                    {painted.terrain === 'berlin_approach' ? 'BA' : painted.terrain[0].toUpperCase()}
+                  </text>
+                  {assignedCities.length > 0 && (
+                    <text
+                      x={painted.x + 14}
+                      y={painted.y - 14}
+                      fontSize={10}
+                      fontWeight="bold"
+                      fill="#065f46"
+                      stroke="#fff"
+                      strokeWidth={2}
+                      paintOrder="stroke"
+                      pointerEvents="none"
+                    >
+                      {assignedCities.length === 1 ? assignedCities[0] : `${assignedCities.length} cities`}
+                    </text>
+                  )}
+                </g>
+              )})}
 
               {showDots && cities.map((c) => {
                 const pos = positions[c.city];

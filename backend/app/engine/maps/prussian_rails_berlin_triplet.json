@@ -1,0 +1,8 @@
+{
+  "berlin_city_centers": [
+    { "x": 657.6, "y": 351.1 },
+    { "x": 716.1, "y": 353.9 },
+    { "x": 688.2, "y": 403.1 }
+  ],
+  "note": "These are the 3 Berlin urban hex centers from user calibration, separate from the surrounding berlin_approach ring."
+}

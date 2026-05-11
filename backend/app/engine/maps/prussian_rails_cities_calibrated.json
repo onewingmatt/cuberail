@@ -1,0 +1,514 @@
+[
+  {
+    "city": "Aachen",
+    "q": 0,
+    "r": 8,
+    "x": 113.2,
+    "y": 599.9,
+    "income": 0
+  },
+  {
+    "city": "Augsburg",
+    "q": 7,
+    "r": 11,
+    "x": 489.4,
+    "y": 951,
+    "income": 0
+  },
+  {
+    "city": "Bamberg",
+    "q": 6,
+    "r": 7,
+    "x": 516.4,
+    "y": 699.4,
+    "income": 0
+  },
+  {
+    "city": "Berlin",
+    "q": 7,
+    "r": 3,
+    "x": 687.2,
+    "y": 367.7,
+    "income": 3
+  },
+  {
+    "city": "Bielefeld",
+    "q": 3,
+    "r": 4,
+    "x": 286.9,
+    "y": 402.1,
+    "income": 0
+  },
+  {
+    "city": "Braunschweig",
+    "q": 5,
+    "r": 3,
+    "x": 457.8,
+    "y": 404.9,
+    "income": 0
+  },
+  {
+    "city": "Bremen",
+    "q": 1,
+    "r": 3,
+    "x": 318.6,
+    "y": 250.8,
+    "income": 0
+  },
+  {
+    "city": "Breslau",
+    "q": 12,
+    "r": 2,
+    "x": 1005,
+    "y": 553.6,
+    "income": 2
+  },
+  {
+    "city": "Bromberg",
+    "q": 11,
+    "r": -2,
+    "x": 1061.6,
+    "y": 255.4,
+    "income": 0
+  },
+  {
+    "city": "Chemnitz",
+    "q": 8,
+    "r": 4,
+    "x": 691,
+    "y": 602.8,
+    "income": 0
+  },
+  {
+    "city": "Danzig",
+    "q": 11,
+    "r": -4,
+    "x": 1146.1,
+    "y": 104,
+    "income": 0
+  },
+  {
+    "city": "Dortmund",
+    "q": 2,
+    "r": 5,
+    "x": 229.3,
+    "y": 504.3,
+    "income": 0
+  },
+  {
+    "city": "Dresden",
+    "q": 9,
+    "r": 4,
+    "x": 717,
+    "y": 551.7,
+    "income": 2
+  },
+  {
+    "city": "Duisburg",
+    "q": 0,
+    "r": 6,
+    "x": 116,
+    "y": 505.2,
+    "income": 0
+  },
+  {
+    "city": "Düsseldorf",
+    "q": 0,
+    "r": 7,
+    "x": 144.8,
+    "y": 550.7,
+    "income": 0
+  },
+  {
+    "city": "Erfurt",
+    "q": 6,
+    "r": 4,
+    "x": 489.5,
+    "y": 553.6,
+    "income": 0
+  },
+  {
+    "city": "Essen",
+    "q": 1,
+    "r": 6,
+    "x": 174.5,
+    "y": 501.5,
+    "income": 0
+  },
+  {
+    "city": "Flensburg",
+    "q": 0,
+    "r": 1,
+    "x": 375.2,
+    "y": 52.9,
+    "income": 0
+  },
+  {
+    "city": "Frankfurt am Main",
+    "q": 4,
+    "r": 8,
+    "x": 287.1,
+    "y": 704,
+    "income": 2
+  },
+  {
+    "city": "Frankfurt an der Oder",
+    "q": 8,
+    "r": 2,
+    "x": 805.3,
+    "y": 405.9,
+    "income": 0
+  },
+  {
+    "city": "Freiburg im Breisgau",
+    "q": 3,
+    "r": 13,
+    "x": 199.6,
+    "y": 950.1,
+    "income": 0
+  },
+  {
+    "city": "Görlitz",
+    "q": 10,
+    "r": 3,
+    "x": 833.1,
+    "y": 556.4,
+    "income": 0
+  },
+  {
+    "city": "Göttingen",
+    "q": 4,
+    "r": 5,
+    "x": 400.3,
+    "y": 502.5,
+    "income": 0
+  },
+  {
+    "city": "Halle",
+    "q": 0,
+    "r": 0,
+    "x": 574,
+    "y": 504.3,
+    "income": 0
+  },
+  {
+    "city": "Hamburg",
+    "q": 2,
+    "r": 2,
+    "x": 401.2,
+    "y": 206.2,
+    "income": 3
+  },
+  {
+    "city": "Hamm",
+    "q": 2,
+    "r": 4,
+    "x": 260,
+    "y": 453.2,
+    "income": 0
+  },
+  {
+    "city": "Hannover",
+    "q": 4,
+    "r": 3,
+    "x": 400.3,
+    "y": 405.9,
+    "income": 0
+  },
+  {
+    "city": "Heilbronn",
+    "q": 4,
+    "r": 10,
+    "x": 314.9,
+    "y": 848.9,
+    "income": 0
+  },
+  {
+    "city": "Karlsruhe",
+    "q": 3,
+    "r": 11,
+    "x": 261,
+    "y": 851.6,
+    "income": 0
+  },
+  {
+    "city": "Kassel",
+    "q": 3,
+    "r": 6,
+    "x": 372.4,
+    "y": 551.6,
+    "income": 0
+  },
+  {
+    "city": "Kiel",
+    "q": 1,
+    "r": 2,
+    "x": 460.7,
+    "y": 105.9,
+    "income": 0
+  },
+  {
+    "city": "Koblenz",
+    "q": 2,
+    "r": 8,
+    "x": 201.5,
+    "y": 653.8,
+    "income": 0
+  },
+  {
+    "city": "Köln",
+    "q": 1,
+    "r": 8,
+    "x": 172.7,
+    "y": 603.7,
+    "income": 2
+  },
+  {
+    "city": "Königsberg",
+    "q": 14,
+    "r": -7,
+    "x": 1289.2,
+    "y": 54.8,
+    "income": 3
+  },
+  {
+    "city": "Kottbus",
+    "q": 9,
+    "r": 3,
+    "x": 775.6,
+    "y": 453.3,
+    "income": 0
+  },
+  {
+    "city": "Kreuz",
+    "q": 9,
+    "r": 0,
+    "x": 916.7,
+    "y": 304.6,
+    "income": 0
+  },
+  {
+    "city": "Leipzig",
+    "q": 7,
+    "r": 4,
+    "x": 602.7,
+    "y": 552.6,
+    "income": 2
+  },
+  {
+    "city": "Liegnitz",
+    "q": 11,
+    "r": 2,
+    "x": 917.7,
+    "y": 502.5,
+    "income": 0
+  },
+  {
+    "city": "Lübeck",
+    "q": 3,
+    "r": 1,
+    "x": 489.5,
+    "y": 155.1,
+    "income": 0
+  },
+  {
+    "city": "Magdeburg",
+    "q": 6,
+    "r": 2,
+    "x": 575.9,
+    "y": 404,
+    "income": 0
+  },
+  {
+    "city": "Mainz",
+    "q": 3,
+    "r": 9,
+    "x": 230.5,
+    "y": 700.3,
+    "income": 0
+  },
+  {
+    "city": "Mannheim",
+    "q": 4,
+    "r": 9,
+    "x": 288.9,
+    "y": 797.8,
+    "income": 1
+  },
+  {
+    "city": "Mühlhausen",
+    "q": 5,
+    "r": 5,
+    "x": 430.9,
+    "y": 552.6,
+    "income": 0
+  },
+  {
+    "city": "München",
+    "q": 8,
+    "r": 10,
+    "x": 543.3,
+    "y": 948.2,
+    "income": 3
+  },
+  {
+    "city": "Münster",
+    "q": 1,
+    "r": 5,
+    "x": 201.5,
+    "y": 453.2,
+    "income": 0
+  },
+  {
+    "city": "Neu Brandenburg",
+    "q": 5,
+    "r": 1,
+    "x": 687.3,
+    "y": 206.2,
+    "income": 0
+  },
+  {
+    "city": "Nürnberg",
+    "q": 7,
+    "r": 8,
+    "x": 512.7,
+    "y": 798.8,
+    "income": 0
+  },
+  {
+    "city": "Oldenburg",
+    "q": 0,
+    "r": 3,
+    "x": 261,
+    "y": 255.4,
+    "income": 0
+  },
+  {
+    "city": "Osnabrück",
+    "q": 2,
+    "r": 3,
+    "x": 259.1,
+    "y": 353.8,
+    "income": 0
+  },
+  {
+    "city": "Plauen",
+    "q": 7,
+    "r": 6,
+    "x": 601.9,
+    "y": 649.2,
+    "income": 0
+  },
+  {
+    "city": "Posen",
+    "q": 10,
+    "r": 1,
+    "x": 976.2,
+    "y": 405,
+    "income": 0
+  },
+  {
+    "city": "Regensburg",
+    "q": 8,
+    "r": 8,
+    "x": 603.7,
+    "y": 849.9,
+    "income": 0
+  },
+  {
+    "city": "Rostock",
+    "q": 4,
+    "r": 0,
+    "x": 601.9,
+    "y": 156,
+    "income": 0
+  },
+  {
+    "city": "Saarbrücken",
+    "q": 1,
+    "r": 11,
+    "x": 114.2,
+    "y": 798.8,
+    "income": 0
+  },
+  {
+    "city": "Schneidemühl",
+    "q": 10,
+    "r": -2,
+    "x": 1004,
+    "y": 256.4,
+    "income": 0
+  },
+  {
+    "city": "Stettin",
+    "q": 6,
+    "r": 0,
+    "x": 805.3,
+    "y": 208.1,
+    "income": 0
+  },
+  {
+    "city": "Stolp",
+    "q": 9,
+    "r": -3,
+    "x": 978,
+    "y": 102.2,
+    "income": 0
+  },
+  {
+    "city": "Stralsund",
+    "q": 5,
+    "r": -1,
+    "x": 687.2,
+    "y": 104,
+    "income": 0
+  },
+  {
+    "city": "Strasbourg",
+    "q": 2,
+    "r": 12,
+    "x": 172.7,
+    "y": 899.9,
+    "income": 0
+  },
+  {
+    "city": "Stuttgart",
+    "q": 5,
+    "r": 11,
+    "x": 344.5,
+    "y": 895.3,
+    "income": 0
+  },
+  {
+    "city": "Waldenburg",
+    "q": 11,
+    "r": 4,
+    "x": 976.2,
+    "y": 604.7,
+    "income": 0
+  },
+  {
+    "city": "Wesel",
+    "q": 0,
+    "r": 5,
+    "x": 143,
+    "y": 450.4,
+    "income": 0
+  },
+  {
+    "city": "Wittenberge",
+    "q": 3,
+    "r": 3,
+    "x": 488.4,
+    "y": 253.5,
+    "income": 0
+  },
+  {
+    "city": "Würzburg",
+    "q": 5,
+    "r": 8,
+    "x": 403.1,
+    "y": 699.3,
+    "income": 0
+  }
+]

@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useGameStore } from '../store';
 import { useWebSocket } from '../hooks/useWebSocket';
 import { HexGridBoard } from './HexGridBoard';
+import { PrussianRailsCalibrator } from './PrussianRailsCalibrator';
 
 const getCurrentUserId = (): string | null => {
   const token = localStorage.getItem('token');
@@ -26,6 +27,7 @@ export const PrussianRailsBoard: React.FC = () => {
   const [selectedHex, setSelectedHex] = useState<string | null>(null);
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [calibrationMode, setCalibrationMode] = useState(false);
   const historyEndRef = useRef<HTMLDivElement>(null);
 
   if (!gameState || !gameState.map_data) return null;
@@ -98,6 +100,14 @@ export const PrussianRailsBoard: React.FC = () => {
   return (
     <div className="flex flex-col items-center p-4">
       <h2 className="text-2xl font-bold mb-1">Prussian Rails</h2>
+      <div className="mb-3 flex gap-2">
+        <button
+          onClick={() => setCalibrationMode(v => !v)}
+          className={`px-3 py-1 rounded text-sm cursor-pointer ${calibrationMode ? 'bg-amber-600 text-white' : 'bg-slate-200 text-slate-900'}`}
+        >
+          {calibrationMode ? 'Exit calibration mode' : 'Enter calibration mode'}
+        </button>
+      </div>
 
       {gameState.game_over && (
         <div className="bg-yellow-100 text-yellow-800 p-3 mb-3 rounded font-semibold">
@@ -106,6 +116,13 @@ export const PrussianRailsBoard: React.FC = () => {
       )}
 
       <div className="flex gap-4 w-full justify-center">
+        {calibrationMode ? (
+          <PrussianRailsCalibrator
+            hexes={hexes}
+            backgroundImage={mapData.background_image || null}
+          />
+        ) : (
+          <>
         {/* Hex Map */}
         <HexGridBoard
           hexes={hexes}
@@ -321,6 +338,8 @@ export const PrussianRailsBoard: React.FC = () => {
             )}
           </div>
         </div>
+          </>
+        )}
       </div>
     </div>
   );
