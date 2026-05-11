@@ -367,18 +367,16 @@ export const HexGridBoard: React.FC<HexGridBoardProps> = ({
   return (
     <div className="relative">
       <svg
-        ref={svgRef}
-        width={viewDims.w}
-        height={viewDims.h}
-        style={{
-          border: '1px solid #ccc',
-          borderRadius: 4,
-          cursor: isPanning ? 'grabbing' : 'grab',
-          background: '#fff',
-          width: '100%',
-          height: '100%',
-          minHeight: 500,
-        }}
+          ref={svgRef}
+          width="100%"
+          height="100%"
+          style={{
+            border: '1px solid #ccc',
+            borderRadius: 4,
+            cursor: isPanning ? 'grabbing' : 'grab',
+            background: '#fff',
+            minHeight: 500,
+          }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}

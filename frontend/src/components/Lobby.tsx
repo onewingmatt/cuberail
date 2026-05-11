@@ -138,7 +138,7 @@ export const Lobby: React.FC = () => {
         <div className="flex items-center gap-4 mb-4">
           <span className="text-sm font-medium text-gray-700">Bot opponents:</span>
           <div className="flex rounded border border-gray-300 overflow-hidden">
-            {[0, 1, 2, 3].map((n) => (
+            {[0, 1, 2, 3, 4].map((n) => (
               <button
                 key={n}
                 onClick={() => setBotCount(n)}

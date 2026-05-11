@@ -72,7 +72,7 @@ async def create_game(
 ):
     Authorize.jwt_required()
     user_id = Authorize.get_jwt_subject()
-    bot_count = max(0, min(bot_count, 3))
+    bot_count = max(0, min(bot_count, 4))
 
     game = Game(game_type=game_type, mode=mode, created_by_id=uuid.UUID(user_id))
     db.add(game)

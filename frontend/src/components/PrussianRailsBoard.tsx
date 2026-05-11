@@ -180,7 +180,7 @@ export const PrussianRailsBoard: React.FC = () => {
         </div>
       )}
 
-      <div className="flex gap-4 w-full justify-center">
+      <div class="flex gap-4 w-full max-w-[1600px] mx-auto">
         {calibrationMode ? (
           <PrussianRailsCalibrator
             hexes={hexes}
@@ -189,6 +189,7 @@ export const PrussianRailsBoard: React.FC = () => {
         ) : (
           <>
         {/* Hex Map */}
+        <div class="flex-1 min-w-0">
         <HexGridBoard
           hexes={hexes}
           hexSize={mapData.hex_size || 40}
@@ -211,9 +212,10 @@ export const PrussianRailsBoard: React.FC = () => {
           showOverlay={showOverlay}
           hexSpacing={hexSpacing}
         />
+        </div>
 
         {/* Sidebar */}
-        <div className="w-72 flex flex-col gap-3">
+        <div class="w-80 flex flex-col gap-3 shrink-0">
           {/* Status */}
           <div className="bg-white p-4 rounded shadow border border-gray-200">
             <h3 className="font-bold border-b pb-2 mb-2">Game Status</h3>
