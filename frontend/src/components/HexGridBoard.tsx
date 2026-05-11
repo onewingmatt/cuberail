@@ -266,7 +266,10 @@ export const HexGridBoard: React.FC<HexGridBoardProps> = ({
           fill={fillColor}
           stroke={isSelected ? '#ef4444' : (isHighlighted ? '#22c55e' : strokeColor)}
           strokeWidth={isSelected ? 3 : (isHighlighted ? 2.5 : 1)}
-          opacity={hasTracks ? 1 : 0.95}
+          opacity={0.65}
+          style={{ transition: 'opacity 0.2s' }}
+          onMouseEnter={(e) => { if (!isSelected) (e.currentTarget as SVGElement).style.opacity = '0.85'; }}
+          onMouseLeave={(e) => { if (!isSelected) (e.currentTarget as SVGElement).style.opacity = '0.65'; }}
         />
         {/* Terrain label */}
         {showTerrainLabels && !hex.city && (

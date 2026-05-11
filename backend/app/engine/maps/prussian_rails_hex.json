@@ -9,8 +9,6 @@
     "r_max": 21
   },
   "background_image": "/prussian_rails_board.png",
-  "image_origin_x": 265,
-  "image_origin_y": 55,
   "terrain_costs": {
     "plains": 2,
     "hills": 3,
@@ -79,51 +77,47 @@
     }
   ],
   "auction_order": [
-    "Preußische Ostbahn",
-    "Niederschlesisch-Märkische",
-    "Königlich-Sächsische",
-    "Königlich-Bayerische",
+    "Preu\u00dfische Ostbahn",
+    "Niederschlesisch-M\u00e4rkische",
+    "K\u00f6niglich-S\u00e4chsische",
+    "K\u00f6niglich-Bayerische",
     "Main-Weser-Bahn",
-    "Großherzoglich Badische",
-    "Köln-Mindener",
+    "Gro\u00dfherzoglich Badische",
+    "K\u00f6ln-Mindener",
     "Berlin-Hamburger"
   ],
   "companies": [
     {
-      "id": "Preußische Ostbahn",
+      "id": "Preu\u00dfische Ostbahn",
       "color": "#1a1a1a",
-      "home": "Königsberg",
+      "home": "K\u00f6nigsberg",
       "start_income": 3,
       "track_count": 20,
-      "ability": "build_4",
-      "ability_desc": "May build up to 4 track cubes per Expansion"
+      "ability": "build_4"
     },
     {
-      "id": "Niederschlesisch-Märkische",
+      "id": "Niederschlesisch-M\u00e4rkische",
       "color": "#8B4513",
       "home": "Breslau",
       "start_income": 2,
       "track_count": 17,
-      "ability": "no_city_penalty",
-      "ability_desc": "Never pays stacking penalty"
+      "ability": "no_city_penalty"
     },
     {
-      "id": "Königlich-Sächsische",
+      "id": "K\u00f6niglich-S\u00e4chsische",
       "color": "#FF8C00",
       "home": "Leipzig",
       "start_income": 1,
       "track_count": 11,
-      "ability": "build_1_2",
-      "ability_desc": "May only build 1 or 2 track cubes per Expansion"
+      "ability": "build_1_2"
     },
     {
-      "id": "Königlich-Bayerische",
+      "id": "K\u00f6niglich-Bayerische",
       "color": "#0000FF",
-      "home": "München",
+      "home": "M\u00fcnchen",
       "start_income": 3,
       "track_count": 16,
-      "ability": "discount_1",
-      "ability_desc": "Cost to build each hex is $1 less (min $1)"
+      "ability": "discount_1"
     },
     {
       "id": "Main-Weser-Bahn",
@@ -131,26 +125,23 @@
       "home": "Kassel",
       "start_income": 2,
       "track_count": 14,
-      "ability": "double_best_income",
-      "ability_desc": "Doubles the income of highest-income Urban hex in network"
+      "ability": "double_best_income"
     },
     {
-      "id": "Großherzoglich Badische",
+      "id": "Gro\u00dfherzoglich Badische",
       "color": "#CC0000",
       "home": "Mannheim",
       "start_income": 1,
       "track_count": 15,
-      "ability": "free_rural",
-      "ability_desc": "One free rural track per Expansion"
+      "ability": "free_rural"
     },
     {
-      "id": "Köln-Mindener",
+      "id": "K\u00f6ln-Mindener",
       "color": "#800080",
-      "home": "Köln",
+      "home": "K\u00f6ln",
       "start_income": 1,
       "track_count": 12,
-      "ability": "max_spend_5",
-      "ability_desc": "Maximum $5 expenditure per build action"
+      "ability": "max_spend_5"
     },
     {
       "id": "Berlin-Hamburger",
@@ -158,11 +149,55 @@
       "home": "Hamburg",
       "start_income": 1,
       "track_count": 13,
-      "ability": "connect_both",
-      "ability_desc": "Must connect to both Berlin and Hamburg to receive dividends"
+      "ability": "connect_both"
     }
   ],
   "hexes": {
+    "-7,-10": {
+      "terrain": "plains"
+    },
+    "-6,-10": {
+      "terrain": "plains"
+    },
+    "-5,-10": {
+      "terrain": "plains"
+    },
+    "-4,-10": {
+      "terrain": "plains"
+    },
+    "-3,-10": {
+      "terrain": "plains"
+    },
+    "-2,-10": {
+      "terrain": "plains"
+    },
+    "-1,-10": {
+      "terrain": "plains"
+    },
+    "0,-10": {
+      "terrain": "plains"
+    },
+    "1,-10": {
+      "terrain": "plains"
+    },
+    "2,-10": {
+      "terrain": "plains"
+    },
+    "3,-10": {
+      "terrain": "plains"
+    },
+    "4,-10": {
+      "terrain": "plains"
+    },
+    "5,-10": {
+      "terrain": "plains"
+    },
+    "6,-10": {
+      "terrain": "plains"
+    },
+    "7,-10": {
+      "terrain": "plains"
+    },
     "8,-10": {
       "terrain": "plains"
     },
@@ -194,6 +229,48 @@
       "terrain": "plains"
     },
     "18,-10": {
+      "terrain": "plains"
+    },
+    "-7,-9": {
+      "terrain": "plains"
+    },
+    "-6,-9": {
+      "terrain": "plains"
+    },
+    "-5,-9": {
+      "terrain": "plains"
+    },
+    "-4,-9": {
+      "terrain": "plains"
+    },
+    "-3,-9": {
+      "terrain": "plains"
+    },
+    "-2,-9": {
+      "terrain": "plains"
+    },
+    "-1,-9": {
+      "terrain": "plains"
+    },
+    "0,-9": {
+      "terrain": "plains"
+    },
+    "1,-9": {
+      "terrain": "plains"
+    },
+    "2,-9": {
+      "terrain": "plains"
+    },
+    "3,-9": {
+      "terrain": "plains"
+    },
+    "4,-9": {
+      "terrain": "plains"
+    },
+    "5,-9": {
+      "terrain": "plains"
+    },
+    "6,-9": {
       "terrain": "plains"
     },
     "7,-9": {
@@ -232,6 +309,45 @@
     "18,-9": {
       "terrain": "plains"
     },
+    "-7,-8": {
+      "terrain": "plains"
+    },
+    "-6,-8": {
+      "terrain": "plains"
+    },
+    "-5,-8": {
+      "terrain": "plains"
+    },
+    "-4,-8": {
+      "terrain": "plains"
+    },
+    "-3,-8": {
+      "terrain": "plains"
+    },
+    "-2,-8": {
+      "terrain": "plains"
+    },
+    "-1,-8": {
+      "terrain": "plains"
+    },
+    "0,-8": {
+      "terrain": "plains"
+    },
+    "1,-8": {
+      "terrain": "plains"
+    },
+    "2,-8": {
+      "terrain": "plains"
+    },
+    "3,-8": {
+      "terrain": "plains"
+    },
+    "4,-8": {
+      "terrain": "plains"
+    },
+    "5,-8": {
+      "terrain": "plains"
+    },
     "6,-8": {
       "terrain": "plains"
     },
@@ -264,13 +380,49 @@
     },
     "16,-8": {
       "terrain": "urban",
-      "city": "Königsberg",
+      "city": "K\u00f6nigsberg",
       "income": 3
     },
     "17,-8": {
       "terrain": "plains"
     },
     "18,-8": {
+      "terrain": "plains"
+    },
+    "-7,-7": {
+      "terrain": "plains"
+    },
+    "-6,-7": {
+      "terrain": "plains"
+    },
+    "-5,-7": {
+      "terrain": "plains"
+    },
+    "-4,-7": {
+      "terrain": "plains"
+    },
+    "-3,-7": {
+      "terrain": "plains"
+    },
+    "-2,-7": {
+      "terrain": "plains"
+    },
+    "-1,-7": {
+      "terrain": "plains"
+    },
+    "0,-7": {
+      "terrain": "plains"
+    },
+    "1,-7": {
+      "terrain": "plains"
+    },
+    "2,-7": {
+      "terrain": "plains"
+    },
+    "3,-7": {
+      "terrain": "plains"
+    },
+    "4,-7": {
       "terrain": "plains"
     },
     "5,-7": {
@@ -315,6 +467,39 @@
       "terrain": "plains"
     },
     "18,-7": {
+      "terrain": "plains"
+    },
+    "-7,-6": {
+      "terrain": "plains"
+    },
+    "-6,-6": {
+      "terrain": "plains"
+    },
+    "-5,-6": {
+      "terrain": "plains"
+    },
+    "-4,-6": {
+      "terrain": "plains"
+    },
+    "-3,-6": {
+      "terrain": "plains"
+    },
+    "-2,-6": {
+      "terrain": "plains"
+    },
+    "-1,-6": {
+      "terrain": "plains"
+    },
+    "0,-6": {
+      "terrain": "plains"
+    },
+    "1,-6": {
+      "terrain": "plains"
+    },
+    "2,-6": {
+      "terrain": "plains"
+    },
+    "3,-6": {
       "terrain": "plains"
     },
     "4,-6": {
@@ -362,6 +547,36 @@
       "terrain": "plains"
     },
     "18,-6": {
+      "terrain": "plains"
+    },
+    "-7,-5": {
+      "terrain": "plains"
+    },
+    "-6,-5": {
+      "terrain": "plains"
+    },
+    "-5,-5": {
+      "terrain": "plains"
+    },
+    "-4,-5": {
+      "terrain": "plains"
+    },
+    "-3,-5": {
+      "terrain": "plains"
+    },
+    "-2,-5": {
+      "terrain": "plains"
+    },
+    "-1,-5": {
+      "terrain": "plains"
+    },
+    "0,-5": {
+      "terrain": "plains"
+    },
+    "1,-5": {
+      "terrain": "plains"
+    },
+    "2,-5": {
       "terrain": "plains"
     },
     "3,-5": {
@@ -412,6 +627,33 @@
     "18,-5": {
       "terrain": "plains"
     },
+    "-7,-4": {
+      "terrain": "plains"
+    },
+    "-6,-4": {
+      "terrain": "plains"
+    },
+    "-5,-4": {
+      "terrain": "plains"
+    },
+    "-4,-4": {
+      "terrain": "plains"
+    },
+    "-3,-4": {
+      "terrain": "plains"
+    },
+    "-2,-4": {
+      "terrain": "plains"
+    },
+    "-1,-4": {
+      "terrain": "plains"
+    },
+    "0,-4": {
+      "terrain": "plains"
+    },
+    "1,-4": {
+      "terrain": "plains"
+    },
     "2,-4": {
       "terrain": "plains"
     },
@@ -447,7 +689,7 @@
     },
     "13,-4": {
       "terrain": "urban",
-      "city": "Schneidemühl",
+      "city": "Schneidem\u00fchl",
       "income": 0
     },
     "14,-4": {
@@ -465,6 +707,30 @@
       "terrain": "plains"
     },
     "18,-4": {
+      "terrain": "plains"
+    },
+    "-7,-3": {
+      "terrain": "plains"
+    },
+    "-6,-3": {
+      "terrain": "plains"
+    },
+    "-5,-3": {
+      "terrain": "plains"
+    },
+    "-4,-3": {
+      "terrain": "plains"
+    },
+    "-3,-3": {
+      "terrain": "plains"
+    },
+    "-2,-3": {
+      "terrain": "plains"
+    },
+    "-1,-3": {
+      "terrain": "plains"
+    },
+    "0,-3": {
       "terrain": "plains"
     },
     "1,-3": {
@@ -521,6 +787,27 @@
       "terrain": "plains"
     },
     "18,-3": {
+      "terrain": "plains"
+    },
+    "-7,-2": {
+      "terrain": "plains"
+    },
+    "-6,-2": {
+      "terrain": "plains"
+    },
+    "-5,-2": {
+      "terrain": "plains"
+    },
+    "-4,-2": {
+      "terrain": "plains"
+    },
+    "-3,-2": {
+      "terrain": "plains"
+    },
+    "-2,-2": {
+      "terrain": "plains"
+    },
+    "-1,-2": {
       "terrain": "plains"
     },
     "0,-2": {
@@ -580,6 +867,24 @@
       "terrain": "plains"
     },
     "18,-2": {
+      "terrain": "plains"
+    },
+    "-7,-1": {
+      "terrain": "plains"
+    },
+    "-6,-1": {
+      "terrain": "plains"
+    },
+    "-5,-1": {
+      "terrain": "plains"
+    },
+    "-4,-1": {
+      "terrain": "plains"
+    },
+    "-3,-1": {
+      "terrain": "plains"
+    },
+    "-2,-1": {
       "terrain": "plains"
     },
     "-1,-1": {
@@ -644,6 +949,21 @@
       "terrain": "plains"
     },
     "18,-1": {
+      "terrain": "plains"
+    },
+    "-7,0": {
+      "terrain": "plains"
+    },
+    "-6,0": {
+      "terrain": "plains"
+    },
+    "-5,0": {
+      "terrain": "plains"
+    },
+    "-4,0": {
+      "terrain": "plains"
+    },
+    "-3,0": {
       "terrain": "plains"
     },
     "-2,0": {
@@ -715,6 +1035,21 @@
     "18,0": {
       "terrain": "plains"
     },
+    "-7,1": {
+      "terrain": "plains"
+    },
+    "-6,1": {
+      "terrain": "plains"
+    },
+    "-5,1": {
+      "terrain": "plains"
+    },
+    "-4,1": {
+      "terrain": "plains"
+    },
+    "-3,1": {
+      "terrain": "plains"
+    },
     "-2,1": {
       "terrain": "plains"
     },
@@ -729,7 +1064,7 @@
     },
     "2,1": {
       "terrain": "urban",
-      "city": "Lübeck",
+      "city": "L\u00fcbeck",
       "income": 0
     },
     "3,1": {
@@ -780,6 +1115,21 @@
       "terrain": "plains"
     },
     "18,1": {
+      "terrain": "plains"
+    },
+    "-7,2": {
+      "terrain": "plains"
+    },
+    "-6,2": {
+      "terrain": "plains"
+    },
+    "-5,2": {
+      "terrain": "plains"
+    },
+    "-4,2": {
+      "terrain": "plains"
+    },
+    "-3,2": {
       "terrain": "plains"
     },
     "-2,2": {
@@ -843,6 +1193,21 @@
       "terrain": "plains"
     },
     "18,2": {
+      "terrain": "plains"
+    },
+    "-7,3": {
+      "terrain": "plains"
+    },
+    "-6,3": {
+      "terrain": "plains"
+    },
+    "-5,3": {
+      "terrain": "plains"
+    },
+    "-4,3": {
+      "terrain": "plains"
+    },
+    "-3,3": {
       "terrain": "plains"
     },
     "-2,3": {
@@ -916,6 +1281,18 @@
     "18,3": {
       "terrain": "plains"
     },
+    "-7,4": {
+      "terrain": "plains"
+    },
+    "-6,4": {
+      "terrain": "plains"
+    },
+    "-5,4": {
+      "terrain": "plains"
+    },
+    "-4,4": {
+      "terrain": "plains"
+    },
     "-3,4": {
       "terrain": "plains"
     },
@@ -966,7 +1343,7 @@
     },
     "11,4": {
       "terrain": "urban",
-      "city": "Görlitz",
+      "city": "G\u00f6rlitz",
       "income": 0
     },
     "12,4": {
@@ -988,6 +1365,15 @@
       "terrain": "plains"
     },
     "18,4": {
+      "terrain": "plains"
+    },
+    "-7,5": {
+      "terrain": "plains"
+    },
+    "-6,5": {
+      "terrain": "plains"
+    },
+    "-5,5": {
       "terrain": "plains"
     },
     "-4,5": {
@@ -1071,6 +1457,15 @@
     "18,5": {
       "terrain": "plains"
     },
+    "-7,6": {
+      "terrain": "plains"
+    },
+    "-6,6": {
+      "terrain": "plains"
+    },
+    "-5,6": {
+      "terrain": "plains"
+    },
     "-4,6": {
       "terrain": "plains"
     },
@@ -1082,7 +1477,7 @@
     },
     "-1,6": {
       "terrain": "urban",
-      "city": "Osnabrück",
+      "city": "Osnabr\u00fcck",
       "income": 0
     },
     "0,6": {
@@ -1100,7 +1495,7 @@
     },
     "3,6": {
       "terrain": "urban",
-      "city": "Göttingen",
+      "city": "G\u00f6ttingen",
       "income": 0
     },
     "4,6": {
@@ -1152,6 +1547,12 @@
     "18,6": {
       "terrain": "plains"
     },
+    "-7,7": {
+      "terrain": "plains"
+    },
+    "-6,7": {
+      "terrain": "plains"
+    },
     "-5,7": {
       "terrain": "plains"
     },
@@ -1185,7 +1586,7 @@
     },
     "4,7": {
       "terrain": "urban",
-      "city": "Mühlhausen",
+      "city": "M\u00fchlhausen",
       "income": 0
     },
     "5,7": {
@@ -1234,11 +1635,14 @@
     "18,7": {
       "terrain": "plains"
     },
+    "-7,8": {
+      "terrain": "plains"
+    },
     "-6,8": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "-5,8": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "-4,8": {
       "terrain": "urban",
@@ -1246,71 +1650,74 @@
       "income": 0
     },
     "-3,8": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "-2,8": {
       "terrain": "urban",
-      "city": "Münster",
+      "city": "M\u00fcnster",
       "income": 0
     },
     "-1,8": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "0,8": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "1,8": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "2,8": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "3,8": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "4,8": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "5,8": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "6,8": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "7,8": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "8,8": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "9,8": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "10,8": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "11,8": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "12,8": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "13,8": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "14,8": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "15,8": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "16,8": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "17,8": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "18,8": {
+      "terrain": "plains"
+    },
+    "-7,9": {
       "terrain": "hills"
     },
     "-6,9": {
@@ -1336,19 +1743,19 @@
       "terrain": "hills"
     },
     "0,9": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "1,9": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "2,9": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "3,9": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "4,9": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "5,9": {
       "terrain": "urban",
@@ -1356,10 +1763,10 @@
       "income": 0
     },
     "6,9": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "7,9": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "8,9": {
       "terrain": "urban",
@@ -1367,34 +1774,34 @@
       "income": 0
     },
     "9,9": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "10,9": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "11,9": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "12,9": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "13,9": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "14,9": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "15,9": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "16,9": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "17,9": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "18,9": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "-7,10": {
       "terrain": "hills"
@@ -1426,59 +1833,59 @@
       "terrain": "hills"
     },
     "2,10": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "3,10": {
       "terrain": "urban",
-      "city": "Würzburg",
+      "city": "W\u00fcrzburg",
       "income": 0
     },
     "4,10": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "5,10": {
       "terrain": "urban",
-      "city": "Nürnberg",
+      "city": "N\u00fcrnberg",
       "income": 0
     },
     "6,10": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "7,10": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "8,10": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "9,10": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "10,10": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "11,10": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "12,10": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "13,10": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "14,10": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "15,10": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "16,10": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "17,10": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "18,10": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "-7,11": {
       "terrain": "hills"
@@ -1491,7 +1898,7 @@
     },
     "-4,11": {
       "terrain": "urban",
-      "city": "Düsseldorf",
+      "city": "D\u00fcsseldorf",
       "income": 0
     },
     "-3,11": {
@@ -1510,55 +1917,55 @@
       "terrain": "hills"
     },
     "2,11": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "3,11": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "4,11": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "5,11": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "6,11": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "7,11": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "8,11": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "9,11": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "10,11": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "11,11": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "12,11": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "13,11": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "14,11": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "15,11": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "16,11": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "17,11": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "18,11": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "-7,12": {
       "terrain": "hills"
@@ -1588,7 +1995,7 @@
       "terrain": "hills"
     },
     "2,12": {
-      "terrain": "hills"
+      "terrain": "plains"
     },
     "3,12": {
       "terrain": "plains"
@@ -1654,7 +2061,7 @@
     },
     "-3,13": {
       "terrain": "urban",
-      "city": "Köln",
+      "city": "K\u00f6ln",
       "income": 2
     },
     "-2,13": {
@@ -1698,49 +2105,49 @@
       "terrain": "plains"
     },
     "10,13": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "11,13": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "12,13": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "13,13": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "14,13": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "15,13": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "16,13": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "17,13": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "18,13": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "-7,14": {
-      "terrain": "mountains"
+      "terrain": "plains"
     },
     "-6,14": {
-      "terrain": "mountains"
+      "terrain": "plains"
     },
     "-5,14": {
-      "terrain": "mountains"
+      "terrain": "plains"
     },
     "-4,14": {
-      "terrain": "mountains"
+      "terrain": "plains"
     },
     "-3,14": {
-      "terrain": "mountains"
+      "terrain": "plains"
     },
     "-2,14": {
-      "terrain": "mountains"
+      "terrain": "plains"
     },
     "-1,14": {
       "terrain": "urban",
@@ -1748,10 +2155,10 @@
       "income": 2
     },
     "0,14": {
-      "terrain": "mountains"
+      "terrain": "plains"
     },
     "1,14": {
-      "terrain": "mountains"
+      "terrain": "plains"
     },
     "2,14": {
       "terrain": "plains"
@@ -1780,31 +2187,31 @@
       "terrain": "plains"
     },
     "10,14": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "11,14": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "12,14": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "13,14": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "14,14": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "15,14": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "16,14": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "17,14": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "18,14": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "-7,15": {
       "terrain": "mountains"
@@ -1836,7 +2243,7 @@
       "terrain": "mountains"
     },
     "2,15": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "3,15": {
       "terrain": "plains"
@@ -1860,13 +2267,13 @@
       "terrain": "plains"
     },
     "10,15": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "11,15": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "12,15": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "13,15": {
       "terrain": "mountains"
@@ -1900,7 +2307,7 @@
     },
     "-3,16": {
       "terrain": "urban",
-      "city": "Saarbrücken",
+      "city": "Saarbr\u00fccken",
       "income": 0
     },
     "-2,16": {
@@ -1925,10 +2332,10 @@
       "income": 0
     },
     "3,16": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "4,16": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "5,16": {
       "terrain": "plains"
@@ -1946,13 +2353,13 @@
       "terrain": "plains"
     },
     "10,16": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "11,16": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "12,16": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "13,16": {
       "terrain": "mountains"
@@ -2000,39 +2407,39 @@
       "terrain": "mountains"
     },
     "2,17": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "3,17": {
       "terrain": "urban",
-      "city": "München",
+      "city": "M\u00fcnchen",
       "income": 3
     },
     "4,17": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "5,17": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "6,17": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "7,17": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "8,17": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "9,17": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "10,17": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "11,17": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "12,17": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "13,17": {
       "terrain": "mountains"
@@ -2082,37 +2489,37 @@
       "terrain": "mountains"
     },
     "2,18": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "3,18": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "4,18": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "5,18": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "6,18": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "7,18": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "8,18": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "9,18": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "10,18": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "11,18": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "12,18": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "13,18": {
       "terrain": "mountains"
@@ -2162,37 +2569,37 @@
       "terrain": "mountains"
     },
     "2,19": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "3,19": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "4,19": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "5,19": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "6,19": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "7,19": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "8,19": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "9,19": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "10,19": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "11,19": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "12,19": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "13,19": {
       "terrain": "mountains"
@@ -2240,37 +2647,37 @@
       "terrain": "mountains"
     },
     "2,20": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "3,20": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "4,20": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "5,20": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "6,20": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "7,20": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "8,20": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "9,20": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "10,20": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "11,20": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "12,20": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "13,20": {
       "terrain": "mountains"
@@ -2318,37 +2725,37 @@
       "terrain": "mountains"
     },
     "2,21": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "3,21": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "4,21": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "5,21": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "6,21": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "7,21": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "8,21": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "9,21": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "10,21": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "11,21": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "12,21": {
-      "terrain": "plains"
+      "terrain": "mountains"
     },
     "13,21": {
       "terrain": "mountains"
