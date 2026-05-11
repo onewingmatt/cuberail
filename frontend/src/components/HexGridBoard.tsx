@@ -360,11 +360,11 @@ export const HexGridBoard: React.FC<HexGridBoardProps> = ({
           {backgroundImage && (
             <image
               href={backgroundImage}
-              x={gridMinX + imageOffsetX}
-              y={gridMinY + imageOffsetY}
-              width={imgW}
-              height={imgH}
-              style={{ opacity: 0.4, pointerEvents: 'none' }}
+              x={0}
+              y={0}
+              width={1409}
+              height={1046}
+              style={{ opacity: 0.35, pointerEvents: 'none', imageRendering: 'auto' }}
             />
           )}
           {hexElements}
