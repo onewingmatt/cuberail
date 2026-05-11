@@ -101,10 +101,12 @@ export const PrussianRailsBoard: React.FC = () => {
 
   const phaseLabel = gameState.phase === 'auction' && !gameState.round_phase ? 'Initial Auction' :
     gameState.phase === 'round' && gameState.auction_state ? 'Share Auction' :
-    gameState.phase === 'round' ? `Round ${gameState.round_number || ''} — ${gameState.round_phase || ''}` :
+    gameState.phase === 'round' ? `Round ${gameState.round_number || gameState.current_round_number || ''} — ${gameState.round_phase || ''}` :
     gameState.phase;
 
   const currentPlayerName = getUserName(gameState.current_player || '', players);
+  const winnerId = (gameState as any).winner;
+  const winnerName = winnerId ? getUserName(winnerId, players) : null;
 
   return (
     <div className="flex flex-col items-center p-4">
@@ -173,8 +175,8 @@ export const PrussianRailsBoard: React.FC = () => {
       )}
 
       {gameState.game_over && (
-        <div className="bg-yellow-100 text-yellow-800 p-3 mb-3 rounded font-semibold">
-          Game Over!
+        <div className="bg-yellow-100 border-2 border-yellow-600 text-yellow-900 p-4 mb-3 rounded-lg shadow font-semibold text-lg">
+          Game Over! {winnerName ? `${winnerName} wins!` : ''}
         </div>
       )}
 
