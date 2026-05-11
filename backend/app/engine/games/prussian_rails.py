@@ -22,19 +22,19 @@ from app.engine.utils.map_loader import MapLoader
 COMPANY_DEFS = [
     {"id": "Preußische Ostbahn", "color": "#1a1a1a", "home": "Königsberg",
      "start_income": 3, "track_count": 20, "ability": "build_4"},
-    {"id": "Niederschlesische", "color": "#8B4513", "home": "Breslau",
+    {"id": "Niederschlesisch-Märkische", "color": "#8B4513", "home": "Breslau",
      "start_income": 2, "track_count": 17, "ability": "no_city_penalty"},
-    {"id": "Sächsische", "color": "#FF8C00", "home": "Leipzig",
+    {"id": "Königlich-Sächsische", "color": "#FF8C00", "home": "Leipzig",
      "start_income": 1, "track_count": 11, "ability": "build_1_2"},
-    {"id": "Bayerische", "color": "#0000FF", "home": "München",
+    {"id": "Königlich-Bayerische", "color": "#0000FF", "home": "München",
      "start_income": 3, "track_count": 16, "ability": "discount_1"},
-    {"id": "Main-Wesel", "color": "#DAA520", "home": "Kassel",
+    {"id": "Main-Weser-Bahn", "color": "#DAA520", "home": "Kassel",
      "start_income": 2, "track_count": 14, "ability": "double_best_income"},
-    {"id": "Badische", "color": "#CC0000", "home": "Mannheim",
+    {"id": "Großherzoglich Badische", "color": "#CC0000", "home": "Mannheim",
      "start_income": 1, "track_count": 15, "ability": "free_rural"},
-    {"id": "Köln-Mindener", "color": "#800080", "home": "Essen",
+    {"id": "Köln-Mindener", "color": "#800080", "home": "Köln",
      "start_income": 1, "track_count": 12, "ability": "max_spend_5"},
-    {"id": "Berlin-Hamburger", "color": "#006400", "home": "Wittenberge",
+    {"id": "Berlin-Hamburger", "color": "#006400", "home": "Hamburg",
      "start_income": 1, "track_count": 13, "ability": "connect_both"},
 ]
 
@@ -750,8 +750,8 @@ class PrussianRailsEngine(GameEngine, AuctionManager, StockMarket):
                 if not self._is_connected_to_both(state, cid):
                     continue
 
-            # Main-Wesel: double the best city income in its network
-            if cid == "Main-Wesel":
+            # Main-Weser-Bahn: double the best city income in its network
+            if cid == "Main-Weser-Bahn":
                 best = self._get_best_city_income(state, cid)
                 income = max(income, income + best)  # effectively double best
 
@@ -783,7 +783,7 @@ class PrussianRailsEngine(GameEngine, AuctionManager, StockMarket):
         return connected_to_berlin and connected_to_hamburg
 
     def _get_best_city_income(self, state: PrussianRailsState, company_id: str) -> int:
-        """Find the highest-income city in a company's network for Main-Wesel ability."""
+        """Find the highest-income city in a company's network for Main-Weser-Bahn ability."""
         best = 0
         for k, companies in state.board.items():
             if company_id in companies:
