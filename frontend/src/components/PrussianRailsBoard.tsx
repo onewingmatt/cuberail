@@ -28,6 +28,13 @@ export const PrussianRailsBoard: React.FC = () => {
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [calibrationMode, setCalibrationMode] = useState(false);
+  const [overlayTranslateX, setOverlayTranslateX] = useState(0);
+  const [overlayTranslateY, setOverlayTranslateY] = useState(0);
+  const [overlayScaleX, setOverlayScaleX] = useState(1);
+  const [overlayScaleY, setOverlayScaleY] = useState(1);
+  const [overlayRotation, setOverlayRotation] = useState(0);
+  const [overlayOpacity, setOverlayOpacity] = useState(0.35);
+  const [showOverlay, setShowOverlay] = useState(true);
   const historyEndRef = useRef<HTMLDivElement>(null);
 
   if (!gameState || !gameState.map_data) return null;
@@ -100,14 +107,58 @@ export const PrussianRailsBoard: React.FC = () => {
   return (
     <div className="flex flex-col items-center p-4">
       <h2 className="text-2xl font-bold mb-1">Prussian Rails</h2>
-      <div className="mb-3 flex gap-2">
+      <div className="mb-3 flex gap-2 flex-wrap items-center">
         <button
           onClick={() => setCalibrationMode(v => !v)}
           className={`px-3 py-1 rounded text-sm cursor-pointer ${calibrationMode ? 'bg-amber-600 text-white' : 'bg-slate-200 text-slate-900'}`}
         >
           {calibrationMode ? 'Exit calibration mode' : 'Enter calibration mode'}
         </button>
+        <button
+          onClick={() => setShowOverlay(v => !v)}
+          className={`px-3 py-1 rounded text-sm cursor-pointer ${showOverlay ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-900'}`}
+        >
+          {showOverlay ? 'Hide logic overlay' : 'Show logic overlay'}
+        </button>
+        <span className="text-xs text-gray-600">Move/scale/rotate the overlay until it matches the board image. Logic stays in JSON underneath.</span>
       </div>
+
+      {!calibrationMode && (
+        <div className="mb-4 w-full max-w-5xl bg-white border rounded p-3 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 text-xs">
+          <label className="flex flex-col gap-1">TX
+            <input type="range" min={-300} max={300} step={1} value={overlayTranslateX} onChange={e => setOverlayTranslateX(Number(e.target.value))} />
+            <span>{overlayTranslateX}</span>
+          </label>
+          <label className="flex flex-col gap-1">TY
+            <input type="range" min={-300} max={300} step={1} value={overlayTranslateY} onChange={e => setOverlayTranslateY(Number(e.target.value))} />
+            <span>{overlayTranslateY}</span>
+          </label>
+          <label className="flex flex-col gap-1">SX
+            <input type="range" min={0.5} max={1.5} step={0.01} value={overlayScaleX} onChange={e => setOverlayScaleX(Number(e.target.value))} />
+            <span>{overlayScaleX.toFixed(2)}</span>
+          </label>
+          <label className="flex flex-col gap-1">SY
+            <input type="range" min={0.5} max={1.5} step={0.01} value={overlayScaleY} onChange={e => setOverlayScaleY(Number(e.target.value))} />
+            <span>{overlayScaleY.toFixed(2)}</span>
+          </label>
+          <label className="flex flex-col gap-1">Rot
+            <input type="range" min={-15} max={15} step={0.1} value={overlayRotation} onChange={e => setOverlayRotation(Number(e.target.value))} />
+            <span>{overlayRotation.toFixed(1)}°</span>
+          </label>
+          <label className="flex flex-col gap-1">Opacity
+            <input type="range" min={0} max={1} step={0.01} value={overlayOpacity} onChange={e => setOverlayOpacity(Number(e.target.value))} />
+            <span>{overlayOpacity.toFixed(2)}</span>
+          </label>
+          <button
+            onClick={() => {
+              setOverlayTranslateX(0); setOverlayTranslateY(0); setOverlayScaleX(1); setOverlayScaleY(1); setOverlayRotation(0); setOverlayOpacity(0.35);
+            }}
+            className="px-3 py-2 rounded bg-slate-100 border cursor-pointer self-end"
+          >
+            Reset overlay
+          </button>
+        </div>
+      )}
 
       {gameState.game_over && (
         <div className="bg-yellow-100 text-yellow-800 p-3 mb-3 rounded font-semibold">
@@ -137,6 +188,13 @@ export const PrussianRailsBoard: React.FC = () => {
           minR={mapData.grid_bounds?.r_min ?? 0}
           maxR={mapData.grid_bounds?.r_max ?? 17}
           backgroundImage={mapData.background_image || null}
+          overlayTranslateX={overlayTranslateX}
+          overlayTranslateY={overlayTranslateY}
+          overlayScaleX={overlayScaleX}
+          overlayScaleY={overlayScaleY}
+          overlayRotation={overlayRotation}
+          overlayOpacity={overlayOpacity}
+          showOverlay={showOverlay}
         />
 
         {/* Sidebar */}

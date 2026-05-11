@@ -99,6 +99,13 @@ interface HexGridBoardProps {
   imageOffsetX?: number;
   imageOffsetY?: number;
   imageScale?: number;
+  overlayTranslateX?: number;
+  overlayTranslateY?: number;
+  overlayScaleX?: number;
+  overlayScaleY?: number;
+  overlayRotation?: number;
+  overlayOpacity?: number;
+  showOverlay?: boolean;
 }
 
 export const HexGridBoard: React.FC<HexGridBoardProps> = ({
@@ -121,6 +128,13 @@ export const HexGridBoard: React.FC<HexGridBoardProps> = ({
   imageOffsetX = 0,
   imageOffsetY = 0,
   imageScale = 1,
+  overlayTranslateX = 0,
+  overlayTranslateY = 0,
+  overlayScaleX = 1,
+  overlayScaleY = 1,
+  overlayRotation = 0,
+  overlayOpacity = 0.65,
+  showOverlay = true,
 }) => {
   const [internalScale, setInternalScale] = useState(1);
   const [internalOffsetX, setInternalOffsetX] = useState(0);
@@ -271,10 +285,10 @@ export const HexGridBoard: React.FC<HexGridBoardProps> = ({
           fill={fillColor}
           stroke={isSelected ? '#ef4444' : (isHighlighted ? '#22c55e' : strokeColor)}
           strokeWidth={isSelected ? 3 : (isHighlighted ? 2.5 : 1)}
-          opacity={0.65}
+          opacity={overlayOpacity}
           style={{ transition: 'opacity 0.2s' }}
-          onMouseEnter={(e) => { if (!isSelected) (e.currentTarget as SVGElement).style.opacity = '0.85'; }}
-          onMouseLeave={(e) => { if (!isSelected) (e.currentTarget as SVGElement).style.opacity = '0.65'; }}
+          onMouseEnter={(e) => { if (!isSelected) (e.currentTarget as SVGElement).style.opacity = String(Math.min(1, overlayOpacity + 0.2)); }}
+          onMouseLeave={(e) => { if (!isSelected) (e.currentTarget as SVGElement).style.opacity = String(overlayOpacity); }}
         />
         {/* Terrain label */}
         {showTerrainLabels && !hex.city && (
@@ -375,7 +389,18 @@ export const HexGridBoard: React.FC<HexGridBoardProps> = ({
               style={{ opacity: 0.35, pointerEvents: 'none', imageRendering: 'auto' }}
             />
           )}
-          {hexElements}
+          {showOverlay && (
+            <g
+              transform={
+                `translate(${overlayTranslateX} ${overlayTranslateY}) ` +
+                `rotate(${overlayRotation}) ` +
+                `scale(${overlayScaleX} ${overlayScaleY})`
+              }
+              style={{ transformOrigin: '0 0' }}
+            >
+              {hexElements}
+            </g>
+          )}
         </g>
       </svg>
       {/* Zoom controls */}
