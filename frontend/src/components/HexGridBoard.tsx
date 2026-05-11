@@ -21,7 +21,8 @@ export function hexCornerPath(q: number, r: number, size: number): string {
   const { x: cx, y: cy } = hexToPixel(q, r, size);
   const corners: string[] = [];
   for (let i = 0; i < 6; i++) {
-    const angleDeg = 60 * i;
+    // Rotate 30° so the hex is pointy-top (points face north/south)
+    const angleDeg = 60 * i + 30;
     const angleRad = Math.PI / 180 * angleDeg;
     corners.push(`${cx + size * Math.cos(angleRad)},${cy + size * Math.sin(angleRad)}`);
   }
