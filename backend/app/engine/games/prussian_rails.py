@@ -153,6 +153,7 @@ class PrussianRailsState(GameState):
             "map_data": self._raw_map,
             "player_turn_order": self.player_turn_order,
             "turn_position": self.turn_position,
+            "cup_pending": self.cup_pending,
             "connected_pairs": [[a, b] for a, b in self.connected_pairs],
             "move_history": self.move_history[-30:],  # last 30 entries
         }

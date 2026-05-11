@@ -367,6 +367,51 @@ export const PrussianRailsBoard: React.FC = () => {
             })}
           </div>
 
+          {/* Turn Order — shows cup draw results */}
+          {gameState.phase === 'round' && (gameState as any).cup_pending && (
+            <div className="bg-white p-4 rounded shadow border border-gray-200">
+              <h3 className="font-bold border-b pb-2 mb-2">Turn Order — Round {(gameState as any).round_number || (gameState as any).current_round_number}</h3>
+              <div className="text-xs space-y-1">
+                {/* Seed row: disk counts per player */}
+                <div className="text-xs text-gray-600 mb-2">
+                  Cup draw (higher income = fewer disks):
+                </div>
+                {Object.entries((gameState as any).cup_pending || {}).map(([pId, disks]) => {
+                  const pName = getUserName(pId, players);
+                  const income = (gameState as any).player_income?.[pId] || 0;
+                  const isActive = gameState.current_player === pId;
+                  return (
+                    <div key={pId} className={`flex items-center gap-2 py-0.5 ${isActive ? 'font-bold text-blue-700' : ''}`}>
+                      <span className="w-3 h-3 rounded-full inline-block shrink-0" style={{
+                        background: isActive ? '#3b82f6' : '#d1d5db',
+                      }} />
+                      <span className="truncate max-w-[100px]">{pName}</span>
+                      <span className="text-gray-400">${income}i</span>
+                      <span className="ml-auto font-mono">{String(disks)} disk{Number(disks) !== 1 ? 's' : ''}</span>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="border-t border-gray-100 mt-2 pt-2">
+                <div className="text-xs text-gray-600 mb-1">Drawn order:</div>
+                <div className="flex gap-1.5 justify-start">
+                  {((gameState as any).player_turn_order || []).map((pId: string, idx: number) => {
+                    const pName = getUserName(pId, players);
+                    const pos = (gameState as any).turn_position ?? 0;
+                    const isCurrent = idx === pos;
+                    return (
+                      <div key={idx} className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 ${isCurrent ? 'bg-blue-600 text-white border-blue-600' : 'bg-gray-100 text-gray-600 border-gray-300'}`}
+                        title={pName}
+                      >
+                        {pName.slice(0, 2).toUpperCase()}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Company State */}
           {!auction && (
             <div className="bg-white p-4 rounded shadow border border-gray-200">
