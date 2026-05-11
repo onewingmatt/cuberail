@@ -284,20 +284,22 @@ export const HexGridBoard: React.FC<HexGridBoardProps> = ({
 
     hexElements.push(
       <g key={key} onClick={() => handleHexClick(q, r)} style={{ cursor: onHexClick ? 'pointer' : 'default' }}>
-        {/* Hex polygon */}
+        {/* Hex polygon fill — hidden when overlay is off */}
         <path
           d={path}
           fill={fillColor}
           stroke={isSelected ? '#ef4444' : (isHighlighted ? '#22c55e' : strokeColor)}
           strokeWidth={isSelected ? 3 : (isHighlighted ? 2.5 : 1)}
-          opacity={overlayOpacity}
+          opacity={showOverlay ? overlayOpacity : 0}
           style={{ transition: 'opacity 0.2s' }}
           strokeLinejoin="round"
           strokeLinecap="round"
           shapeRendering="geometricPrecision"
-          onMouseEnter={(e) => { if (!isSelected) (e.currentTarget as SVGElement).style.opacity = String(Math.min(1, overlayOpacity + 0.2)); }}
-          onMouseLeave={(e) => { if (!isSelected) (e.currentTarget as SVGElement).style.opacity = String(overlayOpacity); }}
+          onMouseEnter={(e) => { if (isSelected) return; const el = e.currentTarget as SVGElement; if (showOverlay) el.style.opacity = String(Math.min(1, overlayOpacity + 0.2)); }}
+          onMouseLeave={(e) => { const el = e.currentTarget as SVGElement; el.style.opacity = showOverlay ? String(overlayOpacity) : '0'; }}
         />
+        {/* These stay visible even when overlay is hidden */}
+        <g style={{ opacity: 1 }}>
         {/* Terrain label */}
         {showTerrainLabels && !hex.city && (
           <text
@@ -352,6 +354,7 @@ export const HexGridBoard: React.FC<HexGridBoardProps> = ({
             rx={0.5}
           />
         ))}
+        </g>
       </g>
     );
   }
