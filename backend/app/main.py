@@ -1,11 +1,12 @@
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_jwt_auth import AuthJWT
 from fastapi_jwt_auth.exceptions import AuthJWTException
 from pydantic import BaseModel
 from app.api import games, auth, notifications
 import socketio
+import os
 
 fastapi_app = FastAPI(title="Cube Rail API")
 
@@ -28,9 +29,10 @@ def authjwt_exception_handler(request: Request, exc: AuthJWTException):
         content={"detail": exc.message}
     )
 
+origins = settings.CORS_ORIGINS.split(",") if settings.CORS_ORIGINS else ["*"]
 fastapi_app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://localhost:8000", "http://0.0.0.0:5173"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -39,6 +41,25 @@ fastapi_app.add_middleware(
 fastapi_app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
 fastapi_app.include_router(games.router, prefix="/api/games", tags=["Games"])
 fastapi_app.include_router(notifications.router, prefix="/api", tags=["Notifications"])
+
+# Serve frontend static files (must be after API routes)
+STATIC_DIR = settings.STATIC_DIR
+
+@fastapi_app.get("/{full_path:path}")
+async def serve_spa(full_path: str):
+    # Let API routes handle their own 404s
+    if full_path.startswith("api/"):
+        return JSONResponse(status_code=404, content={"detail": "Not found"})
+
+    file_path = os.path.join(STATIC_DIR, full_path)
+    if os.path.isfile(file_path):
+        return FileResponse(file_path)
+
+    # SPA fallback — serve index.html for client-side routing
+    index_path = os.path.join(STATIC_DIR, "index.html")
+    if os.path.isfile(index_path):
+        return FileResponse(index_path)
+    return JSONResponse(status_code=404, content={"detail": "Not found"})
 
 sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins='*')
 
