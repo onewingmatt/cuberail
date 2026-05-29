@@ -15,4 +15,4 @@ redis
 fastapi-jwt-auth
 python-socketio
 psycopg2-binary
-pydantic<2
+pydantic[email]<2
