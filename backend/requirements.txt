@@ -16,4 +16,3 @@ pydantic-settings
 fastapi-jwt-auth
 python-socketio
 psycopg2-binary
-pydantic<2
