@@ -21,21 +21,21 @@ from app.engine.utils.map_loader import MapLoader
 
 COMPANY_DEFS = [
     {"id": "Preußische Ostbahn", "color": "#1a1a1a", "home": "Königsberg",
-     "start_income": 3, "track_count": 20, "ability": "build_4"},
+     "start_income": 3, "track_count": 21, "ability": "build_4"},
     {"id": "Niederschlesisch-Märkische", "color": "#8B4513", "home": "Breslau",
-     "start_income": 2, "track_count": 17, "ability": "no_city_penalty"},
+     "start_income": 2, "track_count": 18, "ability": "no_city_penalty"},
     {"id": "Königlich-Sächsische", "color": "#FF8C00", "home": "Leipzig",
-     "start_income": 1, "track_count": 11, "ability": "build_1_2"},
+     "start_income": 1, "track_count": 12, "ability": "build_1_2"},
     {"id": "Königlich-Bayerische", "color": "#0000FF", "home": "München",
-     "start_income": 3, "track_count": 16, "ability": "discount_1"},
+     "start_income": 3, "track_count": 17, "ability": "discount_1"},
     {"id": "Main-Weser-Bahn", "color": "#DAA520", "home": "Kassel",
-     "start_income": 2, "track_count": 14, "ability": "double_best_income"},
+     "start_income": 2, "track_count": 15, "ability": "double_best_income"},
     {"id": "Großherzoglich Badische", "color": "#CC0000", "home": "Mannheim",
-     "start_income": 1, "track_count": 15, "ability": "free_rural"},
-    {"id": "Köln-Mindener", "color": "#800080", "home": "Köln",
-     "start_income": 1, "track_count": 12, "ability": "max_spend_5"},
-    {"id": "Berlin-Hamburger", "color": "#006400", "home": "Hamburg",
-     "start_income": 1, "track_count": 13, "ability": "connect_both"},
+     "start_income": 1, "track_count": 16, "ability": "free_rural"},
+    {"id": "Köln-Mindener", "color": "#800080", "home": "Essen",
+     "start_income": 1, "track_count": 13, "ability": "max_spend_5"},
+    {"id": "Berlin-Hamburger", "color": "#006400", "home": "Wittenberge",
+     "start_income": 1, "track_count": 14, "ability": "connect_both"},
 ]
 
 STARTING_MONEY = {3: 40, 4: 30, 5: 24}
@@ -172,7 +172,7 @@ class PrussianRailsEngine(GameEngine, AuctionManager, StockMarket):
         first_company = state.company_auction_queue.pop(0)
         starter = state.turn_order[0]
         bidder_order = self._build_bidder_order(state.turn_order, starter)
-        self.start_auction(state, first_company, bidder_order, starting_bid=5)
+        self.start_auction(state, first_company, bidder_order, starting_bid=1)  # Minimum bid $1 per rules
         return state
 
     # ── Move dispatch ──────────────────────────────────────────────
@@ -231,7 +231,7 @@ class PrussianRailsEngine(GameEngine, AuctionManager, StockMarket):
                     bidder_order = self._build_bidder_order(
                         state.turn_order, state.turn_order[0]
                     )
-                    self.start_auction(state, next_company, bidder_order, starting_bid=5)
+                    self.start_auction(state, next_company, bidder_order, starting_bid=1)
                 else:
                     state.phase = "round"
                     self._start_new_round(state)
@@ -303,7 +303,7 @@ class PrussianRailsEngine(GameEngine, AuctionManager, StockMarket):
             next_company = state.company_auction_queue.pop(0)
             # Build bidder order starting with previous winner
             bidder_order = self._build_bidder_order(state.turn_order, next_starter)
-            self.start_auction(state, next_company, bidder_order, starting_bid=5)
+            self.start_auction(state, next_company, bidder_order, starting_bid=1)
         else:
             # All initial auctions done → start first round
             state.phase = "round"
