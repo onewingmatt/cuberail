@@ -11,6 +11,25 @@ import uuid
 router = APIRouter()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+# Ensure bcrypt backend loads correctly on Python 3.13
+# Try to pre-load the backend; pass silently if it fails
+import logging
+logger = logging.getLogger(__name__)
+try:
+    pwd_context.hash("test")
+except Exception:
+    logger.warning("passlib bcrypt backend failed — falling back to direct bcrypt")
+    import bcrypt as _bcrypt
+    class _BcryptFallback:
+        @staticmethod
+        def hash(secret):
+            return _bcrypt.hashpw(secret.encode() if isinstance(secret, str) else secret, _bcrypt.gensalt()).decode()
+        @staticmethod
+        def verify(secret, hash):
+            return _bcrypt.checkpw(secret.encode() if isinstance(secret, str) else secret, hash.encode() if isinstance(hash, str) else hash)
+    pwd_context.hash = _BcryptFallback.hash
+    pwd_context.verify = _BcryptFallback.verify
+
 class UserCreate(BaseModel):
     username: str
     email: EmailStr
