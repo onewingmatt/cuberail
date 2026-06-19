@@ -660,6 +660,11 @@ class PrussianRailsEngine(GameEngine, AuctionManager, StockMarket):
                     city_penalty = len(existing_companies)  # +$1 per existing company
                     hex_cost += city_penalty
 
+            # Rural hex: only one railroad may enter (per rules)
+            if is_rural and existing_companies:
+                raise ValueError(f"Rural hex ({q},{r}) already occupied by {existing_companies[0]}")
+
+
             # Berlin approach: only 1 per company per game, only 1 company per approach hex
             if state.hex_grid.is_berlin_approach(q, r):
                 if state.berlin_approach_used.get(company_id, False):
