@@ -1,30 +1,79 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useGameStore, useAuthStore } from '../store';
+import { useGameStore } from '../store';
 import { useWebSocket } from '../hooks/useWebSocket';
-import { InteractiveMapBoard } from './InteractiveMapBoard';
+import { HexGridBoard } from './HexGridBoard';
+import { PrussianRailsCalibrator } from './PrussianRailsCalibrator';
+
+const getCurrentUserId = (): string | null => {
+  const token = localStorage.getItem('token');
+  if (!token) return null;
+  try {
+    return JSON.parse(atob(token.split('.')[1])).sub || null;
+  } catch {
+    return null;
+  }
+};
+
+const getUserName = (playerId: string, players: any[]): string => {
+  const p = players?.find((pl: any) => pl.id === playerId);
+  return p?.username || playerId.slice(0, 8);
+};
 
 export const PrussianRailsBoard: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { gameState } = useGameStore();
-  const { user } = useAuthStore();
   const { sendMove } = useWebSocket(id || '', false);
-  const [selectedCity, setSelectedCity] = useState<string | null>(null);
+  const [selectedHex, setSelectedHex] = useState<string | null>(null);
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [calibrationMode, setCalibrationMode] = useState(false);
+  const [overlayTranslateX, setOverlayTranslateX] = useState(-320);
+  const [overlayTranslateY, setOverlayTranslateY] = useState(56.5);
+  const [overlayScaleX, setOverlayScaleX] = useState(1.06);
+  const [overlayScaleY, setOverlayScaleY] = useState(1.057);
+  const [overlayRotation, setOverlayRotation] = useState(0);
+  const [overlayOpacity, setOverlayOpacity] = useState(0.45);
+  const [showOverlay, setShowOverlay] = useState(false);
+  const [hexSpacing, setHexSpacing] = useState(1.16);
+  const [showOverlayControls, setShowOverlayControls] = useState(false);
+  const historyEndRef = useRef<HTMLDivElement>(null);
 
   if (!gameState || !gameState.map_data) return null;
 
-  const isMyTurn = gameState.current_player === user?.id;
-  const isAuctionPhase = gameState.phase === 'auction';
+  const myUserId = getCurrentUserId();
+  const isMyTurn = gameState.current_player === myUserId;
+  const isAuctionPhase = gameState.phase === 'auction' && !gameState.round_phase;
+  const players = (gameState as any).players || [];
 
-  const handleCityClick = (city: string) => {
-    setSelectedCity(city);
-  };
+  const boardDict: Record<string, string[]> = {};
+  if (Array.isArray(gameState.board)) {
+    for (const [key, companies] of gameState.board) {
+      const colorList: string[] = [];
+      for (const cid of (companies as string[])) {
+        const comp = gameState.companies?.[cid];
+        colorList.push(comp?.color || '#000');
+      }
+      boardDict[key as string] = colorList;
+    }
+  }
+
+  const mapData = gameState.map_data;
+  const hexes = mapData.hexes || {};
+
+  const handleHexClick = useCallback((q: number, r: number) => {
+    setSelectedHex(`${q},${r}`);
+    if (selectedCompany && gameState.phase === 'round' && !gameState.auction_state) {
+      sendMove('build_track', { hex_path: [[q, r]], company: selectedCompany });
+      setSelectedHex(null);
+    }
+  }, [selectedCompany, gameState.phase, gameState.auction_state, sendMove]);
 
   const handleBuildTrack = () => {
-    if (selectedCity && selectedCompany) {
-      sendMove('build_track', { city: selectedCity, company: selectedCompany });
-      setSelectedCity(null);
+    if (selectedHex && selectedCompany) {
+      const [q, r] = selectedHex.split(',').map(Number);
+      sendMove('build_track', { hex_path: [[q, r]], company: selectedCompany });
+      setSelectedHex(null);
     }
   };
 
@@ -36,151 +85,381 @@ export const PrussianRailsBoard: React.FC = () => {
     sendMove('pass', {});
   };
 
-  const renderNode = (city: string, node: any, px: { x: number, y: number }) => {
-    const isSelected = selectedCity === city;
-    const tracks = gameState.board?.[city] || [];
-
-    return (
-      <g key={city} onClick={() => handleCityClick(city)} style={{ cursor: 'pointer' }}>
-        <circle
-          cx={px.x}
-          cy={px.y}
-          r={12}
-          fill="#f3f4f6"
-          stroke={isSelected ? '#ef4444' : '#374151'}
-          strokeWidth={isSelected ? 3 : 2}
-        />
-
-        {/* Render little cubes for track */}
-        {tracks.map((companyId: string, idx: number) => {
-          const comp = gameState.companies?.[companyId];
-          const color = comp ? comp.color : '#000';
-          return (
-            <rect
-              key={idx}
-              x={px.x - 10 + (idx * 6)}
-              y={px.y + 4}
-              width={6}
-              height={6}
-              fill={color}
-              stroke="#fff"
-              strokeWidth={0.5}
-            />
-          );
-        })}
-
-        <text
-          x={px.x}
-          y={px.y - 16}
-          textAnchor="middle"
-          fontSize={12}
-          fontWeight="bold"
-          fill="#111827"
-          style={{ userSelect: 'none', pointerEvents: 'none' }}
-        >
-          {node.label}
-        </text>
-      </g>
-    );
+  const handleAuctionShare = (companyId: string) => {
+    sendMove('auction_share', { company: companyId });
   };
 
-  return (
-    <div className="flex flex-col items-center p-4">
-      <h2 className="text-2xl font-bold mb-2">Prussian Rails: {id}</h2>
+  const auction = gameState.auction_state;
+  const companies = Object.values(gameState.companies || {}) as any[];
+  const moveHistory: string[] = (gameState as any).move_history || [];
 
-      {gameState.game_over && (
-        <div className="bg-red-100 text-red-800 p-3 mb-3 rounded">Game Over!</div>
+  useEffect(() => {
+    if (historyOpen && historyEndRef.current) {
+      historyEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [moveHistory.length, historyOpen]);
+
+  const phaseLabel = gameState.phase === 'auction' && !gameState.round_phase ? 'Initial Auction' :
+    gameState.phase === 'round' && gameState.auction_state ? 'Share Auction' :
+    gameState.phase === 'round' ? `Round ${gameState.round_number || gameState.current_round_number || ''} — ${gameState.round_phase || ''}` :
+    gameState.phase;
+
+  const currentPlayerName = getUserName(gameState.current_player || '', players);
+  const winnerId = (gameState as any).winner;
+  const winnerName = winnerId ? getUserName(winnerId, players) : null;
+
+  return (
+    <div class="flex flex-col items-center p-4 h-screen">
+      <h2 class="text-2xl font-bold mb-1">Prussian Rails</h2>
+      <div className="mb-3 flex gap-2 flex-wrap items-center">
+        <button
+          onClick={() => setCalibrationMode(v => !v)}
+          className={`px-3 py-1 rounded text-sm cursor-pointer ${calibrationMode ? 'bg-amber-600 text-white' : 'bg-slate-200 text-slate-900'}`}
+        >
+          {calibrationMode ? 'Exit calibration mode' : 'Enter calibration mode'}
+        </button>
+        <button
+          onClick={() => setShowOverlay(v => !v)}
+          className={`px-3 py-1 rounded text-sm cursor-pointer ${showOverlay ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-900'}`}
+        >
+          {showOverlay ? 'Hide hex overlay' : 'Show hex overlay'}
+        </button>
+        <button
+          onClick={() => setShowOverlayControls(v => !v)}
+          className={`px-3 py-1 rounded text-sm cursor-pointer ${showOverlayControls ? 'bg-amber-600 text-white' : 'bg-slate-200 text-slate-900'}`}
+        >
+          {showOverlayControls ? 'Hide alignment' : 'Align overlay'}
+        </button>
+        <span className="text-xs text-gray-600">Move/scale/rotate the overlay until it matches the board image. Logic stays in JSON underneath.</span>
+      </div>
+
+      {!calibrationMode && showOverlayControls && (
+        <div className="mb-4 w-full max-w-6xl bg-white border rounded p-3 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-7 gap-3 text-xs">
+          <label className="flex flex-col gap-1">TX
+            <input type="range" min={-300} max={300} step={0.5} value={overlayTranslateX} onChange={e => setOverlayTranslateX(Number(e.target.value))} />
+            <input type="number" step={0.5} value={overlayTranslateX} onChange={e => setOverlayTranslateX(Number(e.target.value))} className="border rounded px-2 py-1" />
+          </label>
+          <label className="flex flex-col gap-1">TY
+            <input type="range" min={-300} max={300} step={0.5} value={overlayTranslateY} onChange={e => setOverlayTranslateY(Number(e.target.value))} />
+            <input type="number" step={0.5} value={overlayTranslateY} onChange={e => setOverlayTranslateY(Number(e.target.value))} className="border rounded px-2 py-1" />
+          </label>
+          <label className="flex flex-col gap-1">SX
+            <input type="range" min={0.5} max={1.5} step={0.001} value={overlayScaleX} onChange={e => setOverlayScaleX(Number(e.target.value))} />
+            <input type="number" step={0.001} value={overlayScaleX} onChange={e => setOverlayScaleX(Number(e.target.value))} className="border rounded px-2 py-1" />
+          </label>
+          <label className="flex flex-col gap-1">SY
+            <input type="range" min={0.5} max={1.5} step={0.001} value={overlayScaleY} onChange={e => setOverlayScaleY(Number(e.target.value))} />
+            <input type="number" step={0.001} value={overlayScaleY} onChange={e => setOverlayScaleY(Number(e.target.value))} className="border rounded px-2 py-1" />
+          </label>
+          <label className="flex flex-col gap-1">Rot
+            <input type="range" min={-15} max={15} step={0.01} value={overlayRotation} onChange={e => setOverlayRotation(Number(e.target.value))} />
+            <input type="number" step={0.01} value={overlayRotation} onChange={e => setOverlayRotation(Number(e.target.value))} className="border rounded px-2 py-1" />
+          </label>
+          <label className="flex flex-col gap-1">Opacity
+            <input type="range" min={0} max={1} step={0.01} value={overlayOpacity} onChange={e => setOverlayOpacity(Number(e.target.value))} />
+            <input type="number" min={0} max={1} step={0.01} value={overlayOpacity} onChange={e => setOverlayOpacity(Number(e.target.value))} className="border rounded px-2 py-1" />
+          </label>
+          <label className="flex flex-col gap-1">Spacing
+            <input type="range" min={0.85} max={1.15} step={0.001} value={hexSpacing} onChange={e => setHexSpacing(Number(e.target.value))} />
+            <input type="number" step={0.001} value={hexSpacing} onChange={e => setHexSpacing(Number(e.target.value))} className="border rounded px-2 py-1" />
+          </label>
+          <button
+            onClick={() => {
+              setOverlayTranslateX(0); setOverlayTranslateY(0); setOverlayScaleX(1); setOverlayScaleY(1); setOverlayRotation(0); setOverlayOpacity(0.35);
+            }}
+            className="px-3 py-2 rounded bg-slate-100 border cursor-pointer self-end"
+          >
+            Reset overlay
+          </button>
+        </div>
       )}
 
-      <div className="flex gap-4 w-full justify-center">
-        {/* Main Map */}
-        <div className="relative">
-          <InteractiveMapBoard
-            boardWidth={gameState.map_data.board_width}
-            boardHeight={gameState.map_data.board_height}
-            backgroundImage={gameState.map_data.background_image}
-            nodes={gameState.map_data.nodes}
-            edges={gameState.map_data.edges}
-            renderNode={renderNode}
+      {gameState.game_over && (
+        <div className="bg-yellow-100 border-2 border-yellow-600 text-yellow-900 p-4 mb-3 rounded-lg shadow font-semibold text-lg">
+          Game Over! {winnerName ? `${winnerName} wins!` : ''}
+        </div>
+      )}
+
+      <div class="flex gap-4 w-full max-w-[1600px] mx-auto flex-1 min-h-0 overflow-hidden">
+        {calibrationMode ? (
+          <PrussianRailsCalibrator
+            hexes={hexes}
+            backgroundImage={mapData.background_image || null}
           />
+        ) : (
+          <>
+        {/* Hex Map */}
+        <div class="flex-1 min-w-0 h-full flex flex-col">
+        <HexGridBoard
+          hexes={hexes}
+          hexSize={mapData.hex_size || 40}
+          boardData={boardDict}
+          companies={gameState.companies || {}}
+          onHexClick={isMyTurn && gameState.phase === 'round' && !gameState.auction_state ? handleHexClick : undefined}
+          selectedHex={selectedHex}
+          showTerrainLabels={false}
+          minQ={mapData.grid_bounds?.q_min ?? 0}
+          maxQ={mapData.grid_bounds?.q_max ?? 17}
+          minR={mapData.grid_bounds?.r_min ?? 0}
+          maxR={mapData.grid_bounds?.r_max ?? 17}
+          backgroundImage={mapData.background_image || null}
+          overlayTranslateX={overlayTranslateX}
+          overlayTranslateY={overlayTranslateY}
+          overlayScaleX={overlayScaleX}
+          overlayScaleY={overlayScaleY}
+          overlayRotation={overlayRotation}
+          overlayOpacity={overlayOpacity}
+          showOverlay={showOverlay}
+          hexSpacing={hexSpacing}
+        />
         </div>
 
-        {/* Sidebar Controls */}
-        <div className="w-64 flex flex-col gap-3">
-          {/* Phase & Turn info */}
+        {/* Sidebar */}
+        <div class="w-80 flex flex-col gap-3 shrink-0 overflow-y-auto">
+          {/* Status */}
           <div className="bg-white p-4 rounded shadow border border-gray-200">
             <h3 className="font-bold border-b pb-2 mb-2">Game Status</h3>
-            <p className="text-sm"><span className="font-semibold">Phase:</span> <span className="capitalize">{gameState.phase}</span></p>
+            <p className="text-sm"><span className="font-semibold">Phase:</span> <span className="capitalize">{phaseLabel}</span></p>
             <p className="text-sm">
-              <span className="font-semibold">Turn:</span> {gameState.current_player}
+              <span className="font-semibold">Turn:</span> {currentPlayerName}
+              {isMyTurn && <span className="text-green-600 ml-1">(you)</span>}
             </p>
-            {isAuctionPhase && gameState.auction_state && (
-              <div className="mt-3 p-2 bg-blue-50 rounded text-sm">
-                <p className="font-bold">Active Auction</p>
-                <p>Company: <span style={{color: gameState.companies[gameState.auction_state.item]?.color}}>{gameState.auction_state.item}</span></p>
-                <p>Current Bid: ${gameState.auction_state.current_bid}</p>
-                <p>Highest Bidder: {gameState.auction_state.highest_bidder || 'None'}</p>
-
-                {isMyTurn && (
-                  <div className="flex gap-2 mt-2">
-                    <button onClick={() => handleBid(gameState.auction_state.current_bid + 1)} className="bg-green-600 text-white px-2 py-1 rounded text-xs flex-1 cursor-pointer hover:bg-green-700">Bid ${gameState.auction_state.current_bid + 1}</button>
-                    <button onClick={handlePass} className="bg-red-600 text-white px-2 py-1 rounded text-xs flex-1 cursor-pointer hover:bg-red-700">Pass</button>
-                  </div>
-                )}
-              </div>
-            )}
           </div>
 
-          {/* Action Panel */}
-          {gameState.phase === 'main' && (
+          {/* Auction panel */}
+          {auction && (
             <div className="bg-white p-4 rounded shadow border border-gray-200">
-              <h3 className="font-bold border-b pb-2 mb-2">Actions</h3>
+              <h3 className="font-bold border-b pb-2 mb-2">Auction</h3>
+              <div className="text-sm space-y-1">
+                <p>
+                  Company: <span style={{ color: gameState.companies?.[auction.item]?.color }} className="font-medium">
+                    {auction.item}
+                  </span>
+                </p>
+                <p>Current Bid: ${auction.current_bid}</p>
+                <p>Highest: {auction.highest_bidder ? getUserName(auction.highest_bidder, players) : 'None'}</p>
+              </div>
+              {isMyTurn && (
+                <div className="flex gap-2 mt-2">
+                  <button
+                    onClick={() => handleBid(auction.current_bid + 1)}
+                    className="bg-green-600 text-white px-2 py-1 rounded text-xs flex-1 cursor-pointer hover:bg-green-700"
+                  >
+                    Bid ${auction.current_bid + 1}
+                  </button>
+                  <button
+                    onClick={handlePass}
+                    className="bg-red-600 text-white px-2 py-1 rounded text-xs flex-1 cursor-pointer hover:bg-red-700"
+                  >
+                    Pass
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Build panel */}
+          {gameState.phase === 'round' && !gameState.auction_state && (
+            <div className="bg-white p-4 rounded shadow border border-gray-200">
+              <h3 className="font-bold border-b pb-2 mb-2">Build Track</h3>
               <div className="flex flex-col gap-2">
-                <p className="text-xs text-gray-500 mb-1">Select a company and a city to build track.</p>
                 <select
                   className="border rounded p-1 text-sm"
                   onChange={(e) => setSelectedCompany(e.target.value)}
                   value={selectedCompany || ''}
                 >
                   <option value="">-- Select Company --</option>
-                  {Object.values(gameState.companies || {}).map((c: any) => (
-                    <option key={c.id} value={c.id}>{c.id}</option>
+                  {companies.map((c: any) => (
+                    <option key={c.id} value={c.id} style={{ color: c.color }}>
+                      {c.id} ({c.track_remaining || '?'} left)
+                    </option>
                   ))}
                 </select>
 
-                {selectedCity && selectedCompany ? (
+                {selectedCompany && (
+                  <div className="text-xs text-gray-600 space-y-0.5 bg-gray-50 p-2 rounded">
+                    <p>Treasury: <span className="font-medium text-green-700">
+                      ${(gameState as any).company_treasury?.[selectedCompany] || 0}</span>
+                    </p>
+                    <p>Income: <span className="font-medium">
+                      {(gameState as any).company_income?.[selectedCompany] || 0}</span>
+                    </p>
+                  </div>
+                )}
+
+                {selectedHex && selectedCompany ? (
                   <button
                     onClick={handleBuildTrack}
                     disabled={!isMyTurn}
                     className="bg-blue-600 text-white px-3 py-1 rounded text-sm disabled:opacity-40 cursor-pointer"
                   >
-                    Build in {selectedCity}
+                    Build in hex {selectedHex}
                   </button>
                 ) : (
-                  <button disabled className="bg-gray-300 text-white px-3 py-1 rounded text-sm opacity-50">Build Track</button>
+                  <p className="text-xs text-gray-500">
+                    {selectedCompany ? 'Click a hex on the map.' : 'Select a company first.'}
+                  </p>
                 )}
               </div>
             </div>
           )}
 
-          {/* Player info */}
+          {/* Share Auction button */}
+          {gameState.phase === 'round' && !gameState.auction_state && isMyTurn && (
+            <div className="bg-white p-4 rounded shadow border border-gray-200">
+              <h3 className="font-bold border-b pb-2 mb-2">Actions</h3>
+              <div className="flex gap-2">
+                <button onClick={handlePass}
+                  className="bg-gray-500 text-white px-3 py-1 rounded text-xs cursor-pointer hover:bg-gray-600">
+                  Pass Turn
+                </button>
+              </div>
+              <div className="mt-2">
+                <p className="text-xs text-gray-500 mb-1">Auction a share:</p>
+                <select
+                  className="border rounded p-1 text-xs w-full"
+                  onChange={(e) => { if (e.target.value) handleAuctionShare(e.target.value); }}
+                  value=""
+                >
+                  <option value="">-- Select company --</option>
+                  {companies.filter((c: any) => c.unissued_shares > 0).map((c: any) => (
+                    <option key={c.id} value={c.id} style={{ color: c.color }}>
+                      {c.id} ({c.unissued_shares} left)
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          )}
+
+          {/* Players */}
           <div className="bg-white p-4 rounded shadow border border-gray-200">
             <h3 className="font-bold border-b pb-2 mb-2">Players</h3>
-            {Object.entries(gameState.balances || {}).map(([pId, bal]) => (
-              <div key={pId} className="mb-2 border-b border-gray-100 pb-1">
-                <div className="flex justify-between text-sm items-center font-medium">
-                  <span>{pId.slice(0, 8)}</span>
-                  <span className="text-green-600">${bal as number}</span>
+            {Object.entries(gameState.player_cash || {}).map(([pId, cash]) => {
+              const income = gameState.player_income?.[pId] || 0;
+              const pName = getUserName(pId, players);
+              const isCurrent = gameState.current_player === pId;
+              return (
+                <div key={pId} className={`mb-2 border-b border-gray-100 pb-1 ${isCurrent ? 'bg-blue-50 -mx-4 px-4' : ''}`}>
+                  <div className="flex justify-between text-sm items-center font-medium">
+                    <span>{pName} {isCurrent && '(current)'}</span>
+                    <span className="text-green-600 font-mono">${cash as number}</span>
+                  </div>
+                  <div className="text-xs text-gray-500 mt-0.5">
+                    Income: <span className="font-mono">${income}</span>
+                  </div>
+                  <div className="text-xs mt-0.5 flex flex-wrap gap-1">
+                    {Object.entries(gameState.shares?.[pId] || {}).map(([cId, count]) => (
+                      count ? (
+                        <span key={cId} style={{
+                          color: gameState.companies?.[cId]?.color || '#000',
+                          background: (gameState.companies?.[cId]?.color || '#000') + '20',
+                          padding: '0 4px',
+                          borderRadius: 3,
+                        }}>
+                          {(gameState.companies as any)?.[cId]?.id?.slice(0, 3) || cId.slice(0, 3)} x{count as number}
+                        </span>
+                      ) : null
+                    ))}
+                  </div>
                 </div>
-                <div className="text-xs text-gray-500 mt-1 flex flex-wrap gap-1">
-                  {Object.entries(gameState.shares?.[pId] || {}).map(([cId, count]) => (
-                    count ? <span key={cId} style={{color: gameState.companies[cId]?.color}}>{cId.slice(0,3)}:{count as number}</span> : null
-                  ))}
+              );
+            })}
+          </div>
+
+          {/* Turn Order — shows cup draw results */}
+          {gameState.phase === 'round' && (gameState as any).cup_pending && (
+            <div className="bg-white p-4 rounded shadow border border-gray-200">
+              <h3 className="font-bold border-b pb-2 mb-2">Turn Order — Round {(gameState as any).round_number || (gameState as any).current_round_number}</h3>
+              <div className="text-xs space-y-1">
+                {/* Seed row: disk counts per player */}
+                <div className="text-xs text-gray-600 mb-2">
+                  Cup draw (higher income = fewer disks):
+                </div>
+                {Object.entries((gameState as any).cup_pending || {}).map(([pId, disks]) => {
+                  const pName = getUserName(pId, players);
+                  const income = (gameState as any).player_income?.[pId] || 0;
+                  const isActive = gameState.current_player === pId;
+                  return (
+                    <div key={pId} className={`flex items-center gap-2 py-0.5 ${isActive ? 'font-bold text-blue-700' : ''}`}>
+                      <span className="w-3 h-3 rounded-full inline-block shrink-0" style={{
+                        background: isActive ? '#3b82f6' : '#d1d5db',
+                      }} />
+                      <span className="truncate max-w-[100px]">{pName}</span>
+                      <span className="text-gray-400">${income}i</span>
+                      <span className="ml-auto font-mono">{String(disks)} disk{Number(disks) !== 1 ? 's' : ''}</span>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="border-t border-gray-100 mt-2 pt-2">
+                <div className="text-xs text-gray-600 mb-1">Drawn order:</div>
+                <div className="flex gap-1.5 justify-start">
+                  {((gameState as any).player_turn_order || []).map((pId: string, idx: number) => {
+                    const pName = getUserName(pId, players);
+                    const pos = (gameState as any).turn_position ?? 0;
+                    const isCurrent = idx === pos;
+                    return (
+                      <div key={idx} className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 ${isCurrent ? 'bg-blue-600 text-white border-blue-600' : 'bg-gray-100 text-gray-600 border-gray-300'}`}
+                        title={pName}
+                      >
+                        {pName.slice(0, 2).toUpperCase()}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
-            ))}
+            </div>
+          )}
+
+          {/* Company State */}
+          {!auction && (
+            <div className="bg-white p-4 rounded shadow border border-gray-200">
+              <h3 className="font-bold border-b pb-2 mb-2">Companies</h3>
+              <div className="max-h-48 overflow-y-auto space-y-1">
+                {companies.map((c: any) => (
+                  <div key={c.id} className="flex justify-between text-xs items-center">
+                    <span style={{ color: c.color }} className="font-medium truncate max-w-[120px]">
+                      {c.id}
+                    </span>
+                    <span className="text-gray-500">
+                      ${(gameState as any).company_treasury?.[c.id] || 0} /
+                      <span className="text-blue-600">{(gameState as any).company_income?.[c.id] || 0}i</span> /
+                      {c.track_remaining || 0}t
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Move History */}
+          <div className="bg-white rounded shadow border border-gray-200">
+            <button
+              onClick={() => setHistoryOpen(!historyOpen)}
+              className="w-full text-left p-3 font-bold text-sm flex justify-between items-center cursor-pointer hover:bg-gray-50"
+            >
+              <span>Move History ({moveHistory.length})</span>
+              <span className="text-xs text-gray-400">{historyOpen ? '▲' : '▼'}</span>
+            </button>
+            {historyOpen && (
+              <div className="max-h-48 overflow-y-auto px-3 pb-3">
+                {moveHistory.length === 0 ? (
+                  <p className="text-xs text-gray-400 italic">No moves yet</p>
+                ) : (
+                  moveHistory.map((entry, i) => (
+                    <div key={i} className="text-xs py-0.5 border-b border-gray-50 last:border-0">
+                      {entry}
+                    </div>
+                  ))
+                )}
+                <div ref={historyEndRef} />
+              </div>
+            )}
           </div>
         </div>
+          </>
+        )}
       </div>
     </div>
   );

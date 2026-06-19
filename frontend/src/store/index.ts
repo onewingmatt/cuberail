@@ -8,19 +8,43 @@ interface AuthState {
   logout: () => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  token: localStorage.getItem('token'),
-  user: null,
-  setToken: (token) => {
-    localStorage.setItem('token', token);
-    set({ token });
-  },
-  setUser: (user) => set({ user }),
-  logout: () => {
-    localStorage.removeItem('token');
-    set({ token: null, user: null });
-  },
-}));
+// Decode user ID from JWT payload (no signature verification, client-side only)
+function decodeUserIdFromToken(token: string | null): string | null {
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.sub || null;
+  } catch {
+    return null;
+  }
+}
+
+export const useAuthStore = create<AuthState>((set) => {
+  const token = localStorage.getItem('token');
+  let user = JSON.parse(localStorage.getItem('user') || 'null');
+  // Fallback: if token exists but user wasn't persisted, decode ID from JWT
+  if (!user && token) {
+    const uid = decodeUserIdFromToken(token);
+    if (uid) user = { id: uid };
+  }
+  return {
+    token,
+    user,
+    setToken: (token) => {
+      localStorage.setItem('token', token);
+      set({ token });
+    },
+    setUser: (user) => {
+      localStorage.setItem('user', JSON.stringify(user));
+      set({ user });
+    },
+    logout: () => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      set({ token: null, user: null });
+    },
+  };
+});
 
 interface GameState {
   gameState: any | null;

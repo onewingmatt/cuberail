@@ -1,0 +1,1605 @@
+{
+  "name": "prussian_rails",
+  "grid_type": "hex_axial",
+  "hex_size": 27,
+  "render_mode": "city_and_painted_overlay",
+  "background_image": "/prussian_rails_board.png",
+  "terrain_costs": {
+    "plains": 2,
+    "hills": 3,
+    "mountains": 4,
+    "berlin_approach": 2,
+    "urban": 2,
+    "water": 999
+  },
+  "starting_money": {
+    "3": 40,
+    "4": 30,
+    "5": 24
+  },
+  "grid_bounds": {
+    "q_min": 0,
+    "q_max": 28,
+    "r_min": 0,
+    "r_max": 18
+  },
+  "berlin_approach_hexes": [
+    {
+      "q": 14,
+      "r": 5
+    },
+    {
+      "q": 15,
+      "r": 5
+    },
+    {
+      "q": 16,
+      "r": 5
+    },
+    {
+      "q": 13,
+      "r": 6
+    },
+    {
+      "q": 16,
+      "r": 6
+    },
+    {
+      "q": 13,
+      "r": 7
+    },
+    {
+      "q": 15,
+      "r": 7
+    },
+    {
+      "q": 13,
+      "r": 8
+    },
+    {
+      "q": 14,
+      "r": 8
+    }
+  ],
+  "auction_order": [
+    "Preußische Ostbahn",
+    "Niederschlesisch-Märkische",
+    "Königlich-Sächsische",
+    "Königlich-Bayerische",
+    "Main-Weser-Bahn",
+    "Großherzoglich Badische",
+    "Köln-Mindener",
+    "Berlin-Hamburger"
+  ],
+  "companies": [
+    {
+      "id": "Preußische Ostbahn",
+      "color": "#1a1a1a",
+      "home": "Königsberg",
+      "start_income": 3,
+      "track_count": 20,
+      "ability": "build_4",
+      "ability_desc": "May build up to 4 track cubes per Expansion"
+    },
+    {
+      "id": "Niederschlesisch-Märkische",
+      "color": "#8B4513",
+      "home": "Breslau",
+      "start_income": 2,
+      "track_count": 17,
+      "ability": "no_city_penalty",
+      "ability_desc": "Never pays stacking penalty"
+    },
+    {
+      "id": "Königlich-Sächsische",
+      "color": "#FF8C00",
+      "home": "Leipzig",
+      "start_income": 1,
+      "track_count": 11,
+      "ability": "build_1_2",
+      "ability_desc": "May only build 1 or 2 track cubes per Expansion"
+    },
+    {
+      "id": "Königlich-Bayerische",
+      "color": "#0000FF",
+      "home": "München",
+      "start_income": 3,
+      "track_count": 16,
+      "ability": "discount_1",
+      "ability_desc": "Cost to build each hex is $1 less (min $1)"
+    },
+    {
+      "id": "Main-Weser-Bahn",
+      "color": "#DAA520",
+      "home": "Kassel",
+      "start_income": 2,
+      "track_count": 14,
+      "ability": "double_best_income",
+      "ability_desc": "Doubles the income of highest-income Urban hex in network"
+    },
+    {
+      "id": "Großherzoglich Badische",
+      "color": "#CC0000",
+      "home": "Mannheim",
+      "start_income": 1,
+      "track_count": 15,
+      "ability": "free_rural",
+      "ability_desc": "One free rural track per Expansion"
+    },
+    {
+      "id": "Köln-Mindener",
+      "color": "#800080",
+      "home": "Köln",
+      "start_income": 1,
+      "track_count": 12,
+      "ability": "max_spend_5",
+      "ability_desc": "Maximum $5 expenditure per build action"
+    },
+    {
+      "id": "Berlin-Hamburger",
+      "color": "#006400",
+      "home": "Hamburg",
+      "start_income": 1,
+      "track_count": 13,
+      "ability": "connect_both",
+      "ability_desc": "Must connect to both Berlin and Hamburg to receive dividends"
+    }
+  ],
+  "hexes": {
+    "12,0": {
+      "terrain": "urban",
+      "render_x": 375.2,
+      "render_y": 52.9,
+      "city": "Flensburg",
+      "render_city_x": 375.2,
+      "render_city_y": 52.9
+    },
+    "13,0": {
+      "terrain": "plains",
+      "render_x": 432.8,
+      "render_y": 57.6
+    },
+    "23,0": {
+      "terrain": "plains",
+      "render_x": 1010.5,
+      "render_y": 55.7
+    },
+    "24,0": {
+      "terrain": "plains",
+      "render_x": 1061.6,
+      "render_y": 51.9
+    },
+    "25,0": {
+      "terrain": "plains",
+      "render_x": 1120.1,
+      "render_y": 52.9
+    },
+    "28,0": {
+      "terrain": "urban",
+      "render_x": 1289.2,
+      "render_y": 54.8,
+      "city": "Königsberg",
+      "render_city_x": 1289.2,
+      "render_city_y": 54.8,
+      "income": 3
+    },
+    "11,1": {
+      "terrain": "plains",
+      "render_x": 347.4,
+      "render_y": 103.1
+    },
+    "12,1": {
+      "terrain": "plains",
+      "render_x": 404.0,
+      "render_y": 105.0
+    },
+    "13,1": {
+      "terrain": "urban",
+      "render_x": 460.7,
+      "render_y": 105.9,
+      "city": "Kiel",
+      "render_city_x": 460.7,
+      "render_city_y": 105.9
+    },
+    "16,1": {
+      "terrain": "plains",
+      "render_x": 633.4,
+      "render_y": 113.3
+    },
+    "17,1": {
+      "terrain": "urban",
+      "render_x": 687.2,
+      "render_y": 104.0,
+      "city": "Stralsund",
+      "render_city_x": 687.2,
+      "render_city_y": 104
+    },
+    "21,1": {
+      "terrain": "plains",
+      "render_x": 922.2,
+      "render_y": 105.8
+    },
+    "22,1": {
+      "terrain": "urban",
+      "render_x": 978.0,
+      "render_y": 102.2,
+      "city": "Stolp",
+      "render_city_x": 978,
+      "render_city_y": 102.2
+    },
+    "23,1": {
+      "terrain": "plains",
+      "render_x": 1034.6,
+      "render_y": 104.9
+    },
+    "24,1": {
+      "terrain": "plains",
+      "render_x": 1089.4,
+      "render_y": 106.7
+    },
+    "25,1": {
+      "terrain": "urban",
+      "render_x": 1146.1,
+      "render_y": 104.0,
+      "city": "Danzig",
+      "render_city_x": 1146.1,
+      "render_city_y": 104
+    },
+    "26,1": {
+      "terrain": "plains",
+      "render_x": 1207.4,
+      "render_y": 105.8
+    },
+    "27,1": {
+      "terrain": "plains",
+      "render_x": 1260.3,
+      "render_y": 104.9
+    },
+    "11,2": {
+      "terrain": "plains",
+      "render_x": 376.2,
+      "render_y": 154.2
+    },
+    "12,2": {
+      "terrain": "plains",
+      "render_x": 435.6,
+      "render_y": 157.9
+    },
+    "13,2": {
+      "terrain": "urban",
+      "render_x": 489.5,
+      "render_y": 155.1,
+      "city": "Lübeck",
+      "render_city_x": 489.5,
+      "render_city_y": 155.1
+    },
+    "14,2": {
+      "terrain": "plains",
+      "render_x": 546.1,
+      "render_y": 151.4
+    },
+    "15,2": {
+      "terrain": "urban",
+      "render_x": 601.9,
+      "render_y": 156.0,
+      "city": "Rostock",
+      "render_city_x": 601.9,
+      "render_city_y": 156
+    },
+    "16,2": {
+      "terrain": "plains",
+      "render_x": 663.2,
+      "render_y": 157.9
+    },
+    "17,2": {
+      "terrain": "plains",
+      "render_x": 720.8,
+      "render_y": 155.1
+    },
+    "18,2": {
+      "terrain": "plains",
+      "render_x": 776.5,
+      "render_y": 154.2
+    },
+    "19,2": {
+      "terrain": "plains",
+      "render_x": 835.9,
+      "render_y": 155.1
+    },
+    "20,2": {
+      "terrain": "plains",
+      "render_x": 892.6,
+      "render_y": 151.4
+    },
+    "21,2": {
+      "terrain": "plains",
+      "render_x": 950.1,
+      "render_y": 155.0
+    },
+    "22,2": {
+      "terrain": "plains",
+      "render_x": 1006.8,
+      "render_y": 156.0
+    },
+    "23,2": {
+      "terrain": "plains",
+      "render_x": 1061.6,
+      "render_y": 156.0
+    },
+    "24,2": {
+      "terrain": "plains",
+      "render_x": 1121.0,
+      "render_y": 154.1
+    },
+    "25,2": {
+      "terrain": "plains",
+      "render_x": 1179.5,
+      "render_y": 154.1
+    },
+    "26,2": {
+      "terrain": "plains",
+      "render_x": 1231.5,
+      "render_y": 152.3
+    },
+    "8,3": {
+      "terrain": "plains",
+      "render_x": 234.0,
+      "render_y": 205.2
+    },
+    "10,3": {
+      "terrain": "plains",
+      "render_x": 344.5,
+      "render_y": 204.3
+    },
+    "11,3": {
+      "terrain": "urban",
+      "render_x": 401.2,
+      "render_y": 206.2,
+      "city": "Hamburg",
+      "render_city_x": 401.2,
+      "render_city_y": 206.2,
+      "income": 3
+    },
+    "12,3": {
+      "terrain": "plains",
+      "render_x": 464.3,
+      "render_y": 209.8
+    },
+    "13,3": {
+      "terrain": "plains",
+      "render_x": 515.4,
+      "render_y": 205.2
+    },
+    "14,3": {
+      "terrain": "plains",
+      "render_x": 574.9,
+      "render_y": 205.2
+    },
+    "15,3": {
+      "terrain": "plains",
+      "render_x": 632.4,
+      "render_y": 205.2
+    },
+    "16,3": {
+      "terrain": "urban",
+      "render_x": 687.3,
+      "render_y": 206.2,
+      "city": "Neu Brandenburg",
+      "render_city_x": 687.3,
+      "render_city_y": 206.2
+    },
+    "17,3": {
+      "terrain": "plains",
+      "render_x": 748.5,
+      "render_y": 208.9
+    },
+    "18,3": {
+      "terrain": "urban",
+      "render_x": 805.3,
+      "render_y": 208.1,
+      "city": "Stettin",
+      "render_city_x": 805.3,
+      "render_city_y": 208.1
+    },
+    "19,3": {
+      "terrain": "plains",
+      "render_x": 865.6,
+      "render_y": 207.1
+    },
+    "20,3": {
+      "terrain": "plains",
+      "render_x": 918.5,
+      "render_y": 206.1
+    },
+    "21,3": {
+      "terrain": "plains",
+      "render_x": 977.0,
+      "render_y": 204.3
+    },
+    "22,3": {
+      "terrain": "plains",
+      "render_x": 1030.9,
+      "render_y": 205.2
+    },
+    "23,3": {
+      "terrain": "plains",
+      "render_x": 1092.2,
+      "render_y": 203.3
+    },
+    "24,3": {
+      "terrain": "plains",
+      "render_x": 1145.1,
+      "render_y": 205.2
+    },
+    "25,3": {
+      "terrain": "plains",
+      "render_x": 1203.7,
+      "render_y": 204.3
+    },
+    "7,4": {
+      "terrain": "plains",
+      "render_x": 204.3,
+      "render_y": 253.5
+    },
+    "8,4": {
+      "terrain": "urban",
+      "render_x": 261.0,
+      "render_y": 255.4,
+      "city": "Oldenburg",
+      "render_city_x": 261,
+      "render_city_y": 255.4
+    },
+    "9,4": {
+      "terrain": "urban",
+      "render_x": 318.6,
+      "render_y": 250.8,
+      "city": "Bremen",
+      "render_city_x": 318.6,
+      "render_city_y": 250.8
+    },
+    "10,4": {
+      "terrain": "plains",
+      "render_x": 373.3,
+      "render_y": 256.3
+    },
+    "11,4": {
+      "terrain": "plains",
+      "render_x": 430.9,
+      "render_y": 255.4
+    },
+    "12,4": {
+      "terrain": "urban",
+      "render_x": 488.4,
+      "render_y": 253.5,
+      "city": "Wittenberge",
+      "render_city_x": 488.4,
+      "render_city_y": 253.5
+    },
+    "13,4": {
+      "terrain": "plains",
+      "render_x": 546.1,
+      "render_y": 255.4
+    },
+    "14,4": {
+      "terrain": "plains",
+      "render_x": 602.7,
+      "render_y": 256.3
+    },
+    "15,4": {
+      "terrain": "plains",
+      "render_x": 660.3,
+      "render_y": 252.6
+    },
+    "16,4": {
+      "terrain": "plains",
+      "render_x": 719.8,
+      "render_y": 253.5
+    },
+    "17,4": {
+      "terrain": "plains",
+      "render_x": 778.3,
+      "render_y": 253.5
+    },
+    "18,4": {
+      "terrain": "plains",
+      "render_x": 834.0,
+      "render_y": 250.7
+    },
+    "19,4": {
+      "terrain": "plains",
+      "render_x": 891.6,
+      "render_y": 255.4
+    },
+    "20,4": {
+      "terrain": "plains",
+      "render_x": 942.7,
+      "render_y": 254.4
+    },
+    "21,4": {
+      "terrain": "urban",
+      "render_x": 1004.0,
+      "render_y": 256.4,
+      "city": "Schneidemühl",
+      "render_city_x": 1004,
+      "render_city_y": 256.4
+    },
+    "22,4": {
+      "terrain": "urban",
+      "render_x": 1061.6,
+      "render_y": 255.4,
+      "city": "Bromberg",
+      "render_city_x": 1061.6,
+      "render_city_y": 255.4
+    },
+    "23,4": {
+      "terrain": "plains",
+      "render_x": 1117.3,
+      "render_y": 257.2
+    },
+    "7,5": {
+      "terrain": "plains",
+      "render_x": 232.2,
+      "render_y": 306.4
+    },
+    "8,5": {
+      "terrain": "plains",
+      "render_x": 287.0,
+      "render_y": 304.6
+    },
+    "9,5": {
+      "terrain": "plains",
+      "render_x": 343.7,
+      "render_y": 300.9
+    },
+    "10,5": {
+      "terrain": "plains",
+      "render_x": 403.1,
+      "render_y": 304.6
+    },
+    "11,5": {
+      "terrain": "plains",
+      "render_x": 458.8,
+      "render_y": 301.8
+    },
+    "12,5": {
+      "terrain": "plains",
+      "render_x": 516.4,
+      "render_y": 300.9
+    },
+    "13,5": {
+      "terrain": "plains",
+      "render_x": 572.1,
+      "render_y": 299.9
+    },
+    "14,5": {
+      "terrain": "berlin_approach",
+      "render_x": 635.4,
+      "render_y": 302.8
+    },
+    "15,5": {
+      "terrain": "berlin_approach",
+      "render_x": 687.4,
+      "render_y": 299.1
+    },
+    "16,5": {
+      "terrain": "berlin_approach",
+      "render_x": 742.2,
+      "render_y": 303.7
+    },
+    "17,5": {
+      "terrain": "plains",
+      "render_x": 804.3,
+      "render_y": 306.4
+    },
+    "18,5": {
+      "terrain": "plains",
+      "render_x": 861.9,
+      "render_y": 304.6
+    },
+    "19,5": {
+      "terrain": "urban",
+      "render_x": 916.7,
+      "render_y": 304.6,
+      "city": "Kreuz",
+      "render_city_x": 916.7,
+      "render_city_y": 304.6
+    },
+    "20,5": {
+      "terrain": "plains",
+      "render_x": 978.0,
+      "render_y": 304.6
+    },
+    "21,5": {
+      "terrain": "plains",
+      "render_x": 1030.0,
+      "render_y": 302.7
+    },
+    "22,5": {
+      "terrain": "plains",
+      "render_x": 1088.5,
+      "render_y": 303.6
+    },
+    "6,6": {
+      "terrain": "plains",
+      "render_x": 200.6,
+      "render_y": 352.9
+    },
+    "7,6": {
+      "terrain": "urban",
+      "render_x": 259.1,
+      "render_y": 353.8,
+      "city": "Osnabrück",
+      "render_city_x": 259.1,
+      "render_city_y": 353.8
+    },
+    "8,6": {
+      "terrain": "plains",
+      "render_x": 315.8,
+      "render_y": 351.9
+    },
+    "9,6": {
+      "terrain": "plains",
+      "render_x": 372.5,
+      "render_y": 352.9
+    },
+    "10,6": {
+      "terrain": "plains",
+      "render_x": 431.9,
+      "render_y": 351.0
+    },
+    "11,6": {
+      "terrain": "plains",
+      "render_x": 489.5,
+      "render_y": 354.7
+    },
+    "12,6": {
+      "terrain": "plains",
+      "render_x": 545.2,
+      "render_y": 351.9
+    },
+    "13,6": {
+      "terrain": "berlin_approach",
+      "render_x": 603.8,
+      "render_y": 353.9
+    },
+    "14,6": {
+      "terrain": "urban",
+      "render_x": 657.6,
+      "render_y": 351.1,
+      "city": "Berlin",
+      "income": 3,
+      "render_city_x": 687.2,
+      "render_city_y": 367.7
+    },
+    "15,6": {
+      "terrain": "urban",
+      "render_x": 716.1,
+      "render_y": 353.9,
+      "render_city_x": 716.1,
+      "render_city_y": 353.9,
+      "city": "Berlin_2",
+      "income": 3
+    },
+    "16,6": {
+      "terrain": "berlin_approach",
+      "render_x": 770.1,
+      "render_y": 352.9
+    },
+    "17,6": {
+      "terrain": "plains",
+      "render_x": 832.2,
+      "render_y": 353.8
+    },
+    "18,6": {
+      "terrain": "plains",
+      "render_x": 889.8,
+      "render_y": 352.9
+    },
+    "19,6": {
+      "terrain": "plains",
+      "render_x": 945.5,
+      "render_y": 349.2
+    },
+    "20,6": {
+      "terrain": "plains",
+      "render_x": 1003.1,
+      "render_y": 355.7
+    },
+    "21,6": {
+      "terrain": "plains",
+      "render_x": 1060.7,
+      "render_y": 354.7
+    },
+    "5,7": {
+      "terrain": "plains",
+      "render_x": 172.8,
+      "render_y": 405.8
+    },
+    "6,7": {
+      "terrain": "plains",
+      "render_x": 229.4,
+      "render_y": 403.0
+    },
+    "7,7": {
+      "terrain": "urban",
+      "render_x": 286.9,
+      "render_y": 402.1,
+      "city": "Bielefeld",
+      "render_city_x": 286.9,
+      "render_city_y": 402.1
+    },
+    "8,7": {
+      "terrain": "hills",
+      "render_x": 347.4,
+      "render_y": 402.2
+    },
+    "9,7": {
+      "terrain": "urban",
+      "render_x": 400.3,
+      "render_y": 405.9,
+      "city": "Hannover",
+      "render_city_x": 400.3,
+      "render_city_y": 405.9
+    },
+    "10,7": {
+      "terrain": "urban",
+      "render_x": 457.8,
+      "render_y": 404.9,
+      "city": "Braunschweig",
+      "render_city_x": 457.8,
+      "render_city_y": 404.9
+    },
+    "11,7": {
+      "terrain": "plains",
+      "render_x": 520.1,
+      "render_y": 402.1
+    },
+    "12,7": {
+      "terrain": "urban",
+      "render_x": 575.9,
+      "render_y": 404.0,
+      "city": "Magdeburg",
+      "render_city_x": 575.9,
+      "render_city_y": 404
+    },
+    "13,7": {
+      "terrain": "berlin_approach",
+      "render_x": 631.7,
+      "render_y": 405.9
+    },
+    "14,7": {
+      "terrain": "urban",
+      "render_x": 688.2,
+      "render_y": 403.1,
+      "city": "Berlin_3",
+      "income": 3,
+      "render_city_x": 688.2,
+      "render_city_y": 403.1
+    },
+    "15,7": {
+      "terrain": "berlin_approach",
+      "render_x": 745.0,
+      "render_y": 396.6
+    },
+    "16,7": {
+      "terrain": "urban",
+      "render_x": 805.3,
+      "render_y": 405.9,
+      "city": "Frankfurt an der Oder",
+      "render_city_x": 805.3,
+      "render_city_y": 405.9
+    },
+    "17,7": {
+      "terrain": "plains",
+      "render_x": 861.0,
+      "render_y": 404.9
+    },
+    "18,7": {
+      "terrain": "plains",
+      "render_x": 918.6,
+      "render_y": 404.9
+    },
+    "19,7": {
+      "terrain": "urban",
+      "render_x": 976.2,
+      "render_y": 405.0,
+      "city": "Posen",
+      "render_city_x": 976.2,
+      "render_city_y": 405
+    },
+    "20,7": {
+      "terrain": "plains",
+      "render_x": 1034.7,
+      "render_y": 399.3
+    },
+    "4,8": {
+      "terrain": "urban",
+      "render_x": 143.0,
+      "render_y": 450.4,
+      "city": "Wesel",
+      "render_city_x": 143,
+      "render_city_y": 450.4
+    },
+    "5,8": {
+      "terrain": "urban",
+      "render_x": 201.5,
+      "render_y": 453.2,
+      "city": "Münster",
+      "render_city_x": 201.5,
+      "render_city_y": 453.2
+    },
+    "6,8": {
+      "terrain": "urban",
+      "render_x": 260.0,
+      "render_y": 453.2,
+      "city": "Hamm",
+      "render_city_x": 260,
+      "render_city_y": 453.2
+    },
+    "7,8": {
+      "terrain": "hills",
+      "render_x": 316.7,
+      "render_y": 451.4
+    },
+    "8,8": {
+      "terrain": "hills",
+      "render_x": 372.5,
+      "render_y": 452.3
+    },
+    "9,8": {
+      "terrain": "hills",
+      "render_x": 429.1,
+      "render_y": 451.4
+    },
+    "10,8": {
+      "terrain": "plains",
+      "render_x": 489.5,
+      "render_y": 450.4
+    },
+    "11,8": {
+      "terrain": "plains",
+      "render_x": 547.1,
+      "render_y": 449.5
+    },
+    "12,8": {
+      "terrain": "plains",
+      "render_x": 606.5,
+      "render_y": 453.2
+    },
+    "13,8": {
+      "terrain": "berlin_approach",
+      "render_x": 656.7,
+      "render_y": 449.5
+    },
+    "14,8": {
+      "terrain": "berlin_approach",
+      "render_x": 719.9,
+      "render_y": 449.5
+    },
+    "15,8": {
+      "terrain": "urban",
+      "render_x": 775.6,
+      "render_y": 453.3,
+      "city": "Kottbus",
+      "render_city_x": 775.6,
+      "render_city_y": 453.3
+    },
+    "16,8": {
+      "terrain": "plains",
+      "render_x": 831.3,
+      "render_y": 452.3
+    },
+    "17,8": {
+      "terrain": "plains",
+      "render_x": 890.7,
+      "render_y": 452.3
+    },
+    "18,8": {
+      "terrain": "plains",
+      "render_x": 947.4,
+      "render_y": 451.3
+    },
+    "19,8": {
+      "terrain": "plains",
+      "render_x": 1005.0,
+      "render_y": 451.3
+    },
+    "3,9": {
+      "terrain": "urban",
+      "render_x": 116.0,
+      "render_y": 505.2,
+      "city": "Duisburg",
+      "render_city_x": 116,
+      "render_city_y": 505.2
+    },
+    "4,9": {
+      "terrain": "urban",
+      "render_x": 174.5,
+      "render_y": 501.5,
+      "city": "Essen",
+      "render_city_x": 174.5,
+      "render_city_y": 501.5
+    },
+    "5,9": {
+      "terrain": "urban",
+      "render_x": 229.3,
+      "render_y": 504.3,
+      "city": "Dortmund",
+      "render_city_x": 229.3,
+      "render_city_y": 504.3
+    },
+    "6,9": {
+      "terrain": "hills",
+      "render_x": 289.8,
+      "render_y": 503.4
+    },
+    "7,9": {
+      "terrain": "hills",
+      "render_x": 347.4,
+      "render_y": 497.8
+    },
+    "8,9": {
+      "terrain": "urban",
+      "render_x": 400.3,
+      "render_y": 502.5,
+      "city": "Göttingen",
+      "render_city_x": 400.3,
+      "render_city_y": 502.5
+    },
+    "9,9": {
+      "terrain": "mountains",
+      "render_x": 455.2,
+      "render_y": 499.7
+    },
+    "10,9": {
+      "terrain": "mountains",
+      "render_x": 517.4,
+      "render_y": 499.7
+    },
+    "11,9": {
+      "terrain": "urban",
+      "render_x": 574.0,
+      "render_y": 504.3,
+      "city": "Halle",
+      "render_city_x": 574,
+      "render_city_y": 504.3
+    },
+    "12,9": {
+      "terrain": "plains",
+      "render_x": 635.3,
+      "render_y": 501.5
+    },
+    "13,9": {
+      "terrain": "plains",
+      "render_x": 687.3,
+      "render_y": 505.2
+    },
+    "14,9": {
+      "terrain": "plains",
+      "render_x": 747.7,
+      "render_y": 500.6
+    },
+    "15,9": {
+      "terrain": "plains",
+      "render_x": 798.8,
+      "render_y": 499.6
+    },
+    "16,9": {
+      "terrain": "plains",
+      "render_x": 859.1,
+      "render_y": 504.3
+    },
+    "17,9": {
+      "terrain": "urban",
+      "render_x": 917.7,
+      "render_y": 502.5,
+      "city": "Liegnitz",
+      "render_city_x": 917.7,
+      "render_city_y": 502.5
+    },
+    "18,9": {
+      "terrain": "plains",
+      "render_x": 979.0,
+      "render_y": 502.4
+    },
+    "19,9": {
+      "terrain": "plains",
+      "render_x": 1031.0,
+      "render_y": 501.5
+    },
+    "3,10": {
+      "terrain": "urban",
+      "render_x": 144.8,
+      "render_y": 550.7,
+      "city": "Düsseldorf",
+      "render_city_x": 144.8,
+      "render_city_y": 550.7
+    },
+    "4,10": {
+      "terrain": "hills",
+      "render_x": 197.8,
+      "render_y": 549.9
+    },
+    "5,10": {
+      "terrain": "hills",
+      "render_x": 255.4,
+      "render_y": 548.0
+    },
+    "6,10": {
+      "terrain": "mountains",
+      "render_x": 318.7,
+      "render_y": 549.9
+    },
+    "7,10": {
+      "terrain": "urban",
+      "render_x": 372.4,
+      "render_y": 551.6,
+      "city": "Kassel",
+      "render_city_x": 372.4,
+      "render_city_y": 551.6
+    },
+    "8,10": {
+      "terrain": "urban",
+      "render_x": 430.9,
+      "render_y": 552.6,
+      "city": "Mühlhausen",
+      "render_city_x": 430.9,
+      "render_city_y": 552.6
+    },
+    "9,10": {
+      "terrain": "urban",
+      "render_x": 489.5,
+      "render_y": 553.6,
+      "city": "Erfurt",
+      "render_city_x": 489.5,
+      "render_city_y": 553.6
+    },
+    "10,10": {
+      "terrain": "hills",
+      "render_x": 545.3,
+      "render_y": 550.7
+    },
+    "11,10": {
+      "terrain": "urban",
+      "render_x": 602.7,
+      "render_y": 552.6,
+      "city": "Leipzig",
+      "render_city_x": 602.7,
+      "render_city_y": 552.6,
+      "income": 2
+    },
+    "12,10": {
+      "terrain": "hills",
+      "render_x": 659.5,
+      "render_y": 552.6
+    },
+    "13,10": {
+      "terrain": "urban",
+      "render_x": 717.0,
+      "render_y": 551.7,
+      "city": "Dresden",
+      "render_city_x": 717,
+      "render_city_y": 551.7,
+      "income": 2
+    },
+    "14,10": {
+      "terrain": "hills",
+      "render_x": 775.6,
+      "render_y": 552.6
+    },
+    "15,10": {
+      "terrain": "urban",
+      "render_x": 833.1,
+      "render_y": 556.4,
+      "city": "Görlitz",
+      "render_city_x": 833.1,
+      "render_city_y": 556.4
+    },
+    "16,10": {
+      "terrain": "hills",
+      "render_x": 891.7,
+      "render_y": 554.4
+    },
+    "17,10": {
+      "terrain": "plains",
+      "render_x": 945.5,
+      "render_y": 553.5
+    },
+    "18,10": {
+      "terrain": "urban",
+      "render_x": 1005.0,
+      "render_y": 553.6,
+      "city": "Breslau",
+      "render_city_x": 1005,
+      "render_city_y": 553.6,
+      "income": 2
+    },
+    "19,10": {
+      "terrain": "plains",
+      "render_x": 1065.3,
+      "render_y": 552.6
+    },
+    "2,11": {
+      "terrain": "urban",
+      "render_x": 113.2,
+      "render_y": 599.9,
+      "city": "Aachen",
+      "render_city_x": 113.2,
+      "render_city_y": 599.9
+    },
+    "3,11": {
+      "terrain": "urban",
+      "render_x": 172.7,
+      "render_y": 603.7,
+      "city": "Köln",
+      "render_city_x": 172.7,
+      "render_city_y": 603.7,
+      "income": 2
+    },
+    "4,11": {
+      "terrain": "hills",
+      "render_x": 231.3,
+      "render_y": 599.0
+    },
+    "5,11": {
+      "terrain": "mountains",
+      "render_x": 283.4,
+      "render_y": 605.6
+    },
+    "6,11": {
+      "terrain": "mountains",
+      "render_x": 343.7,
+      "render_y": 601.9
+    },
+    "7,11": {
+      "terrain": "mountains",
+      "render_x": 398.5,
+      "render_y": 598.2
+    },
+    "8,11": {
+      "terrain": "mountains",
+      "render_x": 459.8,
+      "render_y": 600.9
+    },
+    "9,11": {
+      "terrain": "hills",
+      "render_x": 523.0,
+      "render_y": 603.7
+    },
+    "10,11": {
+      "terrain": "hills",
+      "render_x": 574.1,
+      "render_y": 601.8
+    },
+    "11,11": {
+      "terrain": "hills",
+      "render_x": 626.1,
+      "render_y": 598.1
+    },
+    "12,11": {
+      "terrain": "urban",
+      "render_x": 691.0,
+      "render_y": 602.8,
+      "city": "Chemnitz",
+      "render_city_x": 691,
+      "render_city_y": 602.8
+    },
+    "13,11": {
+      "terrain": "mountains",
+      "render_x": 745.9,
+      "render_y": 603.7
+    },
+    "14,11": {
+      "terrain": "mountains",
+      "render_x": 807.2,
+      "render_y": 603.7
+    },
+    "15,11": {
+      "terrain": "mountains",
+      "render_x": 861.1,
+      "render_y": 599.1
+    },
+    "16,11": {
+      "terrain": "mountains",
+      "render_x": 922.4,
+      "render_y": 600.0
+    },
+    "17,11": {
+      "terrain": "urban",
+      "render_x": 976.2,
+      "render_y": 604.7,
+      "city": "Waldenburg",
+      "render_city_x": 976.2,
+      "render_city_y": 604.7
+    },
+    "18,11": {
+      "terrain": "plains",
+      "render_x": 1031.9,
+      "render_y": 601.9
+    },
+    "2,12": {
+      "terrain": "hills",
+      "render_x": 143.1,
+      "render_y": 651.0
+    },
+    "3,12": {
+      "terrain": "urban",
+      "render_x": 201.5,
+      "render_y": 653.8,
+      "city": "Koblenz",
+      "render_city_x": 201.5,
+      "render_city_y": 653.8
+    },
+    "4,12": {
+      "terrain": "mountains",
+      "render_x": 264.8,
+      "render_y": 653.0
+    },
+    "5,12": {
+      "terrain": "hills",
+      "render_x": 313.1,
+      "render_y": 650.1
+    },
+    "6,12": {
+      "terrain": "hills",
+      "render_x": 366.0,
+      "render_y": 656.6
+    },
+    "7,12": {
+      "terrain": "hills",
+      "render_x": 427.3,
+      "render_y": 652.9
+    },
+    "8,12": {
+      "terrain": "mountains",
+      "render_x": 484.9,
+      "render_y": 649.2
+    },
+    "9,12": {
+      "terrain": "hills",
+      "render_x": 543.4,
+      "render_y": 655.7
+    },
+    "10,12": {
+      "terrain": "urban",
+      "render_x": 601.9,
+      "render_y": 649.2,
+      "city": "Plauen",
+      "render_city_x": 601.9,
+      "render_city_y": 649.2
+    },
+    "11,12": {
+      "terrain": "mountains",
+      "render_x": 659.5,
+      "render_y": 647.4
+    },
+    "1,13": {
+      "terrain": "hills",
+      "render_x": 111.5,
+      "render_y": 703.0
+    },
+    "2,13": {
+      "terrain": "mountains",
+      "render_x": 171.8,
+      "render_y": 703.1
+    },
+    "3,13": {
+      "terrain": "urban",
+      "render_x": 230.5,
+      "render_y": 700.3,
+      "city": "Mainz",
+      "render_city_x": 230.5,
+      "render_city_y": 700.3
+    },
+    "4,13": {
+      "terrain": "urban",
+      "render_x": 287.1,
+      "render_y": 704.0,
+      "city": "Frankfurt am Main",
+      "render_city_x": 287.1,
+      "render_city_y": 704,
+      "income": 2
+    },
+    "6,13": {
+      "terrain": "urban",
+      "render_x": 403.1,
+      "render_y": 699.3,
+      "city": "Würzburg",
+      "render_city_x": 403.1,
+      "render_city_y": 699.3
+    },
+    "7,13": {
+      "terrain": "hills",
+      "render_x": 457.0,
+      "render_y": 700.3
+    },
+    "8,13": {
+      "terrain": "urban",
+      "render_x": 516.4,
+      "render_y": 699.4,
+      "city": "Bamberg",
+      "render_city_x": 516.4,
+      "render_city_y": 699.4
+    },
+    "9,13": {
+      "terrain": "mountains",
+      "render_x": 575.9,
+      "render_y": 703.1
+    },
+    "10,13": {
+      "terrain": "mountains",
+      "render_x": 629.8,
+      "render_y": 705.9
+    },
+    "1,14": {
+      "terrain": "mountains",
+      "render_x": 149.5,
+      "render_y": 752.3
+    },
+    "2,14": {
+      "terrain": "hills",
+      "render_x": 203.5,
+      "render_y": 752.3
+    },
+    "3,14": {
+      "terrain": "hills",
+      "render_x": 258.3,
+      "render_y": 747.6
+    },
+    "5,14": {
+      "terrain": "hills",
+      "render_x": 370.7,
+      "render_y": 750.4
+    },
+    "6,14": {
+      "terrain": "mountains",
+      "render_x": 422.6,
+      "render_y": 756.1
+    },
+    "7,14": {
+      "terrain": "mountains",
+      "render_x": 493.2,
+      "render_y": 746.8
+    },
+    "8,14": {
+      "terrain": "hills",
+      "render_x": 542.5,
+      "render_y": 749.5
+    },
+    "9,14": {
+      "terrain": "mountains",
+      "render_x": 603.7,
+      "render_y": 751.4
+    },
+    "0,15": {
+      "terrain": "urban",
+      "render_x": 114.2,
+      "render_y": 798.8,
+      "city": "Saarbrücken",
+      "render_city_x": 114.2,
+      "render_city_y": 798.8
+    },
+    "1,15": {
+      "terrain": "mountains",
+      "render_x": 174.6,
+      "render_y": 799.7
+    },
+    "2,15": {
+      "terrain": "hills",
+      "render_x": 235.1,
+      "render_y": 797.8
+    },
+    "3,15": {
+      "terrain": "urban",
+      "render_x": 288.9,
+      "render_y": 797.8,
+      "city": "Mannheim",
+      "render_city_x": 288.9,
+      "render_city_y": 797.8,
+      "income": 1
+    },
+    "4,15": {
+      "terrain": "hills",
+      "render_x": 343.7,
+      "render_y": 802.4
+    },
+    "5,15": {
+      "terrain": "mountains",
+      "render_x": 405.0,
+      "render_y": 800.6
+    },
+    "6,15": {
+      "terrain": "mountains",
+      "render_x": 456.0,
+      "render_y": 794.1
+    },
+    "7,15": {
+      "terrain": "urban",
+      "render_x": 512.7,
+      "render_y": 798.8,
+      "city": "Nürnberg",
+      "render_city_x": 512.7,
+      "render_city_y": 798.8
+    },
+    "8,15": {
+      "terrain": "mountains",
+      "render_x": 573.1,
+      "render_y": 802.5
+    },
+    "9,15": {
+      "terrain": "mountains",
+      "render_x": 630.7,
+      "render_y": 804.3
+    },
+    "0,16": {
+      "terrain": "mountains",
+      "render_x": 141.2,
+      "render_y": 847.1
+    },
+    "1,16": {
+      "terrain": "hills",
+      "render_x": 199.8,
+      "render_y": 852.6
+    },
+    "2,16": {
+      "terrain": "urban",
+      "render_x": 261.0,
+      "render_y": 851.6,
+      "city": "Karlsruhe",
+      "render_city_x": 261,
+      "render_city_y": 851.6
+    },
+    "3,16": {
+      "terrain": "urban",
+      "render_x": 314.9,
+      "render_y": 848.9,
+      "city": "Heilbronn",
+      "render_city_x": 314.9,
+      "render_city_y": 848.9
+    },
+    "4,16": {
+      "terrain": "mountains",
+      "render_x": 369.7,
+      "render_y": 850.7
+    },
+    "5,16": {
+      "terrain": "mountains",
+      "render_x": 431.0,
+      "render_y": 846.1
+    },
+    "6,16": {
+      "terrain": "hills",
+      "render_x": 491.4,
+      "render_y": 849.8
+    },
+    "7,16": {
+      "terrain": "mountains",
+      "render_x": 548.0,
+      "render_y": 846.1
+    },
+    "8,16": {
+      "terrain": "urban",
+      "render_x": 603.7,
+      "render_y": 849.9,
+      "city": "Regensburg",
+      "render_city_x": 603.7,
+      "render_city_y": 849.9
+    },
+    "9,16": {
+      "terrain": "mountains",
+      "render_x": 656.7,
+      "render_y": 853.6
+    },
+    "0,17": {
+      "terrain": "urban",
+      "render_x": 172.7,
+      "render_y": 899.9,
+      "city": "Strasbourg",
+      "render_city_x": 172.7,
+      "render_city_y": 899.9
+    },
+    "1,17": {
+      "terrain": "hills",
+      "render_x": 227.6,
+      "render_y": 900.9
+    },
+    "2,17": {
+      "terrain": "mountains",
+      "render_x": 287.1,
+      "render_y": 899.9
+    },
+    "3,17": {
+      "terrain": "urban",
+      "render_x": 344.5,
+      "render_y": 895.3,
+      "city": "Stuttgart",
+      "render_city_x": 344.5,
+      "render_city_y": 895.3
+    },
+    "4,17": {
+      "terrain": "mountains",
+      "render_x": 402.2,
+      "render_y": 898.1
+    },
+    "5,17": {
+      "terrain": "mountains",
+      "render_x": 459.8,
+      "render_y": 906.4
+    },
+    "6,17": {
+      "terrain": "hills",
+      "render_x": 512.8,
+      "render_y": 897.2
+    },
+    "7,17": {
+      "terrain": "mountains",
+      "render_x": 575.9,
+      "render_y": 899.1
+    },
+    "8,17": {
+      "terrain": "hills",
+      "render_x": 629.8,
+      "render_y": 898.1
+    },
+    "9,17": {
+      "terrain": "mountains",
+      "render_x": 686.4,
+      "render_y": 900.9
+    },
+    "0,18": {
+      "terrain": "urban",
+      "render_x": 199.6,
+      "render_y": 950.1,
+      "city": "Freiburg im Breisgau",
+      "render_city_x": 199.6,
+      "render_city_y": 950.1
+    },
+    "1,18": {
+      "terrain": "mountains",
+      "render_x": 261.1,
+      "render_y": 952.0
+    },
+    "2,18": {
+      "terrain": "mountains",
+      "render_x": 319.6,
+      "render_y": 952.0
+    },
+    "3,18": {
+      "terrain": "mountains",
+      "render_x": 380.0,
+      "render_y": 948.2
+    },
+    "4,18": {
+      "terrain": "mountains",
+      "render_x": 426.4,
+      "render_y": 952.0
+    },
+    "5,18": {
+      "terrain": "urban",
+      "render_x": 489.4,
+      "render_y": 951.0,
+      "city": "Augsburg",
+      "render_city_x": 489.4,
+      "render_city_y": 951
+    },
+    "6,18": {
+      "terrain": "urban",
+      "render_x": 543.3,
+      "render_y": 948.2,
+      "city": "München",
+      "render_city_x": 543.3,
+      "render_city_y": 948.2,
+      "income": 3
+    },
+    "7,18": {
+      "terrain": "mountains",
+      "render_x": 604.7,
+      "render_y": 950.2
+    },
+    "8,18": {
+      "terrain": "mountains",
+      "render_x": 658.5,
+      "render_y": 953.9
+    }
+  }
+}

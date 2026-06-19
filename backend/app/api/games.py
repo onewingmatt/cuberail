@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from app.db import get_db
 from app.models.schema import Game, GamePlayer, GameMove, User
 from app.engine.games.simple_rail import SimpleRailEngine, SimpleRailState
-from app.engine.games.northern_pacific import NPEngine, NPState
+from app.engine.games.northern_pacific_official import NPEngineOfficial, NPState
 from app.engine.games.prussian_rails import PrussianRailsEngine, PrussianRailsState
 import uuid
 from typing import List, Dict, Any, Optional
@@ -72,7 +72,7 @@ async def create_game(
 ):
     Authorize.jwt_required()
     user_id = Authorize.get_jwt_subject()
-    bot_count = max(0, min(bot_count, 3))
+    bot_count = max(0, min(bot_count, 4))
 
     game = Game(game_type=game_type, mode=mode, created_by_id=uuid.UUID(user_id))
     db.add(game)
@@ -147,9 +147,11 @@ async def join_game(
     db.add(player)
     await db.commit()
 
-    from app.services.notifications import notify_player_joined
-
-    await notify_player_joined(str(game.created_by_id), joiner_name, game_id, db)
+    try:
+        from app.services.notifications import notify_player_joined
+        await notify_player_joined(str(game.created_by_id), joiner_name, game_id, db)
+    except ImportError:
+        pass
 
     return {"message": "Joined"}
 
@@ -176,9 +178,11 @@ async def start_game(
     )
     players = result.scalars().all()
     player_ids = [str(p.user_id) for p in players]
-    from app.services.notifications import notify_game_started
-
-    await notify_game_started(player_ids, game_id, db)
+    try:
+        from app.services.notifications import notify_game_started
+        await notify_game_started(player_ids, game_id, db)
+    except ImportError:
+        pass
 
     # If first player is a bot, auto-play immediately
     engine, state, player_ids = await _load_game(game_id, db)
@@ -206,14 +210,16 @@ async def _load_game(
 
     if game.game_type == "simple_rail":
         engine = SimpleRailEngine()
+        state = engine.setup_game(player_ids)
     elif game.game_type == "northern_pacific":
-        engine = NPEngine()
+        engine = NPEngineOfficial()
+        player_count = len(player_ids)
+        state = engine.setup_game(player_ids, player_count=player_count)
     elif game.game_type == "prussian_rails":
         engine = PrussianRailsEngine()
+        state = engine.setup_game(player_ids)
     else:
         raise ValueError("Unknown game type")
-
-    state = engine.setup_game(player_ids)
 
     result = await db.execute(
         select(GameMove)
@@ -222,7 +228,16 @@ async def _load_game(
     )
     moves = result.scalars().all()
     for move in moves:
-        state = engine.apply_move(state, str(move.user_id), move.action_type, move.payload)
+        try:
+            state = engine.apply_move(state, str(move.user_id), move.action_type, move.payload)
+        except ValueError as e:
+            # During replay, random cup-draw can produce different turn order.
+            # Skip moves that don't match — they were already validated when made.
+            import logging
+            logging.getLogger("cuberail").warning(
+                "Skipping move %d during replay: %s", move.move_number, e
+            )
+            continue
 
     return engine, state, player_ids
 
@@ -251,7 +266,17 @@ async def _process_bot_turns(
     After a human move, auto-process any consecutive bot turns.
     Returns the final state after all bot moves.
     """
-    from app.engine.games.northern_pacific_bot import decide_move
+    # Import the right bot for this game type
+    engine_name = type(engine).__name__
+    if engine_name == "NPEngineOfficial":
+        from app.engine.games.northern_pacific_bot import decide_move, _available_track_segments
+    elif engine_name == "PrussianRailsEngine":
+        from app.engine.games.prussian_rails_bot import decide_move
+        # For Prussian Rails, the fallback is handled differently
+        _available_track_segments = None
+    else:
+        # Unknown game type — no bot support
+        return
 
     while not state.is_game_over:
         current = state.get_current_actor()
@@ -261,14 +286,34 @@ async def _process_bot_turns(
         if not is_bot:
             break
 
-        # Bot decides
-        action_type, payload = decide_move(current, username, state.to_dict())
+        # Bot decides — guard against individual move failures
+        action_type = "pass"
+        payload = {}
+        try:
+            action_type, payload = decide_move(current, username, state.to_dict())
+            new_state = engine.apply_move(state, current, action_type, payload)
+            state = new_state
+        except Exception as exc:
+            import logging
+            logging.getLogger("cuberail").warning(
+                "Bot move failed for %s (%s): %s — forcing pass", current, username, exc
+            )
+            # NP bot has track segment fallback; PR bot just passes
+            if _available_track_segments is not None:
+                fallback_tracks = _available_track_segments(state.to_dict())
+                if fallback_tracks:
+                    action_type = "lay_track"
+                    payload = {"segment_id": fallback_tracks[0][0]}
+                else:
+                    action_type = "pass"
+                    payload = {}
+            else:
+                action_type = "pass"
+                payload = {}
+            new_state = engine.apply_move(state, current, action_type, payload)
+            state = new_state
 
-        # Apply
-        new_state = engine.apply_move(state, current, action_type, payload)
-        state = new_state
-
-        # Save move
+        # Save the move
         move = GameMove(
             game_id=uuid.UUID(game_id),
             user_id=uuid.UUID(current),
@@ -307,11 +352,15 @@ async def get_state(game_id: str, db: AsyncSession = Depends(get_db)):
     for gp in gp_result.scalars().all():
         user_result = await db.execute(select(User).where(User.id == gp.user_id))
         user = user_result.scalars().first()
+        pid = str(gp.user_id)
         if user:
             result["players"].append({
-                "id": str(user.id),
+                "id": pid,
                 "username": user.username,
                 "is_bot": user.username.startswith("Bot_") or user.username.startswith("Bot ") if user.username else False,
+                "cash": result.get("player_cash", {}).get(pid),
+                "income": result.get("player_income", {}).get(pid),
+                "shares": result.get("shares", {}).get(pid, {}),
             })
 
     return result
@@ -340,6 +389,11 @@ async def make_move(
     result = await db.execute(select(Game).where(Game.id == uuid.UUID(game_id)))
     game = result.scalars().first()
 
+    # Auto-start game if still waiting
+    if game and game.status == "waiting":
+        game.status = "in_progress"
+        await db.commit()
+
     try:
         new_state = engine.apply_move(state, user_id, move_req.action_type, move_req.payload)
     except ValueError as e:
@@ -358,24 +412,41 @@ async def make_move(
     next_move_num += 1
 
     from app.main import sio
-    await sio.emit("STATE_UPDATED", {"payload": new_state.to_dict()}, room=game_id)
 
-    # Notification triggers
-    from app.services.notifications import notify_your_turn, notify_game_over
+    # Auto-process bot turns BEFORE any WS emit, so the first STATE_UPDATED
+    # already includes the bot's move. This prevents the frontend from
+    # seeing an intermediate "bot's turn" state.
+    try:
+        await _process_bot_turns(
+            game_id, engine, new_state, db, sio, next_move_num
+        )
+    except Exception as exc:
+        import logging
+        logging.getLogger("cuberail").exception("Bot processing failed: %s", exc)
+
+    # Emit final state (after human + bot processing)
+    try:
+        await sio.emit("STATE_UPDATED", {"payload": new_state.to_dict()}, room=game_id)
+    except Exception:
+        pass  # WebSocket state broadcast is non-critical
+
+    # Notification triggers (optional — resend module may not be installed)
+    try:
+        from app.services.notifications import notify_your_turn, notify_game_over
+    except ImportError:
+        notify_your_turn = notify_game_over = None
 
     if new_state.is_game_over:
-        winner = None
-        balances = new_state.to_dict().get("balances", {})
-        if balances:
-            winner = max(balances, key=balances.get)
-        winner_name = None
-        if winner:
-            r = await db.execute(select(User).where(User.id == uuid.UUID(winner)))
-            w = r.scalars().first()
-            if w:
-                winner_name = w.username
-        await notify_game_over(player_ids, game_id, winner_name, db)
-    elif game.mode == "async":
+        if notify_game_over:
+            winner = new_state.to_dict().get("winner")
+            winner_name = None
+            if winner:
+                r = await db.execute(select(User).where(User.id == uuid.UUID(winner)))
+                w = r.scalars().first()
+                if w:
+                    winner_name = w.username
+            await notify_game_over(player_ids, game_id, winner_name, db)
+    elif game and game.mode == "async" and notify_your_turn:
         next_player = new_state.get_current_actor()
         if next_player:
             r = await db.execute(select(User).where(User.id == uuid.UUID(user_id)))
@@ -386,9 +457,4 @@ async def make_move(
                 if not is_bot:
                     await notify_your_turn(next_player, game_id, mover_name, db)
 
-    # Auto-process bot turns (don't notify for bot moves)
-    await _process_bot_turns(
-        game_id, engine, new_state, db, sio, next_move_num
-    )
-
-    return {"message": "Move accepted"}
+    return {"message": "Move accepted", "state": new_state.to_dict()}

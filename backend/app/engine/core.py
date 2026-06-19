@@ -91,7 +91,8 @@ class AuctionManager:
             "passed_bidders": []
         }
 
-    def handle_auction_bid(self, state: GameState, player_id: str, bid: int):
+    def handle_auction_bid(self, state: GameState, player_id: str, bid: int) -> bool:
+        """Handle a bid. Returns True if the auction is concluded (only 1 bidder remains)."""
         auction = getattr(state, "auction_state", {})
         if not auction:
             raise ValueError("No active auction.")
@@ -107,6 +108,11 @@ class AuctionManager:
 
         current = state.active_player_stack.pop()
         state.active_player_stack.insert(0, current)
+
+        # Auto-conclude if only 1 bidder left and there's a highest bidder
+        if len(auction["bidders"]) == 1 and auction["highest_bidder"] is not None:
+            return True
+        return False
 
     def handle_auction_pass(self, state: GameState, player_id: str) -> bool:
         """
