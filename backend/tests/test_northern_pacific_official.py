@@ -272,13 +272,13 @@ def test_payout_multiple_cubes():
     engine = NPEngineOfficial()
     state = engine.setup_game(["alice", "bob"])
 
-    # Alice uses 2 standard cubes in Duluth (setup doesn't allow that easily
-    # because city_capacity=2, so we need 2 alice turns. Let's hack supply)
-    # Actually with 2 players, capacity=2. Alice can invest twice.
+    # Alice uses 2 standard cubes in Duluth
     state = engine.apply_move(state, "alice", "invest", {"city": "Duluth"})
-    state = engine.apply_move(state, "bob", "pass", {})
+    # Bob invests in Fargo instead of passing
+    state = engine.apply_move(state, "bob", "invest", {"city": "Fargo"})
     state = engine.apply_move(state, "alice", "invest", {"city": "Duluth"})
-    state = engine.apply_move(state, "bob", "pass", {})
+    # Bob invests in Fargo again (capacity allows 2)
+    state = engine.apply_move(state, "bob", "invest", {"city": "Fargo"})
 
     assert state.city_cubes["Duluth"]["alice"] == 2
     supply_before = state.player_supply["alice"]
@@ -449,14 +449,13 @@ def test_game_over_rejects_moves():
 
 # ---- Edge cases ----
 
-def test_pass_action():
-    """Pass moves the turn but does nothing else."""
+def test_pass_action_not_allowed_with_moves():
+    """Pass is not allowed when the player has legal moves."""
     engine = NPEngineOfficial()
     state = engine.setup_game(["alice", "bob"])
 
-    state = engine.apply_move(state, "alice", "pass", {})
-    assert state.current_player_index == 1  # bob's turn
-    assert state.train_endpoint == "StPaul"
+    with pytest.raises(ValueError, match="Cannot pass when legal moves"):
+        engine.apply_move(state, "alice", "pass", {})
 
 
 def test_available_tracks_reflects_endpoint():

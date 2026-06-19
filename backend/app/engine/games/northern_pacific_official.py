@@ -190,7 +190,11 @@ class NPEngineOfficial(GameEngine):
         elif action_type == "lay_track":
             self._do_lay_track(state, player_id, payload)
         elif action_type == "pass":
-            pass  # Skip turn (no legal moves)
+            # Only allowed when no legal moves exist
+            invest_cities = state._available_invest_cities()
+            avail_tracks = state._available_track_segments()
+            if invest_cities or avail_tracks:
+                raise ValueError("Cannot pass when legal moves are available")
         else:
             raise ValueError(f"Unknown action: {action_type}")
 
