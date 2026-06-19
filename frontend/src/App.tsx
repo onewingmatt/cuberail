@@ -27,11 +27,11 @@ const GameRouter = () => {
     return <div className="p-8 text-center text-xl">Loading Game State...</div>;
   }
 
-  if (gameState.train_endpoint !== undefined) {
-    return <NorthernPacificBoard />;
-  }
   if (gameState.game_type === 'prussian_rails') {
     return <PrussianRailsBoard />;
+  }
+  if (gameState.train_endpoint !== undefined) {
+    return <NorthernPacificBoard />;
   }
   return <GameBoard />;
 };

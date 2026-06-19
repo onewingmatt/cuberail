@@ -28,12 +28,12 @@ export const PrussianRailsBoard: React.FC = () => {
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [calibrationMode, setCalibrationMode] = useState(false);
-  const [overlayTranslateX, setOverlayTranslateX] = useState(-320);
-  const [overlayTranslateY, setOverlayTranslateY] = useState(56.5);
-  const [overlayScaleX, setOverlayScaleX] = useState(1.06);
-  const [overlayScaleY, setOverlayScaleY] = useState(1.057);
+  const [overlayTranslateX, setOverlayTranslateX] = useState(-295);
+  const [overlayTranslateY, setOverlayTranslateY] = useState(72.5);
+  const [overlayScaleX, setOverlayScaleX] = useState(0.9619);
+  const [overlayScaleY, setOverlayScaleY] = useState(0.958);
   const [overlayRotation, setOverlayRotation] = useState(0);
-  const [overlayOpacity, setOverlayOpacity] = useState(0.45);
+  const [overlayOpacity, setOverlayOpacity] = useState(0.35);
   const [showOverlay, setShowOverlay] = useState(false);
   const [hexSpacing, setHexSpacing] = useState(1.16);
   const [showOverlayControls, setShowOverlayControls] = useState(false);
@@ -116,21 +116,8 @@ export const PrussianRailsBoard: React.FC = () => {
           onClick={() => setCalibrationMode(v => !v)}
           className={`px-3 py-1 rounded text-sm cursor-pointer ${calibrationMode ? 'bg-amber-600 text-white' : 'bg-slate-200 text-slate-900'}`}
         >
-          {calibrationMode ? 'Exit calibration mode' : 'Enter calibration mode'}
+          {calibrationMode ? 'Exit calibration' : 'Calibrate map'}
         </button>
-        <button
-          onClick={() => setShowOverlay(v => !v)}
-          className={`px-3 py-1 rounded text-sm cursor-pointer ${showOverlay ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-900'}`}
-        >
-          {showOverlay ? 'Hide hex overlay' : 'Show hex overlay'}
-        </button>
-        <button
-          onClick={() => setShowOverlayControls(v => !v)}
-          className={`px-3 py-1 rounded text-sm cursor-pointer ${showOverlayControls ? 'bg-amber-600 text-white' : 'bg-slate-200 text-slate-900'}`}
-        >
-          {showOverlayControls ? 'Hide alignment' : 'Align overlay'}
-        </button>
-        <span className="text-xs text-gray-600">Move/scale/rotate the overlay until it matches the board image. Logic stays in JSON underneath.</span>
       </div>
 
       {!calibrationMode && showOverlayControls && (
